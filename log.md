@@ -5,3 +5,4 @@ Timestamp	Activity Type	Function	File	Details
 2020-07-26 15:47:28	write	write_temp_csv	/var/folders/pg/_nr70_kj7y31yvv84yyy7524sx_q0w/T//Rtmpl2Y8m1/file30bc30eddfef.csv	
 2020-07-26 15:49:12	write	write_temp_csv	/var/folders/pg/_nr70_kj7y31yvv84yyy7524sx_q0w/T//Rtmpl2Y8m1/file30bc757844a9.csv	
 2020-07-26 15:49:33	write	write_temp_csv	/var/folders/pg/_nr70_kj7y31yvv84yyy7524sx_q0w/T//Rtmpl2Y8m1/file30bc2ae3ef7f.csv	
+2020-07-26 15:56:51	write	write_temp_csv	/var/folders/pg/_nr70_kj7y31yvv84yyy7524sx_q0w/T//Rtmps5VVRe/file344115eb2f46.csv	
