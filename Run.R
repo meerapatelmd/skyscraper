@@ -24,6 +24,7 @@
 # for (i in 1:length(fns)) {
 #     fns_lines <- read_lines(file = fns[i])
 #     if (any(grepl("pag13", fns_lines))) {
+#         print(fns[i])
 #         secretary::press_enter()
 #     }
 #

@@ -1,6 +1,6 @@
 #' Create CONCEPT_SYNONYM Table
 #' @importFrom pg13 writeTable
-#' @importFrom pag13 lsTables
+#' @importFrom pg13 lsTables
 #' @import dplyr
 #' @export
 

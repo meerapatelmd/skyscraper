@@ -1,7 +1,7 @@
 #' Create CONCEPT_METADATA Table
 #' @description The CONCEPT_METADATA Table is a custom addition to the OMOP Vocabulary Infrastructure and stores the metadata associated with the scrape of a given concept.
 #' @importFrom pg13 writeTable
-#' @importFrom pag13 lsTables
+#' @importFrom pg13 lsTables
 #' @import dplyr
 #' @export
 
