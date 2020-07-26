@@ -2,7 +2,7 @@
 #' @description
 #' @importFrom purrr map
 #' @importFrom centipede no_blank
-#' @import dplyr bind_rows
+#' @import dplyr
 #' @export
 
 getDrugConcept <-
