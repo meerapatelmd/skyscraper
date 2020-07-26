@@ -1,5 +1,4 @@
 #' Get Individual Drug Data
-#' @description
 #' @importFrom purrr map
 #' @importFrom centipede no_blank
 #' @import dplyr
