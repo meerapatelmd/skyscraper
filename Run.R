@@ -19,3 +19,12 @@
 #         appendSynonymTable(output,
 #                            conn = conn)
 # }
+
+# fns <- list.files("R", full.names = TRUE)
+# for (i in 1:length(fns)) {
+#     fns_lines <- read_lines(file = fns[i])
+#     if (any(grepl("typewrite", fns_lines))) {
+#         secretary::press_enter()
+#     }
+#
+# }

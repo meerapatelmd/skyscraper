@@ -22,9 +22,9 @@ loadScrapedDrugs <-
                 if (is.null(.output[[i]])) {
 
                             .output[[i]] <-
-                                    police::try_catch_error_as_na(xml2::read_html(.input$DRUG_DEF_LINK[i]) %>%
+                                    xml2::read_html(.input$DRUG_DEF_LINK[i]) %>%
                                                 rvest::html_nodes("dl") %>%
-                                                rvest::html_text())
+                                                rvest::html_text()
 
                             if (!is.logical(.output[[i]])) {
 
