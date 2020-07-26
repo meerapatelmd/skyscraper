@@ -2,7 +2,7 @@
 #' @import httr
 #' @import jsonlite
 #' @import rvest
-#' @import secretary typewrite
+#' @import secretary
 #' @param max_page Maximum page to scrape until at https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=
 #' @export
 
