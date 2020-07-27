@@ -4,7 +4,7 @@
 #' @import dplyr
 #' @export
 
-createConceptTable <-
+appendConceptTable <-
     function(conn,
              .input) {
 
@@ -12,11 +12,11 @@ createConceptTable <-
                     stop("input is empty")
                 }
 
-                cgTables <- pg13::lsTables(conn = conn,
-                                           schema = "cancergov")
+                conceptTable <- pg13::query(conn = conn,
+                                            pg13::buildQuery(schema = "cancergov",
+                                                             tableName = "concept"))
 
-
-                if (!("concept" %in% tolower(cgTables))) {
+                if (nrow(conceptTable) == 0) {
                     concept <-
                         input %>%
                         rubix::filter_at_grepl(concept_definition,
@@ -33,7 +33,7 @@ createConceptTable <-
                                          valid_end_date = as.Date("2099-12-31"),
                                          invalid_reason = NA)
 
-                    pg13::writeTable(conn = conn,
+                    pg13::appendTable(conn = conn,
                                      schema = "cancergov",
                                      tableName = "concept",
                                      .data = concept %>%

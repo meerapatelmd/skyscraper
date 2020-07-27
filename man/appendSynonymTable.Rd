@@ -2,10 +2,10 @@
 % Please edit documentation in R/appendSynonymTable.R
 \name{appendSynonymTable}
 \alias{appendSynonymTable}
-\title{Append Synonym Table}
+\title{Create CONCEPT_SYNONYM Table}
 \usage{
-appendSynonymTable(.input, conn)
+appendSynonymTable(conn, .input)
 }
 \description{
-Append Synonym Table
+Create CONCEPT_SYNONYM Table
 }
