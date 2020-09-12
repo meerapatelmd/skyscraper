@@ -6,7 +6,7 @@
 #' @param max_page maximum page for the base url https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=
 #' @export
 
-getDrugPageLinks <-
+nciDrugDetailLinks <-
     function(max_page = 39) {
 
             output <- list()
