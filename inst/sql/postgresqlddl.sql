@@ -128,3 +128,21 @@ CREATE TABLE @schema.attribute_definition (
   attribute_syntax				    TEXT	NULL
 )
 ;
+
+
+--HINT DISTRIBUTE ON RANDOM
+CREATE TABLE @schema.concept_definition (
+  concept_id			INTEGER			NOT NULL ,
+  concept_name			VARCHAR(255)	NOT NULL ,
+  concept_definition TEXT NOT NULL
+)
+;
+
+--HINT DISTRIBUTE ON RANDOM
+CREATE TABLE @schema.concept_metadata (
+  concept_timestamp VARCHAR(25) NOT NULL,
+  concept_id			INTEGER			NOT NULL ,
+  concept_page		INTEGER	NOT NULL ,
+  concept_page_url TEXT NOT NULL
+)
+;
