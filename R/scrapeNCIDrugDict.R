@@ -19,9 +19,14 @@ scrapeNCIDrugDict <-
 
                 page_scrape <- xml2::read_html(paste0("https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=", i))
 
+                # page_text <-
+                #         page_scrape %>%
+                #         rvest::html_nodes("#main") %>%
+                #         rvest::html_text()
+
                 page_text <-
                         page_scrape %>%
-                        rvest::html_nodes("#main") %>%
+                        rvest::html_nodes(".dictionary-list") %>%
                         rvest::html_text()
 
                 page_text2 <-

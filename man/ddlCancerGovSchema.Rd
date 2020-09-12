@@ -2,10 +2,30 @@
 % Please edit documentation in R/ddlCancerGovSchema.R
 \name{ddlCancerGovSchema}
 \alias{ddlCancerGovSchema}
-\title{DDL Standardized Vocabulary Tables}
+\title{DDL Cancer Gov Schema}
 \usage{
 ddlCancerGovSchema(conn)
 }
+\arguments{
+\item{conn}{PARAM_DESCRIPTION}
+}
+\value{
+OUTPUT_DESCRIPTION
+}
 \description{
-The ddl will only execute on the condition that there are 0 tables current in the `hemonc_extension` schema.
+If the cancergov schema does not have any tables, writes empty OMOP Vocabulary Tables
+}
+\details{
+DETAILS
+}
+\examples{
+\dontrun{
+if(interactive()){
+ #EXAMPLE1
+ }
+}
+}
+\seealso{
+\code{\link[pg13]{lsTables}},\code{\link[pg13]{send}}
+ \code{\link[SqlRender]{render}},\code{\link[SqlRender]{readSql}}
 }

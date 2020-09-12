@@ -146,3 +146,12 @@ CREATE TABLE @schema.concept_metadata (
   concept_page_url TEXT NOT NULL
 )
 ;
+
+--HINT DISTRIBUTE ON RANDOM
+CREATE TABLE @schema.concept_log (
+  concept_timestamp VARCHAR(25) NOT NULL,
+  concept_count INTEGER NOT NULL
+)
+;
+
+
