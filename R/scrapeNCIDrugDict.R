@@ -6,10 +6,14 @@
 #' @param max_page Maximum page to scrape until at https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=
 #' @export
 
-scrapeCancerGovDict <-
+scrapeNCIDrugDict <-
     function(max_page = 39) {
 
         for (i in 1:max_page) {
+
+                if (i == 1) {
+                        output <- tibble::tibble()
+                }
 
                 secretary::typewrite(paste0("[", Sys.time(), "]"), "\t", i, " of ", max_page)
 
@@ -48,11 +52,20 @@ scrapeCancerGovDict <-
 
                 names(page_text4) <- c("DRUG", "DEFINITION")
 
-                cacheScrape(page_text4,
-                            page=i,
-                            url=paste0("https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=", i),
-                            source="cancergov")
+
+                output <-
+                        dplyr::bind_rows(output,
+                                         tibble::tibble(DRUG = unlist(page_text4$DRUG),
+                                                        DEFINITION = unlist(page_text4$DEFINITION)))
+
+                # cacheScrape(page_text4,
+                #             page=i,
+                #             url=paste0("https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=", i),
+                #             source="cancergov")
 
         }
+            output %>%
+                    dplyr::mutate_all(trimws) %>%
+                    dplyr::mutate_all(stringr::str_replace_all, pattern = "[\r\n\t]{1,}|[ ]{2,}", replacement = " ")
 
     }

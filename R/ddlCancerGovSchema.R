@@ -1,9 +1,23 @@
-#' DDL Standardized Vocabulary Tables
-#' @description The ddl will only execute on the condition that there are 0 tables current in the `hemonc_extension` schema.
-#' @import pg13
-#' @import SqlRender
+#' @title
+#' DDL Cancer Gov Schema
+#' @description
+#' If the cancergov schema does not have any tables, writes empty OMOP Vocabulary Tables
+#' @param conn PARAM_DESCRIPTION
+#' @return OUTPUT_DESCRIPTION
+#' @details DETAILS
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'  #EXAMPLE1
+#'  }
+#' }
+#' @seealso
+#'  \code{\link[pg13]{lsTables}},\code{\link[pg13]{send}}
+#'  \code{\link[SqlRender]{render}},\code{\link[SqlRender]{readSql}}
+#' @rdname ddlCancerGovSchema
 #' @export
-
+#' @importFrom pg13 lsTables send
+#' @importFrom SqlRender render readSql
 
 ddlCancerGovSchema <-
         function(conn) {
