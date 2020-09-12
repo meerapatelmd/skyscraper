@@ -123,6 +123,10 @@ pg13::dropTable(conn = conn,
 drugLinks <- nciDrugDetailLinks()
 stopifnot(nrow(drugLinks) == drugCount)
 
+pg13::dropTable(conn = conn,
+                 schema = "cancergov",
+                 tableName = "drug_link")
+
 
 pg13::writeTable(conn = conn,
                  schema = "cancergov",
@@ -139,11 +143,14 @@ pg13::query(conn = conn,
 
 qa <- new_concepts %>%
         dplyr::filter(is.na(concept_id))
-
-
 stopifnot(nrow(qa) == 0)
 
+pg13::dropTable(conn = conn,
+                schema = "cancergov",
+                tableName = "drug_link")
 
+
+scrapeDrugSynonyms(df=new_concepts)
 
  scrapedHtml <- loadScrapedDrugs(drug_links,
                                  1,

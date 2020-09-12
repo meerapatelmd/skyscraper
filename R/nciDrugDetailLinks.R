@@ -29,10 +29,11 @@ nciDrugDetailLinks <-
 
                     output[[i]] <- tibble::tibble(DRUG = drug_names,
                                           DRUG_DEF_LINK = drug_def_link)
+                    names(output)[i] <- as.character(i)
 
             }
 
-            .output <- dplyr::bind_rows(output) %>%
+            .output <- dplyr::bind_rows(output, .id = "PAGE") %>%
                         dplyr::mutate(DRUG_DEF_LINK = paste0("https://www.cancer.gov", DRUG_DEF_LINK))
 
 

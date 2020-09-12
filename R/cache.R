@@ -16,14 +16,10 @@ clearSkyscraperCache <-
 
 cacheScrape <-
     function(object,
-             page,
-             url = NULL,
-             source) {
+             url) {
 
         R.cache::saveCache(object=object,
-                           key=list(page,
-                                    url,
-                                    source),
+                           key=list(url),
                            dirs="skyscraper")
     }
 
@@ -32,12 +28,8 @@ cacheScrape <-
 #' @export
 
 loadCachedScrape <-
-    function(page,
-             url,
-             source) {
+    function(url) {
 
-        R.cache::loadCache(key=list(page,
-                                    url,
-                                    source),
+        R.cache::loadCache(key=list(url),
                            dirs = "skyscraper")
     }

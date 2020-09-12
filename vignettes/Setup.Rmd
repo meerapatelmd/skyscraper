@@ -1,0 +1,34 @@
+---
+title: "Setup"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Setup}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  echo=TRUE,
+  eval=FALSE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(skyscraper)
+library(chariot)
+```
+
+# First Time Setup      
+
+A `cancergov` Postgres schema is made to the database with the addition of a CONCEPT_LOG, CONCEPT_METADATA, and CONCEPT_DEFINITION Tables.      
+
+```{r}
+conn <- chariot::connectAthena()
+skyscraper::createCancerGovSchema(conn = conn)
+skyscraper::ddlCancerGovSchema(conn = conn)
+chariot::dcAthena(conn=conn)
+```
+
