@@ -133,24 +133,25 @@ pg13::dropTable(conn = conn,
                 tableName = "drug_dictionary")
 
 
-drugLinks <- nciDrugDetailLinks(max_page = 39)
+drugLinks <- skyscraper::nciDrugDetailLinks(max_page = 39)
 stopifnot(nrow(drugLinks) == drugCount)
 
-scrapeDrugSynonymsRandom(df=drugLinks,
-                         progress_bar = FALSE)
-loadCachedDrugSynonyms(df=drugLinks)
 
-stopifnot(length(loadCachedDrugSynonyms_results)==drugCount)
+skyscraper::scrapeDrugPage(df = drugLinks,
+                           progress_bar = F)
+skyscraper::loadCachedDrugPage(df = drugLinks)
+
+stopifnot(length(loadCachedDrugPage_results)==drugCount)
 failed_to_scrape <-
-    loadCachedDrugSynonyms_results %>%
+    loadCachedDrugPage_results %>%
     purrr::keep(function(x) any(is.na(x$X1)))
 
 not_scraped <-
-    loadCachedDrugSynonyms_results %>%
+    loadCachedDrugPage_results %>%
     purrr::keep(function(x) is.null(x))
 
 drugData <-
-    loadCachedDrugSynonyms_results %>%
+    loadCachedDrugPage_results %>%
     dplyr::bind_rows(.id = "Label") %>%
     dplyr::rename(relationship = X1,
                   Label2 = X2) %>%
@@ -268,111 +269,3 @@ chariot::queryAthena("SELECT * FROM cancergov.concept_definition WHERE concept_i
 chariot::queryAthena("SELECT * FROM cancergov.concept_relationship WHERE concept_id_1 = 913151323")
 chariot::queryAthena("SELECT * FROM cancergov.concept_relationship WHERE concept_id_2 = 913151323")
 chariot::queryAthena("SELECT * FROM cancergov.concept_synonym WHERE concept_id = 913151323")
-# concept_definition <-
-#         pg13::readTable(conn = conn,
-#                         schema = "cancergov",
-#                         tableName = "concept_definition")
-
-concept_synonym <-
-    pg13::readTable(conn = conn,
-                    schema = "cancergov",
-                    tableName = "concept_synonym")
-
-
-definition_to_id <-
-    pg13::query(conn = conn,
-                sql_statement = "SELECT cancergov.drug_dictionary.*, cancergov.concept_synonym.concept_id
-                                FROM cancergov.drug_dictionary
-                                LEFT JOIN cancergov.concept_synonym
-                                    ON LOWER(cancergov.concept_synonym.concept_synonym_name) = LOWER(cancergov.drug_dictionary.drug);") %>%
-    tibble::as_tibble()
-
-
-new_concepts <-
-    definition_to_id %>%
-    dplyr::filter(is.na(concept_id)) %>%
-    dplyr::group_by(drug) %>%
-    dplyr::mutate(instance = 1:n()) %>%
-    dplyr::ungroup() %>%
-    dplyr::filter(instance == 1) %>%
-    dplyr::select(-instance) %>%
-    dplyr::distinct()
-
-# Get max ID from today
-max_concept_id <-
-chariot::queryAthena(pg13::buildQuery(fields = "concept_id",
-                                      distinct = TRUE,
-                                      schema = "cancergov",
-                                      tableName = "concept",
-                                      whereInField = "valid_start_date",
-                                      whereInVector = as.character(Sys.Date()),
-                                      caseInsensitive = FALSE)) %>%
-    max()
-new_concept_ids <- max_concept_id+1:nrow(new_concepts)
-new_concepts$concept_id <- new_concept_ids
-
-
-append_to_concept_table <-
-    new_concepts %>%
-dplyr::transmute(concept_id,
-                 concept_name = drug,
-                 domain_id = "Drug",
-                 vocabulary_id = "NCI Drug Dictionary",
-                 concept_class_id = "Label",
-                 standard_concept = NA,
-                 concept_code = NA,
-                 valid_start_date = Sys.Date(),
-                 valid_end_date = as.Date("2099-12-31"),
-                 invalid_reason = NA) %>%
-    dplyr::distinct()
-
-pg13::appendTable(conn = conn,
-                  schema = "cancergov",
-                  tableName = "concept",
-                  append_to_concept_table)
-
-append_to_concept_synonym_table <-
-    append_to_concept_table %>%
-    dplyr::transmute(concept_id,
-                  concept_synonym_name = concept_name,
-                  language_concept_id = 4180186) %>%
-    dplyr::distinct()
-
-
-pg13::appendTable(conn = conn,
-                  schema = "cancergov",
-                  tableName = "concept_synonym",
-                  append_to_concept_synonym_table)
-
-
-definition_to_id <-
-    pg13::query(conn = conn,
-                sql_statement = "SELECT cancergov.drug_dictionary.*, cancergov.concept_synonym.concept_id
-                                FROM cancergov.drug_dictionary
-                                LEFT JOIN cancergov.concept_synonym
-                                    ON LOWER(cancergov.concept_synonym.concept_synonym_name) = LOWER(cancergov.drug_dictionary.drug);") %>%
-    tibble::as_tibble()
-
-
-all(!is.na(definition_to_id))
-
-concept_definition_table <-
-    definition_to_id %>%
-    dplyr::select(concept_id,
-                  concept_name = drug,
-                  concept_definition = definition) %>%
-    dplyr::distinct()
-
-pg13::appendTable(conn = conn,
-                  schema = "cancergov",
-                  tableName = "concept_definition",
-                  concept_definition_table)
-
-pg13::dropTable(conn = conn,
-                schema = "cancergov",
-                tableName = "drug_dictionary")
-
-
-
-
-

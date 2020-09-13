@@ -23,12 +23,278 @@ library(chariot)
 
 # First Time Setup      
 
-A `cancergov` Postgres schema is made to the database with the addition of a CONCEPT_LOG, CONCEPT_METADATA, and CONCEPT_DEFINITION Tables.      
-
 ```{r}
 conn <- chariot::connectAthena()
+pg13::dropSchema(conn = conn,
+                 schema = "cancergov",
+                 cascade = TRUE)
 skyscraper::createCancerGovSchema(conn = conn)
+## OMOP Vocabulary Tables + CONCEPT_DEFINITION and CONCEPT_METADATA tables
 skyscraper::ddlCancerGovSchema(conn = conn)
-chariot::dcAthena(conn=conn)
+
+drugCount <- skyscraper::nciDrugCount()
+stopifnot(is.integer(drugCount))
+
+concept_log <-
+        pg13::readTable(conn = conn,
+                        schema = "cancergov",
+                        tableName = "concept_log")
+stopifnot(!(drugCount %in% concept_log$concept_count))
+
+pg13::appendTable(conn = conn,
+                  schema = "cancergov",
+                  tableName = "concept_log",
+                  data.frame(concept_timestamp = as.character(Sys.time()),
+                            concept_count = drugCount))
+
+nciDD <- skyscraper::scrapeDictionary(max_page = 39)
+
+stopifnot(nrow(nciDD) == drugCount)
+
+
+pg13::dropTable(conn = conn,
+                schema = "cancergov",
+                tableName = "drug_dictionary")
+pg13::writeTable(conn = conn,
+                 schema = "cancergov",
+                 tableName = "drug_dictionary",
+                 nciDD)
+
+nciDD_concepts <-
+    pg13::query(conn = conn,
+                sql_statement = "SELECT cancergov.drug_dictionary.*, cancergov.concept.concept_id
+                                FROM cancergov.drug_dictionary
+                                LEFT JOIN cancergov.concept
+                                    ON LOWER(cancergov.concept.concept_name) = LOWER(cancergov.drug_dictionary.drug);") %>%
+    tibble::as_tibble() %>%
+    filter(is.na(concept_id))
+
+concept_table <-
+    nciDD_concepts %>%
+    dplyr::select(drug) %>%
+    dplyr::distinct() %>%
+    dplyr::transmute(concept_id = NA,
+                     concept_name = drug,
+                     domain_id = "Drug",
+                     vocabulary_id = "NCI Drug Dictionary",
+                     concept_class_id = "Label",
+                     standard_concept = NA,
+                     concept_code = NA,
+                     valid_start_date = Sys.Date(),
+                     valid_end_date = as.Date("2099-12-31"),
+                     invalid_reason = NA)
+
+concept_table$concept_id <-
+    rubix::make_identifier()+1:nrow(concept_table)
+
+pg13::dropTable(conn = conn,
+                schema = "cancergov",
+                tableName = "concept")
+
+pg13::writeTable(conn = conn,
+                 schema = "cancergov",
+                 tableName = "concept",
+                 concept_table)
+
+definition_to_id <-
+    pg13::query(conn = conn,
+                sql_statement = "SELECT cancergov.drug_dictionary.*, cancergov.concept.concept_id
+                                FROM cancergov.drug_dictionary
+                                LEFT JOIN cancergov.concept
+                                    ON cancergov.concept.concept_name = cancergov.drug_dictionary.drug;") %>%
+    tibble::as_tibble() %>%
+    dplyr::distinct()
+
+nrow(definition_to_id)
+all(!is.na(definition_to_id$concept_id))
+
+concept_definition_table <-
+    definition_to_id %>%
+    dplyr::select(concept_id,
+                  concept_name = drug,
+                  concept_definition = definition) %>%
+    dplyr::distinct()
+
+nrow(concept_definition_table)
+length(unique(concept_definition_table$concept_id))
+
+
+concept_definition_table2 <-
+concept_definition_table %>%
+    rubix::filter_at_grepl(concept_definition,
+                           grepl_phrase = "Other name") %>%
+    mutate(main_concept_name = tolower(stringr::str_remove_all(concept_definition, "[(]{1}.*?[:]{1} |[)]{1}"))) %>%
+    dplyr::left_join(concept_table %>%
+                         dplyr::mutate(lower_concept_name = tolower(concept_name)),
+                     by = c("main_concept_name" = "lower_concept_name"),
+                     suffix = c(".synonym", ".main")) %>%
+    dplyr::transmute(concept_id = coalesce(concept_id.main, concept_id.synonym),
+                     concept_name = concept_name.synonym) %>%
+    dplyr::distinct()
+
+all(!is.na(concept_definition_table2$concept_id))
+
+
+concept_definition_table3 <-
+    dplyr::left_join(concept_definition_table,
+                     concept_definition_table2,
+                     by = "concept_name",
+                     suffix = c(".first", ".update")) %>%
+    dplyr::distinct() %>%
+    dplyr::transmute(concept_id = coalesce(concept_id.update, concept_id.first),
+                     concept_name,
+                     concept_definition) %>%
+    distinct()
+
+pg13::dropTable(conn = conn,
+                schema = "cancergov",
+                tableName = "concept_definition")
+pg13::writeTable(conn = conn,
+                  schema = "cancergov",
+                  tableName = "concept_definition",
+                  concept_definition_table3)
+
+pg13::dropTable(conn = conn,
+                schema = "cancergov",
+                tableName = "drug_dictionary")
+
+
+drugLinks <- skyscraper::nciDrugDetailLinks(max_page = 39)
+stopifnot(nrow(drugLinks) == drugCount)
+
+
+skyscraper::scrapeDrugPage(df = drugLinks,
+                           progress_bar = F)
+skyscraper::loadCachedDrugPage(df = drugLinks)
+
+stopifnot(length(loadCachedDrugPage_results)==drugCount)
+failed_to_scrape <-
+    loadCachedDrugPage_results %>%
+    purrr::keep(function(x) any(is.na(x$X1)))
+
+not_scraped <-
+    loadCachedDrugPage_results %>%
+    purrr::keep(function(x) is.null(x))
+
+drugData <-
+    loadCachedDrugPage_results %>%
+    dplyr::bind_rows(.id = "Label") %>%
+    dplyr::rename(relationship = X1,
+                  Label2 = X2) %>%
+    dplyr::mutate(relationship = stringr::str_remove_all(relationship, pattern = "[[:punct:]]{1,}$")) %>%
+    dplyr::filter_at(vars(!Label),
+                     all_vars(!is.na(.))) %>%
+    dplyr::filter(relationship != "Chemical structure") %>%
+    dplyr::filter(Label != Label2)
+
+concept_table <- pg13::readTable(conn = conn,
+                                 schema = "cancergov",
+                                 tableName = "concept")
+
+any(is.na(concept_table$concept_name))
+
+drugData2a2 <-
+    drugData %>%
+    dplyr::left_join(concept_table,
+                     by = c("Label" = "concept_name")) %>%
+    dplyr::distinct()
+
+any(is.na(drugData2a2$concept_id))
+
+concept_synonym_table <-
+    dplyr::bind_rows(drugData2a2 %>%
+                        dplyr::select(concept_id,
+                                      concept_synonym_name = Label),
+                     drugData2a2 %>%
+                         dplyr::select(concept_id,
+                                       concept_synonym_name = Label2)) %>%
+    dplyr::distinct() %>%
+    dplyr::mutate(language_concept_id = 4180186)
+
+
+qa <-
+    concept_synonym_table %>%
+    dplyr::group_by(concept_synonym_name) %>%
+    dplyr::mutate(count = n()) %>%
+    dplyr::filter(count > 1) %>%
+    dplyr::arrange(concept_synonym_name)
+
+
+concept_relationship_table <-
+    drugData2a2 %>%
+    dplyr::select(concept_id_1 = concept_id,
+                  concept_name_1 = Label,
+                  relationship,
+                  concept_name_2 = Label2) %>%
+    dplyr::filter(!is.na(concept_name_2)) %>%
+    dplyr::left_join(concept_synonym_table,
+                     by = c("concept_name_2" = "concept_synonym_name")) %>%
+    dplyr::rename(concept_id_2 = concept_id) %>%
+    dplyr::select(-language_concept_id) %>%
+    # Modify Relationship
+    dplyr::mutate(relationship_id = paste0("Has ", tolower(stringr::str_remove_all(relationship, pattern = "[[:punct:]]{1,}$")))) %>%
+    dplyr::select(-relationship) %>%
+    dplyr::transmute(concept_id_1,
+                     concept_id_2,
+                     relationship_id,
+                     valid_start_date = Sys.Date(),
+                     valid_end_date = NA,
+                     invalid_reason = NA) %>%
+    dplyr::distinct()
+
+all(!is.na(concept_relationship_table$concept_id_1))
+all(!is.na(concept_relationship_table$concept_id_2))
+
+concept_relationship_table_inverse <-
+    concept_relationship_table %>%
+    dplyr::transmute(concept_id_1 = concept_id_2,
+                     concept_id_2 = concept_id_1,
+                     relationship_id = paste0(stringr::str_to_title(stringr::str_remove_all(relationship_id, "Has ")), " of"),
+                     valid_start_date,
+                     valid_end_date,
+                     invalid_reason) %>%
+    dplyr::distinct()
+
+
+concept_relationship_table <-
+    dplyr::bind_rows(concept_relationship_table,
+                     concept_relationship_table_inverse) %>%
+    dplyr::distinct()
+
+
+## Making sure no duplicates by concept_name in concept table
+qa <- concept_table %>%
+            dplyr::group_by(concept_name) %>%
+            dplyr::summarise(n = n(), .groups = "drop") %>%
+            dplyr::ungroup() %>%
+            dplyr::filter(n > 1)
+
+stopifnot(nrow(qa) == 0)
+
+pg13::dropTable(conn = conn,
+                schema = "cancergov",
+                tableName = "concept_synonym")
+
+pg13::writeTable(conn = conn,
+                 schema = "cancergov",
+                 tableName = "concept_synonym",
+                 concept_synonym_table)
+
+pg13::dropTable(conn = conn,
+                schema = "cancergov",
+                tableName = "concept_relationship")
+
+pg13::writeTable(conn = conn,
+                 schema = "cancergov",
+                 tableName = "concept_relationship",
+                 concept_relationship_table)
+```
+
+```{r,eval=TRUE}
+chariot::queryAthena("SELECT * FROM cancergov.concept WHERE concept_id = 913151323")
+chariot::queryAthena("SELECT * FROM cancergov.concept_definition WHERE concept_id = 913151323")
+chariot::queryAthena("SELECT * FROM cancergov.concept_relationship WHERE concept_id_1 = 913151323")
+chariot::queryAthena("SELECT * FROM cancergov.concept_relationship WHERE concept_id_2 = 913151323")
+chariot::queryAthena("SELECT * FROM cancergov.concept_synonym WHERE concept_id = 913151323")
 ```
 
