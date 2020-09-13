@@ -135,7 +135,7 @@ pg13::dropTable(conn = conn,
                 tableName = "drug_dictionary")
 
 
-drugLinks <- nciDrugDetailLinks()
+drugLinks <- nciDrugDetailLinks(max_page = 39)
 stopifnot(nrow(drugLinks) == drugCount)
 
 scrapeDrugSynonymsRandom(df=drugLinks,
