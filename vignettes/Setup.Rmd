@@ -290,6 +290,24 @@ pg13::writeTable(conn = conn,
                  concept_relationship_table)
 ```
 
+# Drop Empty Tables     
+
+```{r}
+pg13::lsTables(conn = conn,
+               schema = "cancergov") %>%
+    rubix::map_names_set(~pg13::query(conn = conn,
+                            sql_statement = pg13::renderRowCount(schema = "cancergov",
+                                                                 tableName = .))) %>%
+    purrr::map(unlist) %>%
+    purrr::keep(~.==0) %>%
+    names() %>%
+    purrr::map(~pg13::dropTable(conn = conn,
+                                schema = "cancergov",
+                                tableName = .))
+```
+
+
+
 ```{r,eval=TRUE}
 chariot::queryAthena("SELECT * FROM cancergov.concept WHERE concept_id = 913151323")
 chariot::queryAthena("SELECT * FROM cancergov.concept_definition WHERE concept_id = 913151323")
