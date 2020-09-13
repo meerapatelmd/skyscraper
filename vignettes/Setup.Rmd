@@ -306,6 +306,20 @@ pg13::lsTables(conn = conn,
                                 tableName = .))
 ```
 
+# Add to Package   
+
+```{r}
+tableData <-
+pg13::lsTables(conn = conn,
+               schema = "cancergov") %>%
+    rubix::map_names_set(~pg13::readTable(conn = conn,
+                                          schema = "cancergov",
+                                          tableName = .))
+usethis::use_data_raw(name = "tableData")
+
+broca::write_full_excel(x = tableData,
+                        file = "data-raw/tableData.xlsx")
+```
 
 
 ```{r,eval=TRUE}
