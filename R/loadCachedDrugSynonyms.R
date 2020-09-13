@@ -4,28 +4,47 @@
 #' @import xml2
 #' @export
 
-loadScrapedDrugSynonyms <-
-    function(df) {
+loadCachedDrugSynonyms <-
+    function(df, output.var = "loadCachedDrugSynonyms_results") {
+
+            if (exists(output.var, envir = globalenv())) {
+                    input <- get(output.var, envir = globalenv())
+                    starting_index <- length(input)
+            } else {
+                    starting_index <- 1
+            }
+
+            df <-
+                    df %>%
+                    dplyr::rename_all(tolower)
 
             #scrapeDrugSynonyms_output <- tibble::tibble()
 
-            pb <- progress::progress_bar$new(total = nrow(df),
-                                             format = ":what [:bar] :current/:total (:percent)")
+            # pb <- progress::progress_bar$new(total = nrow(df),
+            #                                  format = ":what [:bar] :current/:total (:percent)")
+            #
+            # pb$tick(0)
+            # Sys.sleep(0.2)
 
-            pb$tick(0)
-            Sys.sleep(0.2)
+            output <- list()
 
             for (i in 1:nrow(df)) {
+
+                    secretary::typewrite(paste0("[", Sys.time(), "]"), "\t", i, " of ", nrow(df))
+
+
 
                     drug_link <- df$drug_def_link[i]
                     drug_name <- df$drug[i]
 
-                    pb$tick(tokens = list(what = drug_name))
-                    Sys.sleep(0.2)
+                    # pb$tick(tokens = list(what = drug_name))
+                    # Sys.sleep(0.2)
 
 
-                    results <- loadCachedScrape(url = drug_link)
+                    output[[i]] <- loadCachedScrape(url = drug_link) %>%
+                                        dplyr::bind_rows()
 
+                    names(output)[i] <- drug_name
                     # if (is.null(results)) {
                     #         results <-
                     #                        tryCatch(
@@ -40,13 +59,12 @@ loadScrapedDrugSynonyms <-
                     #         cacheScrape(object = results,
                     #                     url = drug_link)
                     # }
-
-                    scrapeDrugSynonyms_output <-
-                            dplyr::bind_rows(scrapeDrugSynonyms_output,
-                                            dplyr::bind_rows(results) %>%
-                                                                dplyr::mutate(drug = drug_name))
+                    #
+                    assign(x = output.var,
+                           value = output,
+                           envir = globalenv())
             }
 
-            scrapeDrugSynonyms_output
+            secretary::typewrite_bold("Completed.")
     }
 
