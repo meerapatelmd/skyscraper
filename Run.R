@@ -29,16 +29,17 @@ pg13::send(conn = conn,
                         response TEXT NOT NULL
            )")
 
+error_concepts <- vector()
 while (length(concepts)) {
         concept <- concepts[1]
 
         output <-
-                police::try_catch_error_as_null(
+                #police::try_catch_error_as_null(
                 scrapeChemiDPlus(phrase = concept) %>%
                 dplyr::mutate(LOG_DATETIME = as.character(Sys.time())) %>%
                 dplyr::select(LOG_DATETIME,
                               everything())
-                )
+                #)
 
         if (!is.null(output)) {
 
@@ -46,7 +47,13 @@ while (length(concepts)) {
                                   schema = "chemidplus",
                                   tableName = "concept_log",
                                   output)
+        } else {
+                error_concepts <-
+                        c(error_concepts,
+                          concept)
         }
+
+        #closeAllConnections()
 
         #secretary::press_enter()
         concepts <- concepts[-1]
