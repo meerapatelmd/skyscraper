@@ -4,7 +4,7 @@
 \alias{loadCachedScrape}
 \title{Load a Cached Scraped Object}
 \usage{
-loadCachedScrape(page, url, source)
+loadCachedScrape(url)
 }
 \description{
 Load a Cached Scraped Object

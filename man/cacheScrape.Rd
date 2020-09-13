@@ -4,7 +4,7 @@
 \alias{cacheScrape}
 \title{Cache the Scraped object}
 \usage{
-cacheScrape(object, page, url = NULL, source)
+cacheScrape(object, url)
 }
 \arguments{
 \item{source}{Source vocabulary such as "CancerGov" or "UpToDate"}
