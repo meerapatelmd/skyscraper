@@ -305,11 +305,337 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(chariot)</a></code></pre></div>
 <div id="first-time-setup" class="section level1">
 <h1>First Time Setup</h1>
-<p>A <code>cancergov</code> Postgres schema is made to the database with the addition of a CONCEPT_LOG, CONCEPT_METADATA, and CONCEPT_DEFINITION Tables.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">conn &lt;-<span class="st"> </span>chariot<span class="op">::</span><span class="kw">connectAthena</span>()</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">skyscraper<span class="op">::</span><span class="kw">createCancerGovSchema</span>(<span class="dt">conn =</span> conn)</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3">skyscraper<span class="op">::</span><span class="kw">ddlCancerGovSchema</span>(<span class="dt">conn =</span> conn)</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">chariot<span class="op">::</span><span class="kw">dcAthena</span>(<span class="dt">conn=</span>conn)</a></code></pre></div>
+<a class="sourceLine" id="cb2-2" data-line-number="2">pg13<span class="op">::</span><span class="kw">dropSchema</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">                 <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">                 <span class="dt">cascade =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">skyscraper<span class="op">::</span><span class="kw">createCancerGovSchema</span>(<span class="dt">conn =</span> conn)</a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">## OMOP Vocabulary Tables + CONCEPT_DEFINITION and CONCEPT_METADATA tables</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7">skyscraper<span class="op">::</span><span class="kw">ddlCancerGovSchema</span>(<span class="dt">conn =</span> conn)</a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9">drugCount &lt;-<span class="st"> </span>skyscraper<span class="op">::</span><span class="kw">nciDrugCount</span>()</a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="kw">stopifnot</span>(<span class="kw">is.integer</span>(drugCount))</a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12">concept_log &lt;-</a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="st">        </span>pg13<span class="op">::</span><span class="kw">readTable</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-14" data-line-number="14">                        <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb2-15" data-line-number="15">                        <span class="dt">tableName =</span> <span class="st">&quot;concept_log&quot;</span>)</a>
+<a class="sourceLine" id="cb2-16" data-line-number="16"><span class="kw">stopifnot</span>(<span class="op">!</span>(drugCount <span class="op">%in%</span><span class="st"> </span>concept_log<span class="op">$</span>concept_count))</a>
+<a class="sourceLine" id="cb2-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb2-18" data-line-number="18">pg13<span class="op">::</span><span class="kw">appendTable</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-19" data-line-number="19">                  <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb2-20" data-line-number="20">                  <span class="dt">tableName =</span> <span class="st">&quot;concept_log&quot;</span>,</a>
+<a class="sourceLine" id="cb2-21" data-line-number="21">                  <span class="kw">data.frame</span>(<span class="dt">concept_timestamp =</span> <span class="kw">as.character</span>(<span class="kw">Sys.time</span>()),</a>
+<a class="sourceLine" id="cb2-22" data-line-number="22">                            <span class="dt">concept_count =</span> drugCount))</a>
+<a class="sourceLine" id="cb2-23" data-line-number="23"></a>
+<a class="sourceLine" id="cb2-24" data-line-number="24">nciDD &lt;-<span class="st"> </span>skyscraper<span class="op">::</span><span class="kw">scrapeDictionary</span>(<span class="dt">max_page =</span> <span class="dv">39</span>)</a>
+<a class="sourceLine" id="cb2-25" data-line-number="25"></a>
+<a class="sourceLine" id="cb2-26" data-line-number="26"><span class="kw">stopifnot</span>(<span class="kw">nrow</span>(nciDD) <span class="op">==</span><span class="st"> </span>drugCount)</a>
+<a class="sourceLine" id="cb2-27" data-line-number="27"></a>
+<a class="sourceLine" id="cb2-28" data-line-number="28"></a>
+<a class="sourceLine" id="cb2-29" data-line-number="29">pg13<span class="op">::</span><span class="kw">dropTable</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-30" data-line-number="30">                <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb2-31" data-line-number="31">                <span class="dt">tableName =</span> <span class="st">&quot;drug_dictionary&quot;</span>)</a>
+<a class="sourceLine" id="cb2-32" data-line-number="32">pg13<span class="op">::</span><span class="kw">writeTable</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-33" data-line-number="33">                 <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb2-34" data-line-number="34">                 <span class="dt">tableName =</span> <span class="st">&quot;drug_dictionary&quot;</span>,</a>
+<a class="sourceLine" id="cb2-35" data-line-number="35">                 nciDD)</a>
+<a class="sourceLine" id="cb2-36" data-line-number="36"></a>
+<a class="sourceLine" id="cb2-37" data-line-number="37">nciDD_concepts &lt;-</a>
+<a class="sourceLine" id="cb2-38" data-line-number="38"><span class="st">    </span>pg13<span class="op">::</span><span class="kw">query</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-39" data-line-number="39">                <span class="dt">sql_statement =</span> <span class="st">&quot;SELECT cancergov.drug_dictionary.*, cancergov.concept.concept_id</span></a>
+<a class="sourceLine" id="cb2-40" data-line-number="40"><span class="st">                                FROM cancergov.drug_dictionary</span></a>
+<a class="sourceLine" id="cb2-41" data-line-number="41"><span class="st">                                LEFT JOIN cancergov.concept</span></a>
+<a class="sourceLine" id="cb2-42" data-line-number="42"><span class="st">                                    ON LOWER(cancergov.concept.concept_name) = LOWER(cancergov.drug_dictionary.drug);&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-43" data-line-number="43"><span class="st">    </span>tibble<span class="op">::</span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-44" data-line-number="44"><span class="st">    </span><span class="kw">filter</span>(<span class="kw">is.na</span>(concept_id))</a>
+<a class="sourceLine" id="cb2-45" data-line-number="45"></a>
+<a class="sourceLine" id="cb2-46" data-line-number="46">concept_table &lt;-</a>
+<a class="sourceLine" id="cb2-47" data-line-number="47"><span class="st">    </span>nciDD_concepts <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-48" data-line-number="48"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">select</span>(drug) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-49" data-line-number="49"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">distinct</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-50" data-line-number="50"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">transmute</span>(<span class="dt">concept_id =</span> <span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb2-51" data-line-number="51">                     <span class="dt">concept_name =</span> drug,</a>
+<a class="sourceLine" id="cb2-52" data-line-number="52">                     <span class="dt">domain_id =</span> <span class="st">&quot;Drug&quot;</span>,</a>
+<a class="sourceLine" id="cb2-53" data-line-number="53">                     <span class="dt">vocabulary_id =</span> <span class="st">&quot;NCI Drug Dictionary&quot;</span>,</a>
+<a class="sourceLine" id="cb2-54" data-line-number="54">                     <span class="dt">concept_class_id =</span> <span class="st">&quot;Label&quot;</span>,</a>
+<a class="sourceLine" id="cb2-55" data-line-number="55">                     <span class="dt">standard_concept =</span> <span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb2-56" data-line-number="56">                     <span class="dt">concept_code =</span> <span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb2-57" data-line-number="57">                     <span class="dt">valid_start_date =</span> <span class="kw">Sys.Date</span>(),</a>
+<a class="sourceLine" id="cb2-58" data-line-number="58">                     <span class="dt">valid_end_date =</span> <span class="kw">as.Date</span>(<span class="st">&quot;2099-12-31&quot;</span>),</a>
+<a class="sourceLine" id="cb2-59" data-line-number="59">                     <span class="dt">invalid_reason =</span> <span class="ot">NA</span>)</a>
+<a class="sourceLine" id="cb2-60" data-line-number="60"></a>
+<a class="sourceLine" id="cb2-61" data-line-number="61">concept_table<span class="op">$</span>concept_id &lt;-</a>
+<a class="sourceLine" id="cb2-62" data-line-number="62"><span class="st">    </span>rubix<span class="op">::</span><span class="kw">make_identifier</span>()<span class="op">+</span><span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(concept_table)</a>
+<a class="sourceLine" id="cb2-63" data-line-number="63"></a>
+<a class="sourceLine" id="cb2-64" data-line-number="64">pg13<span class="op">::</span><span class="kw">dropTable</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-65" data-line-number="65">                <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb2-66" data-line-number="66">                <span class="dt">tableName =</span> <span class="st">&quot;concept&quot;</span>)</a>
+<a class="sourceLine" id="cb2-67" data-line-number="67"></a>
+<a class="sourceLine" id="cb2-68" data-line-number="68">pg13<span class="op">::</span><span class="kw">writeTable</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-69" data-line-number="69">                 <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb2-70" data-line-number="70">                 <span class="dt">tableName =</span> <span class="st">&quot;concept&quot;</span>,</a>
+<a class="sourceLine" id="cb2-71" data-line-number="71">                 concept_table)</a>
+<a class="sourceLine" id="cb2-72" data-line-number="72"></a>
+<a class="sourceLine" id="cb2-73" data-line-number="73">definition_to_id &lt;-</a>
+<a class="sourceLine" id="cb2-74" data-line-number="74"><span class="st">    </span>pg13<span class="op">::</span><span class="kw">query</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-75" data-line-number="75">                <span class="dt">sql_statement =</span> <span class="st">&quot;SELECT cancergov.drug_dictionary.*, cancergov.concept.concept_id</span></a>
+<a class="sourceLine" id="cb2-76" data-line-number="76"><span class="st">                                FROM cancergov.drug_dictionary</span></a>
+<a class="sourceLine" id="cb2-77" data-line-number="77"><span class="st">                                LEFT JOIN cancergov.concept</span></a>
+<a class="sourceLine" id="cb2-78" data-line-number="78"><span class="st">                                    ON cancergov.concept.concept_name = cancergov.drug_dictionary.drug;&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-79" data-line-number="79"><span class="st">    </span>tibble<span class="op">::</span><span class="kw">as_tibble</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-80" data-line-number="80"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">distinct</span>()</a>
+<a class="sourceLine" id="cb2-81" data-line-number="81"></a>
+<a class="sourceLine" id="cb2-82" data-line-number="82"><span class="kw">nrow</span>(definition_to_id)</a>
+<a class="sourceLine" id="cb2-83" data-line-number="83"><span class="kw">all</span>(<span class="op">!</span><span class="kw">is.na</span>(definition_to_id<span class="op">$</span>concept_id))</a>
+<a class="sourceLine" id="cb2-84" data-line-number="84"></a>
+<a class="sourceLine" id="cb2-85" data-line-number="85">concept_definition_table &lt;-</a>
+<a class="sourceLine" id="cb2-86" data-line-number="86"><span class="st">    </span>definition_to_id <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-87" data-line-number="87"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">select</span>(concept_id,</a>
+<a class="sourceLine" id="cb2-88" data-line-number="88">                  <span class="dt">concept_name =</span> drug,</a>
+<a class="sourceLine" id="cb2-89" data-line-number="89">                  <span class="dt">concept_definition =</span> definition) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-90" data-line-number="90"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">distinct</span>()</a>
+<a class="sourceLine" id="cb2-91" data-line-number="91"></a>
+<a class="sourceLine" id="cb2-92" data-line-number="92"><span class="kw">nrow</span>(concept_definition_table)</a>
+<a class="sourceLine" id="cb2-93" data-line-number="93"><span class="kw">length</span>(<span class="kw">unique</span>(concept_definition_table<span class="op">$</span>concept_id))</a>
+<a class="sourceLine" id="cb2-94" data-line-number="94"></a>
+<a class="sourceLine" id="cb2-95" data-line-number="95"></a>
+<a class="sourceLine" id="cb2-96" data-line-number="96">concept_definition_table2 &lt;-</a>
+<a class="sourceLine" id="cb2-97" data-line-number="97">concept_definition_table <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-98" data-line-number="98"><span class="st">    </span>rubix<span class="op">::</span><span class="kw">filter_at_grepl</span>(concept_definition,</a>
+<a class="sourceLine" id="cb2-99" data-line-number="99">                           <span class="dt">grepl_phrase =</span> <span class="st">&quot;Other name&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-100" data-line-number="100"><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">main_concept_name =</span> <span class="kw">tolower</span>(stringr<span class="op">::</span><span class="kw">str_remove_all</span>(concept_definition, <span class="st">&quot;[(]{1}.*?[:]{1} |[)]{1}&quot;</span>))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-101" data-line-number="101"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(concept_table <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-102" data-line-number="102"><span class="st">                         </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">lower_concept_name =</span> <span class="kw">tolower</span>(concept_name)),</a>
+<a class="sourceLine" id="cb2-103" data-line-number="103">                     <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;main_concept_name&quot;</span> =<span class="st"> &quot;lower_concept_name&quot;</span>),</a>
+<a class="sourceLine" id="cb2-104" data-line-number="104">                     <span class="dt">suffix =</span> <span class="kw">c</span>(<span class="st">&quot;.synonym&quot;</span>, <span class="st">&quot;.main&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-105" data-line-number="105"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">transmute</span>(<span class="dt">concept_id =</span> <span class="kw">coalesce</span>(concept_id.main, concept_id.synonym),</a>
+<a class="sourceLine" id="cb2-106" data-line-number="106">                     <span class="dt">concept_name =</span> concept_name.synonym) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-107" data-line-number="107"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">distinct</span>()</a>
+<a class="sourceLine" id="cb2-108" data-line-number="108"></a>
+<a class="sourceLine" id="cb2-109" data-line-number="109"><span class="kw">all</span>(<span class="op">!</span><span class="kw">is.na</span>(concept_definition_table2<span class="op">$</span>concept_id))</a>
+<a class="sourceLine" id="cb2-110" data-line-number="110"></a>
+<a class="sourceLine" id="cb2-111" data-line-number="111"></a>
+<a class="sourceLine" id="cb2-112" data-line-number="112">concept_definition_table3 &lt;-</a>
+<a class="sourceLine" id="cb2-113" data-line-number="113"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(concept_definition_table,</a>
+<a class="sourceLine" id="cb2-114" data-line-number="114">                     concept_definition_table2,</a>
+<a class="sourceLine" id="cb2-115" data-line-number="115">                     <span class="dt">by =</span> <span class="st">&quot;concept_name&quot;</span>,</a>
+<a class="sourceLine" id="cb2-116" data-line-number="116">                     <span class="dt">suffix =</span> <span class="kw">c</span>(<span class="st">&quot;.first&quot;</span>, <span class="st">&quot;.update&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-117" data-line-number="117"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">distinct</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-118" data-line-number="118"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">transmute</span>(<span class="dt">concept_id =</span> <span class="kw">coalesce</span>(concept_id.update, concept_id.first),</a>
+<a class="sourceLine" id="cb2-119" data-line-number="119">                     concept_name,</a>
+<a class="sourceLine" id="cb2-120" data-line-number="120">                     concept_definition) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-121" data-line-number="121"><span class="st">    </span><span class="kw">distinct</span>()</a>
+<a class="sourceLine" id="cb2-122" data-line-number="122"></a>
+<a class="sourceLine" id="cb2-123" data-line-number="123">pg13<span class="op">::</span><span class="kw">dropTable</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-124" data-line-number="124">                <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb2-125" data-line-number="125">                <span class="dt">tableName =</span> <span class="st">&quot;concept_definition&quot;</span>)</a>
+<a class="sourceLine" id="cb2-126" data-line-number="126">pg13<span class="op">::</span><span class="kw">writeTable</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-127" data-line-number="127">                  <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb2-128" data-line-number="128">                  <span class="dt">tableName =</span> <span class="st">&quot;concept_definition&quot;</span>,</a>
+<a class="sourceLine" id="cb2-129" data-line-number="129">                  concept_definition_table3)</a>
+<a class="sourceLine" id="cb2-130" data-line-number="130"></a>
+<a class="sourceLine" id="cb2-131" data-line-number="131">pg13<span class="op">::</span><span class="kw">dropTable</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-132" data-line-number="132">                <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb2-133" data-line-number="133">                <span class="dt">tableName =</span> <span class="st">&quot;drug_dictionary&quot;</span>)</a>
+<a class="sourceLine" id="cb2-134" data-line-number="134"></a>
+<a class="sourceLine" id="cb2-135" data-line-number="135"></a>
+<a class="sourceLine" id="cb2-136" data-line-number="136">drugLinks &lt;-<span class="st"> </span>skyscraper<span class="op">::</span><span class="kw">nciDrugDetailLinks</span>(<span class="dt">max_page =</span> <span class="dv">39</span>)</a>
+<a class="sourceLine" id="cb2-137" data-line-number="137"><span class="kw">stopifnot</span>(<span class="kw">nrow</span>(drugLinks) <span class="op">==</span><span class="st"> </span>drugCount)</a>
+<a class="sourceLine" id="cb2-138" data-line-number="138"></a>
+<a class="sourceLine" id="cb2-139" data-line-number="139"></a>
+<a class="sourceLine" id="cb2-140" data-line-number="140">skyscraper<span class="op">::</span><span class="kw">scrapeDrugPage</span>(<span class="dt">df =</span> drugLinks,</a>
+<a class="sourceLine" id="cb2-141" data-line-number="141">                           <span class="dt">progress_bar =</span> F)</a>
+<a class="sourceLine" id="cb2-142" data-line-number="142">skyscraper<span class="op">::</span><span class="kw">loadCachedDrugPage</span>(<span class="dt">df =</span> drugLinks)</a>
+<a class="sourceLine" id="cb2-143" data-line-number="143"></a>
+<a class="sourceLine" id="cb2-144" data-line-number="144"><span class="kw">stopifnot</span>(<span class="kw">length</span>(loadCachedDrugPage_results)<span class="op">==</span>drugCount)</a>
+<a class="sourceLine" id="cb2-145" data-line-number="145">failed_to_scrape &lt;-</a>
+<a class="sourceLine" id="cb2-146" data-line-number="146"><span class="st">    </span>loadCachedDrugPage_results <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-147" data-line-number="147"><span class="st">    </span>purrr<span class="op">::</span><span class="kw">keep</span>(<span class="cf">function</span>(x) <span class="kw">any</span>(<span class="kw">is.na</span>(x<span class="op">$</span>X1)))</a>
+<a class="sourceLine" id="cb2-148" data-line-number="148"></a>
+<a class="sourceLine" id="cb2-149" data-line-number="149">not_scraped &lt;-</a>
+<a class="sourceLine" id="cb2-150" data-line-number="150"><span class="st">    </span>loadCachedDrugPage_results <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-151" data-line-number="151"><span class="st">    </span>purrr<span class="op">::</span><span class="kw">keep</span>(<span class="cf">function</span>(x) <span class="kw">is.null</span>(x))</a>
+<a class="sourceLine" id="cb2-152" data-line-number="152"></a>
+<a class="sourceLine" id="cb2-153" data-line-number="153">drugData &lt;-</a>
+<a class="sourceLine" id="cb2-154" data-line-number="154"><span class="st">    </span>loadCachedDrugPage_results <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-155" data-line-number="155"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">bind_rows</span>(<span class="dt">.id =</span> <span class="st">&quot;Label&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-156" data-line-number="156"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">rename</span>(<span class="dt">relationship =</span> X1,</a>
+<a class="sourceLine" id="cb2-157" data-line-number="157">                  <span class="dt">Label2 =</span> X2) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-158" data-line-number="158"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">relationship =</span> stringr<span class="op">::</span><span class="kw">str_remove_all</span>(relationship, <span class="dt">pattern =</span> <span class="st">&quot;[[:punct:]]{1,}$&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-159" data-line-number="159"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">filter_at</span>(<span class="kw">vars</span>(<span class="op">!</span>Label),</a>
+<a class="sourceLine" id="cb2-160" data-line-number="160">                     <span class="kw">all_vars</span>(<span class="op">!</span><span class="kw">is.na</span>(.))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-161" data-line-number="161"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">filter</span>(relationship <span class="op">!=</span><span class="st"> &quot;Chemical structure&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-162" data-line-number="162"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">filter</span>(Label <span class="op">!=</span><span class="st"> </span>Label2)</a>
+<a class="sourceLine" id="cb2-163" data-line-number="163"></a>
+<a class="sourceLine" id="cb2-164" data-line-number="164">concept_table &lt;-<span class="st"> </span>pg13<span class="op">::</span><span class="kw">readTable</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-165" data-line-number="165">                                 <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb2-166" data-line-number="166">                                 <span class="dt">tableName =</span> <span class="st">&quot;concept&quot;</span>)</a>
+<a class="sourceLine" id="cb2-167" data-line-number="167"></a>
+<a class="sourceLine" id="cb2-168" data-line-number="168"><span class="kw">any</span>(<span class="kw">is.na</span>(concept_table<span class="op">$</span>concept_name))</a>
+<a class="sourceLine" id="cb2-169" data-line-number="169"></a>
+<a class="sourceLine" id="cb2-170" data-line-number="170">drugData2a2 &lt;-</a>
+<a class="sourceLine" id="cb2-171" data-line-number="171"><span class="st">    </span>drugData <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-172" data-line-number="172"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(concept_table,</a>
+<a class="sourceLine" id="cb2-173" data-line-number="173">                     <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;Label&quot;</span> =<span class="st"> &quot;concept_name&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-174" data-line-number="174"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">distinct</span>()</a>
+<a class="sourceLine" id="cb2-175" data-line-number="175"></a>
+<a class="sourceLine" id="cb2-176" data-line-number="176"><span class="kw">any</span>(<span class="kw">is.na</span>(drugData2a2<span class="op">$</span>concept_id))</a>
+<a class="sourceLine" id="cb2-177" data-line-number="177"></a>
+<a class="sourceLine" id="cb2-178" data-line-number="178">concept_synonym_table &lt;-</a>
+<a class="sourceLine" id="cb2-179" data-line-number="179"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">bind_rows</span>(drugData2a2 <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-180" data-line-number="180"><span class="st">                        </span>dplyr<span class="op">::</span><span class="kw">select</span>(concept_id,</a>
+<a class="sourceLine" id="cb2-181" data-line-number="181">                                      <span class="dt">concept_synonym_name =</span> Label),</a>
+<a class="sourceLine" id="cb2-182" data-line-number="182">                     drugData2a2 <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-183" data-line-number="183"><span class="st">                         </span>dplyr<span class="op">::</span><span class="kw">select</span>(concept_id,</a>
+<a class="sourceLine" id="cb2-184" data-line-number="184">                                       <span class="dt">concept_synonym_name =</span> Label2)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-185" data-line-number="185"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">distinct</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-186" data-line-number="186"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">language_concept_id =</span> <span class="dv">4180186</span>)</a>
+<a class="sourceLine" id="cb2-187" data-line-number="187"></a>
+<a class="sourceLine" id="cb2-188" data-line-number="188"></a>
+<a class="sourceLine" id="cb2-189" data-line-number="189">qa &lt;-</a>
+<a class="sourceLine" id="cb2-190" data-line-number="190"><span class="st">    </span>concept_synonym_table <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-191" data-line-number="191"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(concept_synonym_name) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-192" data-line-number="192"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">count =</span> <span class="kw">n</span>()) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-193" data-line-number="193"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">filter</span>(count <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-194" data-line-number="194"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">arrange</span>(concept_synonym_name)</a>
+<a class="sourceLine" id="cb2-195" data-line-number="195"></a>
+<a class="sourceLine" id="cb2-196" data-line-number="196"></a>
+<a class="sourceLine" id="cb2-197" data-line-number="197">concept_relationship_table &lt;-</a>
+<a class="sourceLine" id="cb2-198" data-line-number="198"><span class="st">    </span>drugData2a2 <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-199" data-line-number="199"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="dt">concept_id_1 =</span> concept_id,</a>
+<a class="sourceLine" id="cb2-200" data-line-number="200">                  <span class="dt">concept_name_1 =</span> Label,</a>
+<a class="sourceLine" id="cb2-201" data-line-number="201">                  relationship,</a>
+<a class="sourceLine" id="cb2-202" data-line-number="202">                  <span class="dt">concept_name_2 =</span> Label2) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-203" data-line-number="203"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(concept_name_<span class="dv">2</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-204" data-line-number="204"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(concept_synonym_table,</a>
+<a class="sourceLine" id="cb2-205" data-line-number="205">                     <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;concept_name_2&quot;</span> =<span class="st"> &quot;concept_synonym_name&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-206" data-line-number="206"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">rename</span>(<span class="dt">concept_id_2 =</span> concept_id) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-207" data-line-number="207"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>language_concept_id) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-208" data-line-number="208"><span class="st">    </span><span class="co"># Modify Relationship</span></a>
+<a class="sourceLine" id="cb2-209" data-line-number="209"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">relationship_id =</span> <span class="kw">paste0</span>(<span class="st">&quot;Has &quot;</span>, <span class="kw">tolower</span>(stringr<span class="op">::</span><span class="kw">str_remove_all</span>(relationship, <span class="dt">pattern =</span> <span class="st">&quot;[[:punct:]]{1,}$&quot;</span>)))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-210" data-line-number="210"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>relationship) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-211" data-line-number="211"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">transmute</span>(concept_id_<span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb2-212" data-line-number="212">                     concept_id_<span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb2-213" data-line-number="213">                     relationship_id,</a>
+<a class="sourceLine" id="cb2-214" data-line-number="214">                     <span class="dt">valid_start_date =</span> <span class="kw">Sys.Date</span>(),</a>
+<a class="sourceLine" id="cb2-215" data-line-number="215">                     <span class="dt">valid_end_date =</span> <span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb2-216" data-line-number="216">                     <span class="dt">invalid_reason =</span> <span class="ot">NA</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-217" data-line-number="217"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">distinct</span>()</a>
+<a class="sourceLine" id="cb2-218" data-line-number="218"></a>
+<a class="sourceLine" id="cb2-219" data-line-number="219"><span class="kw">all</span>(<span class="op">!</span><span class="kw">is.na</span>(concept_relationship_table<span class="op">$</span>concept_id_<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb2-220" data-line-number="220"><span class="kw">all</span>(<span class="op">!</span><span class="kw">is.na</span>(concept_relationship_table<span class="op">$</span>concept_id_<span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb2-221" data-line-number="221"></a>
+<a class="sourceLine" id="cb2-222" data-line-number="222">concept_relationship_table_inverse &lt;-</a>
+<a class="sourceLine" id="cb2-223" data-line-number="223"><span class="st">    </span>concept_relationship_table <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-224" data-line-number="224"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">transmute</span>(<span class="dt">concept_id_1 =</span> concept_id_<span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb2-225" data-line-number="225">                     <span class="dt">concept_id_2 =</span> concept_id_<span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb2-226" data-line-number="226">                     <span class="dt">relationship_id =</span> <span class="kw">paste0</span>(stringr<span class="op">::</span><span class="kw">str_to_title</span>(stringr<span class="op">::</span><span class="kw">str_remove_all</span>(relationship_id, <span class="st">&quot;Has &quot;</span>)), <span class="st">&quot; of&quot;</span>),</a>
+<a class="sourceLine" id="cb2-227" data-line-number="227">                     valid_start_date,</a>
+<a class="sourceLine" id="cb2-228" data-line-number="228">                     valid_end_date,</a>
+<a class="sourceLine" id="cb2-229" data-line-number="229">                     invalid_reason) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-230" data-line-number="230"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">distinct</span>()</a>
+<a class="sourceLine" id="cb2-231" data-line-number="231"></a>
+<a class="sourceLine" id="cb2-232" data-line-number="232"></a>
+<a class="sourceLine" id="cb2-233" data-line-number="233">concept_relationship_table &lt;-</a>
+<a class="sourceLine" id="cb2-234" data-line-number="234"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">bind_rows</span>(concept_relationship_table,</a>
+<a class="sourceLine" id="cb2-235" data-line-number="235">                     concept_relationship_table_inverse) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-236" data-line-number="236"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">distinct</span>()</a>
+<a class="sourceLine" id="cb2-237" data-line-number="237"></a>
+<a class="sourceLine" id="cb2-238" data-line-number="238"></a>
+<a class="sourceLine" id="cb2-239" data-line-number="239"><span class="co">## Making sure no duplicates by concept_name in concept table</span></a>
+<a class="sourceLine" id="cb2-240" data-line-number="240">qa &lt;-<span class="st"> </span>concept_table <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-241" data-line-number="241"><span class="st">            </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(concept_name) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-242" data-line-number="242"><span class="st">            </span>dplyr<span class="op">::</span><span class="kw">summarise</span>(<span class="dt">n =</span> <span class="kw">n</span>(), <span class="dt">.groups =</span> <span class="st">&quot;drop&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-243" data-line-number="243"><span class="st">            </span>dplyr<span class="op">::</span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-244" data-line-number="244"><span class="st">            </span>dplyr<span class="op">::</span><span class="kw">filter</span>(n <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb2-245" data-line-number="245"></a>
+<a class="sourceLine" id="cb2-246" data-line-number="246"><span class="kw">stopifnot</span>(<span class="kw">nrow</span>(qa) <span class="op">==</span><span class="st"> </span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb2-247" data-line-number="247"></a>
+<a class="sourceLine" id="cb2-248" data-line-number="248">pg13<span class="op">::</span><span class="kw">dropTable</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-249" data-line-number="249">                <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb2-250" data-line-number="250">                <span class="dt">tableName =</span> <span class="st">&quot;concept_synonym&quot;</span>)</a>
+<a class="sourceLine" id="cb2-251" data-line-number="251"></a>
+<a class="sourceLine" id="cb2-252" data-line-number="252">pg13<span class="op">::</span><span class="kw">writeTable</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-253" data-line-number="253">                 <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb2-254" data-line-number="254">                 <span class="dt">tableName =</span> <span class="st">&quot;concept_synonym&quot;</span>,</a>
+<a class="sourceLine" id="cb2-255" data-line-number="255">                 concept_synonym_table)</a>
+<a class="sourceLine" id="cb2-256" data-line-number="256"></a>
+<a class="sourceLine" id="cb2-257" data-line-number="257">pg13<span class="op">::</span><span class="kw">dropTable</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-258" data-line-number="258">                <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb2-259" data-line-number="259">                <span class="dt">tableName =</span> <span class="st">&quot;concept_relationship&quot;</span>)</a>
+<a class="sourceLine" id="cb2-260" data-line-number="260"></a>
+<a class="sourceLine" id="cb2-261" data-line-number="261">pg13<span class="op">::</span><span class="kw">writeTable</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb2-262" data-line-number="262">                 <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb2-263" data-line-number="263">                 <span class="dt">tableName =</span> <span class="st">&quot;concept_relationship&quot;</span>,</a>
+<a class="sourceLine" id="cb2-264" data-line-number="264">                 concept_relationship_table)</a></code></pre></div>
+</div>
+<div id="drop-empty-tables" class="section level1">
+<h1>Drop Empty Tables</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">pg13<span class="op">::</span><span class="kw">lsTables</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">               <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">    </span>rubix<span class="op">::</span><span class="kw">map_names_set</span>(<span class="op">~</span>pg13<span class="op">::</span><span class="kw">query</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">                            <span class="dt">sql_statement =</span> pg13<span class="op">::</span><span class="kw">renderRowCount</span>(<span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">                                                                 <span class="dt">tableName =</span> .))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="st">    </span>purrr<span class="op">::</span><span class="kw">map</span>(unlist) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="st">    </span>purrr<span class="op">::</span><span class="kw">keep</span>(<span class="op">~</span>.<span class="op">==</span><span class="dv">0</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="st">    </span><span class="kw">names</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="st">    </span>purrr<span class="op">::</span><span class="kw">map</span>(<span class="op">~</span>pg13<span class="op">::</span><span class="kw">dropTable</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb3-10" data-line-number="10">                                <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb3-11" data-line-number="11">                                <span class="dt">tableName =</span> .))</a></code></pre></div>
+</div>
+<div id="add-to-package" class="section level1">
+<h1>Add to Package</h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">tableData &lt;-</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">pg13<span class="op">::</span><span class="kw">lsTables</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">               <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">    </span>rubix<span class="op">::</span><span class="kw">map_names_set</span>(<span class="op">~</span>pg13<span class="op">::</span><span class="kw">readTable</span>(<span class="dt">conn =</span> conn,</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">                                          <span class="dt">schema =</span> <span class="st">&quot;cancergov&quot;</span>,</a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">                                          <span class="dt">tableName =</span> .))</a>
+<a class="sourceLine" id="cb4-7" data-line-number="7">usethis<span class="op">::</span><span class="kw">use_data_raw</span>(<span class="dt">name =</span> <span class="st">&quot;tableData&quot;</span>)</a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9">broca<span class="op">::</span><span class="kw">write_full_excel</span>(<span class="dt">x =</span> tableData,</a>
+<a class="sourceLine" id="cb4-10" data-line-number="10">                        <span class="dt">file =</span> <span class="st">&quot;data-raw/tableData.xlsx&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">chariot<span class="op">::</span><span class="kw">queryAthena</span>(<span class="st">&quot;SELECT * FROM cancergov.concept WHERE concept_id = 913151323&quot;</span>)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co">#&gt; Warning: replacing previous import 'R.cache::clearCache' by 'pg13::clearCache'</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#&gt; when loading 'metaorite'</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#&gt; Warning: replacing previous import 'pg13::query' by 'preQL::query' when loading</span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; 'metaorite'</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt; Warning: replacing previous import 'magrittr::set_names' by 'purrr::set_names'</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt; when loading 'chariot'</span></a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; Warning: replacing previous import 'magrittr::extract' by 'tidyr::extract' when</span></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt; loading 'chariot'</span></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co">#&gt; # A tibble: 1 x 10</span></a>
+<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="co">#&gt;   concept_id concept_name domain_id vocabulary_id concept_class_id</span></a>
+<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt;        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;         &lt;chr&gt;           </span></a>
+<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="co">#&gt; 1  913151323 ABVE regimen Drug      NCI Drug Dic… Label           </span></a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt; # … with 5 more variables: standard_concept &lt;chr&gt;, concept_code &lt;chr&gt;,</span></a>
+<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#&gt; #   valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;, invalid_reason &lt;chr&gt;</span></a>
+<a class="sourceLine" id="cb5-16" data-line-number="16">chariot<span class="op">::</span><span class="kw">queryAthena</span>(<span class="st">&quot;SELECT * FROM cancergov.concept_definition WHERE concept_id = 913151323&quot;</span>)</a>
+<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="co">#&gt; # A tibble: 1 x 3</span></a>
+<a class="sourceLine" id="cb5-18" data-line-number="18"><span class="co">#&gt;   concept_id concept_name concept_definition                                    </span></a>
+<a class="sourceLine" id="cb5-19" data-line-number="19"><span class="co">#&gt;        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;                                                 </span></a>
+<a class="sourceLine" id="cb5-20" data-line-number="20"><span class="co">#&gt; 1  913151323 ABVE regimen A regimen containing doxorubicin hydrochloride, bleom…</span></a>
+<a class="sourceLine" id="cb5-21" data-line-number="21">chariot<span class="op">::</span><span class="kw">queryAthena</span>(<span class="st">&quot;SELECT * FROM cancergov.concept_relationship WHERE concept_id_1 = 913151323&quot;</span>)</a>
+<a class="sourceLine" id="cb5-22" data-line-number="22"><span class="co">#&gt; # A tibble: 2 x 6</span></a>
+<a class="sourceLine" id="cb5-23" data-line-number="23"><span class="co">#&gt;   concept_id_1 concept_id_2 relationship_id valid_start_date valid_end_date</span></a>
+<a class="sourceLine" id="cb5-24" data-line-number="24"><span class="co">#&gt;          &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;           &lt;date&gt;           &lt;chr&gt;         </span></a>
+<a class="sourceLine" id="cb5-25" data-line-number="25"><span class="co">#&gt; 1    913151323    913151323 Has synonym     2020-09-13       &lt;NA&gt;          </span></a>
+<a class="sourceLine" id="cb5-26" data-line-number="26"><span class="co">#&gt; 2    913151323    913151323 Synonym of      2020-09-13       &lt;NA&gt;          </span></a>
+<a class="sourceLine" id="cb5-27" data-line-number="27"><span class="co">#&gt; # … with 1 more variable: invalid_reason &lt;chr&gt;</span></a>
+<a class="sourceLine" id="cb5-28" data-line-number="28">chariot<span class="op">::</span><span class="kw">queryAthena</span>(<span class="st">&quot;SELECT * FROM cancergov.concept_relationship WHERE concept_id_2 = 913151323&quot;</span>)</a>
+<a class="sourceLine" id="cb5-29" data-line-number="29"><span class="co">#&gt; # A tibble: 2 x 6</span></a>
+<a class="sourceLine" id="cb5-30" data-line-number="30"><span class="co">#&gt;   concept_id_1 concept_id_2 relationship_id valid_start_date valid_end_date</span></a>
+<a class="sourceLine" id="cb5-31" data-line-number="31"><span class="co">#&gt;          &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;           &lt;date&gt;           &lt;chr&gt;         </span></a>
+<a class="sourceLine" id="cb5-32" data-line-number="32"><span class="co">#&gt; 1    913151323    913151323 Has synonym     2020-09-13       &lt;NA&gt;          </span></a>
+<a class="sourceLine" id="cb5-33" data-line-number="33"><span class="co">#&gt; 2    913151323    913151323 Synonym of      2020-09-13       &lt;NA&gt;          </span></a>
+<a class="sourceLine" id="cb5-34" data-line-number="34"><span class="co">#&gt; # … with 1 more variable: invalid_reason &lt;chr&gt;</span></a>
+<a class="sourceLine" id="cb5-35" data-line-number="35">chariot<span class="op">::</span><span class="kw">queryAthena</span>(<span class="st">&quot;SELECT * FROM cancergov.concept_synonym WHERE concept_id = 913151323&quot;</span>)</a>
+<a class="sourceLine" id="cb5-36" data-line-number="36"><span class="co">#&gt; # A tibble: 2 x 3</span></a>
+<a class="sourceLine" id="cb5-37" data-line-number="37"><span class="co">#&gt;   concept_id concept_synonym_name                              language_concept…</span></a>
+<a class="sourceLine" id="cb5-38" data-line-number="38"><span class="co">#&gt;        &lt;dbl&gt; &lt;chr&gt;                                                         &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb5-39" data-line-number="39"><span class="co">#&gt; 1  913151323 ABVE regimen                                                4180186</span></a>
+<a class="sourceLine" id="cb5-40" data-line-number="40"><span class="co">#&gt; 2  913151323 ABVEAdriamycin-bleomycin-vincristine-etoposide r…           4180186</span></a></code></pre></div>
 </div>
 
 
