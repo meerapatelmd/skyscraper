@@ -21,10 +21,8 @@ pg13::appendTable(conn = conn,
                   data.frame(concept_timestamp = as.character(Sys.time()),
                             concept_count = drugCount))
 
-nciDD <- skyscraper::scrapeNCIDrugDict(max_page = 39)
-nciDD <-
-    nciDD %>%
-    call_mr_clean()
+nciDD <- skyscraper::scrapeDictionary(max_page = 39)
+
 stopifnot(nrow(nciDD) == drugCount)
 
 
