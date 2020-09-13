@@ -32,15 +32,21 @@ pg13::send(conn = conn,
 while (length(concepts)) {
         concept <- concepts[1]
 
-        output <- scrapeChemiDPlus(phrase = concept) %>%
+        output <-
+                police::try_catch_error_as_null(
+                scrapeChemiDPlus(phrase = concept) %>%
                 dplyr::mutate(LOG_DATETIME = as.character(Sys.time())) %>%
                 dplyr::select(LOG_DATETIME,
                               everything())
+                )
+
+        if (!is.null(output)) {
 
                 pg13::appendTable(conn = conn,
                                   schema = "chemidplus",
                                   tableName = "concept_log",
                                   output)
+        }
 
         #secretary::press_enter()
         concepts <- concepts[-1]
