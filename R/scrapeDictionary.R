@@ -1,12 +1,38 @@
-#' Scrape Cancer.gov Drug Dictionary
-#' @import httr
-#' @import jsonlite
-#' @import rvest
-#' @import secretary
-#' @param max_page Maximum page to scrape until at https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=
+#' @title
+#' Scrape the NCI Drug Dictionary
+#'
+#' @description
+#' Scrape the drug names and their definitions from all the pages of the NCI Drug Dictionary (https://www.cancer.gov/publications/dictionaries/cancer-drug)
+#'
+#' @param max_page Maximum page to scrape, Default: 39
+#'
+#' @return
+#' A data frame
+#'
+#' @seealso
+#'  \code{\link[tibble]{tibble}}
+#'  \code{\link[secretary]{typewrite}}
+#'  \code{\link[xml2]{read_xml}}
+#'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
+#'  \code{\link[purrr]{map}},\code{\link[purrr]{keep}},\code{\link[purrr]{transpose}}
+#'  \code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate_all}}
+#'  \code{\link[stringr]{str_replace}}
+#'
+#' @rdname scrapeDictionary
+#'
 #' @export
+#' @importFrom tibble tibble
+#' @importFrom secretary typewrite
+#' @importFrom xml2 read_html
+#' @importFrom rvest html_nodes html_text
+#' @importFrom purrr map keep transpose
+#' @importFrom dplyr bind_rows mutate_all
+#' @importFrom stringr str_replace_all
+#' @importFrom magrittr %>%
 
-scrapeNCIDrugDict <-
+
+
+scrapeDictionary <-
     function(max_page = 39) {
 
         for (i in 1:max_page) {
