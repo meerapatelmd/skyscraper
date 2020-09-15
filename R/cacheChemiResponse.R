@@ -70,7 +70,6 @@ cacheChemiResponse <-
         # Connection was provided and a phrase_log table is present: nrow(phrase_log) == 0
         # Connection was provided and phrase_log table was not present
         # Connection was not provided
-
         if (!missing(conn)) {
 
             if ("PHRASE_LOG" %in% chemiTables) {
@@ -84,7 +83,9 @@ cacheChemiResponse <-
             }
 
         } else {
+
             proceed <- TRUE
+
         }
 
         if (proceed) {
@@ -111,7 +112,7 @@ cacheChemiResponse <-
                     dplyr::mutate(url = url)
 
 
-                cachedResp <- loadCachedScrape(url=url)
+                cachedResp <- loadCachedScrape(url = url)
 
 
                 if (is.null(cachedResp)) {
@@ -123,15 +124,15 @@ cacheChemiResponse <-
                         if (!is.null(resp)) {
 
                                 status_df <-
-                                    status_df %>%
-                                    dplyr::mutate(response_received = "TRUE")
+                                        status_df %>%
+                                        dplyr::mutate(response_received = "TRUE")
 
                                 cacheScrape(object=resp,
                                             url=url)
 
                                 status_df <-
-                                    status_df %>%
-                                    dplyr::mutate(response_cached = "TRUE")
+                                        status_df %>%
+                                        dplyr::mutate(response_cached = "TRUE")
 
                         } else {
 

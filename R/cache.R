@@ -30,6 +30,6 @@ cacheScrape <-
 loadCachedScrape <-
     function(url) {
 
-        R.cache::loadCache(key=list(url),
+        R.cache::loadCache(key = list(url),
                            dirs = "skyscraper")
     }

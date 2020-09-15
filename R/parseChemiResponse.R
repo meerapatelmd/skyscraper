@@ -62,11 +62,36 @@ parseChemiResponse <-
 
                         if (proceed) {
 
+                                # Getting 1 or more urls from log information
+                                urls <-
+                                pg13::query(conn = conn,
+                                            sql_statement = pg13::buildQuery(schema = "chemidplus",
+                                                                             tableName = "phrase_log",
+                                                                             whereInField = "phrase",
+                                                                             whereInVector = phrase)) %>%
+                                        dplyr::filter(type == type) %>%
+                                        dplyr::filter(response_cached == "TRUE") %>%
+                                        dplyr::select(url) %>%
+                                        dplyr::distinct() %>%
+                                        unlist()
+
                                 status_df <-
-                                        tibble::tibble(prr_dt = Sys.time(),
+                                        tibble::tibble(phrase_response_result_dt = Sys.time(),
                                                        phrase = phrase,
                                                        type = type) %>%
-                                        dplyr::mutate(url = url)
+                                        dplyr::mutate(url = urls)
+
+                                response <-
+                                        urls %>%
+                                        rubix::map_names_set(loadCachedScrape)
+
+
+                                response
+
+                                # no_records_response <-
+                                #         resp %>%
+                                #         rvest::html_nodes("h3") %>%
+                                #         rvest::html_text()
 
 
                         }
