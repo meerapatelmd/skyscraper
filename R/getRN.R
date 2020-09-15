@@ -27,9 +27,9 @@
 #' @importFrom pg13 lsSchema createSchema lsTables appendTable writeTable
 #' @importFrom magrittr %>%
 
-cacheChemiResponse <-
+getRN <-
     function(conn,
-             phrase,
+             input,
              type = "contains",
              sleep_secs = 3) {
 
@@ -55,8 +55,8 @@ cacheChemiResponse <-
                                     sql_statement = pg13::buildQuery(distinct = TRUE,
                                                                      schema = "chemidplus",
                                                                      tableName = "phrase_log",
-                                                                     whereInField = "phrase",
-                                                                     whereInVector = phrase)) %>%
+                                                                     whereInField = "input",
+                                                                     whereInVector = input)) %>%
                         dplyr::filter(type == type) %>%
                         dplyr::filter(response_received == "TRUE")
 
@@ -90,15 +90,9 @@ cacheChemiResponse <-
 
         if (proceed) {
 
-                status_df <-
-                    tibble::tibble(phrase_datetime = Sys.time(),
-                                   phrase = phrase,
-                                   type = type) %>%
-                    dplyr::mutate(url = url)
-
 
                 #Remove all spaces
-                phrase <- stringr::str_remove_all(phrase, "\\s")
+                phrase <- stringr::str_remove_all(input, "\\s")
 
 
                 #url <- "https://chem.nlm.nih.gov/chemidplus/name/contains/technetiumTc99m-labeledtilmanocept"
@@ -107,51 +101,65 @@ cacheChemiResponse <-
 
                 status_df <-
                     tibble::tibble(phrase_datetime = Sys.time(),
+                                   input = input,
                                    phrase = phrase,
                                    type = type) %>%
                     dplyr::mutate(url = url)
 
 
-                cachedResp <- loadCachedScrape(url = url)
 
+                resp <- xml2::read_html(url)
 
-                if (is.null(cachedResp)) {
+                Sys.sleep(sleep_secs)
 
-                        resp <- xml2::read_html(url)
-
-                        Sys.sleep(sleep_secs)
-
-                        if (!is.null(resp)) {
+                if (!is.null(resp)) {
 
                                 status_df <-
                                         status_df %>%
-                                        dplyr::mutate(response_received = "TRUE")
+                                        dplyr::mutate(response_received = "TRUE") %>%
+                                        dplyr::mutate(no_record = isNoRecord(response = resp))
 
-                                cacheScrape(object=resp,
-                                            url=url)
 
-                                status_df <-
+                                if (!status_df$no_record) {
+
+                                        results <-
+                                            dplyr::bind_rows(
+                                                    isSingleHit(response = resp),
+                                                    isMultipleHits(response = resp)) %>%
+                                            dplyr::mutate(url = url)
+
+                                        status_df <-
+                                            status_df %>%
+                                            dplyr::mutate(response_recorded = "TRUE") %>%
+                                            dplyr::left_join(results, by = "url") %>%
+                                            dplyr::distinct() %>%
+                                            dplyr::filter(rn_url != "https://chem.nlm.nih.gov/chemidplus/rn/NA")
+
+
+                                } else {
+
+                                    status_df <-
                                         status_df %>%
-                                        dplyr::mutate(response_cached = "TRUE")
+                                        dplyr::mutate(response_recorded = "FALSE") %>%
+                                        dplyr::mutate(compound_match = "NA",
+                                                      rn = "NA",
+                                                      rn_url = "NA")
+
+
+                                }
+
 
                         } else {
 
                                 status_df <-
                                     status_df %>%
                                     dplyr::mutate(response_received = "FALSE",
-                                                  response_cached = "FALSE")
+                                                  response_recorded = "FALSE")  %>%
+                                    dplyr::mutate(compound_match = "NA",
+                                                  rn = "NA",
+                                                  rn_url = "NA")
 
                         }
-
-
-                } else {
-
-                    status_df <-
-                        status_df %>%
-                        dplyr::mutate(response_received = "NA") %>%
-                        dplyr::mutate(response_cached = "TRUE")
-
-                }
 
 
 
@@ -193,5 +201,7 @@ cacheChemiResponse <-
 
                 }
         }
-
     }
+
+
+

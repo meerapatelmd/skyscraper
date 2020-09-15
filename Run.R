@@ -7,23 +7,8 @@ pg13::dropSchema(conn = conn,
 pg13::createSchema(conn = conn,
                    schema = "chemidplus")
 
-concepts <- chariot::queryAthena("SELECT DISTINCT concept_name FROM public.concept WHERE vocabulary_id = 'HemOnc' AND invalid_reason IS NULL AND domain_id IN ('Drug', 'Regimen')")
+concepts <- chariot::queryAthena("SELECT DISTINCT concept_name FROM public.concept WHERE vocabulary_id = 'HemOnc' AND invalid_reason IS NULL AND domain_id = 'Drug';")
 concepts <- unlist(concepts)
-
-
-pg13::dropTable(conn = conn,
-                schema = "chemidplus",
-                tableName = "url_status_log")
-
-# pg13::send(conn = conn,
-#            sql_statement =
-#            "CREATE TABLE chemidplus.url_status_log (
-#                         status_datetime varchar(25) NOT NULL,
-#                         phrase TEXT NOT NULL,
-#                         type varchar(25) NOT NULL,
-#                         url TEXT NOT NULL,
-#                         url_connection_status varchar(25) NOT NULL
-#            )")
 
 error_concepts <- vector()
 total_concepts <- length(concepts)
@@ -32,9 +17,9 @@ while (length(concepts)) {
 
         output <-
                 tryCatch(
-                        cacheChemiResponse(conn = conn,
-                                           phrase = concept,
-                                           sleep_secs = 3),
+                        getRN(conn = conn,
+                              input = concept,
+                              sleep_secs = 3),
                         error = function(e) paste("Error")
                 )
 
@@ -48,8 +33,9 @@ while (length(concepts)) {
 
         #secretary::press_enter()
         concepts <- concepts[-1]
-        secretary::typewrite(secretary::redTxt(signif(100*length(concepts)/total_concepts, digits = 2), "% to go."))
+        secretary::typewrite(secretary::redTxt(signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), "percent completed."))
         secretary::typewrite(secretary::redTxt(length(concepts), "out of", total_concepts, "to go."))
+        secretary::typewrite(secretary::redTxt(length(error_concepts), "errors."))
 }
 
 error_concepts2 <- vector()

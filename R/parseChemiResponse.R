@@ -9,6 +9,16 @@ parseChemiResponse <-
                  phrase,
                  type) {
 
+                loadCachedRN <-
+                        function(phrase,
+                                 type) {
+
+                                R.cache::loadCache(key=list(phrase,
+                                                            type),
+                                                   dirs="skyscraper/chemidplus/rn")
+
+                        }
+
                         connSchemas <-
                                 pg13::lsSchema(conn = conn)
 
@@ -63,30 +73,30 @@ parseChemiResponse <-
                         if (proceed) {
 
                                 # Getting 1 or more urls from log information
-                                urls <-
-                                pg13::query(conn = conn,
-                                            sql_statement = pg13::buildQuery(schema = "chemidplus",
-                                                                             tableName = "phrase_log",
-                                                                             whereInField = "phrase",
-                                                                             whereInVector = phrase)) %>%
-                                        dplyr::filter(type == type) %>%
-                                        dplyr::filter(response_cached == "TRUE") %>%
-                                        dplyr::select(url) %>%
-                                        dplyr::distinct() %>%
-                                        unlist()
-
-                                status_df <-
-                                        tibble::tibble(phrase_response_result_dt = Sys.time(),
-                                                       phrase = phrase,
-                                                       type = type) %>%
-                                        dplyr::mutate(url = urls)
+                                # urls <-
+                                # pg13::query(conn = conn,
+                                #             sql_statement = pg13::buildQuery(schema = "chemidplus",
+                                #                                              tableName = "phrase_log",
+                                #                                              whereInField = "phrase",
+                                #                                              whereInVector = phrase)) %>%
+                                #         dplyr::filter(type == type) %>%
+                                #         dplyr::filter(response_cached == "TRUE") %>%
+                                #         dplyr::select(url) %>%
+                                #         dplyr::distinct() %>%
+                                #         unlist()
+                                #
+                                # status_df <-
+                                #         tibble::tibble(phrase_response_result_dt = Sys.time(),
+                                #                        phrase = phrase,
+                                #                        type = type) %>%
+                                #         dplyr::mutate(url = urls)
 
                                 response <-
-                                        urls %>%
-                                        rubix::map_names_set(loadCachedScrape)
+                                        loadCachedRN(phrase = phrase,
+                                                     type = type)
 
-
-                                response
+                                list(status_df,
+                                     response)
 
                                 # no_records_response <-
                                 #         resp %>%
