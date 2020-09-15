@@ -2,6 +2,7 @@ library(tidyverse)
 library(secretary)
 library(chariot)
 library(pg13)
+library(skyscraper)
 
 
 conn <- chariot::connectAthena()
@@ -29,7 +30,8 @@ while (length(rn_urls)) {
 
         output <-
                 tryCatch(
-                        scrapeRN(conn = conn,
+                        skyscraper::scrapeRN(
+                                 conn = conn,
                                  rn_url = rn_url,
                                  sleep_time = 5),
                         error = function(e) paste("Error")
@@ -63,7 +65,8 @@ while (length(rn_urls)) {
 
         output <-
                 tryCatch(
-                        scrapeRN(conn = conn,
+                        skyscraper::scrapeRN(
+                                 conn = conn,
                                  rn_url = rn_url,
                                  sleep_time = 10),
                         error = function(e) paste("Error")
@@ -96,7 +99,8 @@ while (length(rn_urls)) {
 
         output <-
                 tryCatch(
-                        scrapeRN(conn = conn,
+                        skyscraper::scrapeRN(
+                                conn = conn,
                                  rn_url = rn_url,
                                  sleep_time = 15),
                         error = function(e) paste("Error")

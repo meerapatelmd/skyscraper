@@ -2,6 +2,7 @@ library(tidyverse)
 library(secretary)
 library(chariot)
 library(pg13)
+library(skyscraper)
 
 
 concepts <- chariot::queryAthena("SELECT DISTINCT concept_name FROM public.concept WHERE vocabulary_id = 'HemOnc' AND invalid_reason IS NULL AND domain_id = 'Drug';")
@@ -16,9 +17,10 @@ while (length(concepts)) {
 
         output <-
                 tryCatch(
-                        getRN(conn = conn,
-                              input = concept,
-                              sleep_secs = 5),
+                        skyscraper::getRN(
+                                conn = conn,
+                                input = concept,
+                                sleep_secs = 5),
                         error = function(e) paste("Error")
                 )
 
@@ -50,7 +52,7 @@ while (length(concepts)) {
 
         output <-
                 tryCatch(
-                        getRN(conn = conn,
+                        skyscraper::getRN(conn = conn,
                               input = concept,
                               sleep_secs = 8),
                         error = function(e) paste("Error")
