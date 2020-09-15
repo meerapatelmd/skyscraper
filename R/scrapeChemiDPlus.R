@@ -17,6 +17,12 @@ scrapeChemiDPlus <-
                            type = type)
 
 
+        phrase <- "trastuzumab"
+        type <- "contains"
+        #phrase <- "acetate"
+        #phrase <- "meera patel"
+
+
         #Remove all spaces
         phrase <- stringr::str_remove_all(phrase, "\\s")
 
@@ -28,11 +34,11 @@ scrapeChemiDPlus <-
             status_df %>%
             dplyr::mutate(url = url)
 
-        urlConn <- police::try_catch_error_as_null(url(url, "rb"))
+        #urlConn <- police::try_catch_error_as_null(url(url, "rb"))
 
-        status_df <-
-            status_df %>%
-            dplyr::mutate(url_connection_status = ifelse(is.null(urlConn), "Error", "Success"))
+        # status_df <-
+        #     status_df %>%
+        #     dplyr::mutate(url_connection_status = ifelse(is.null(urlConn), "Error", "Success"))
 
 
         if (!is.null(urlConn)) {
@@ -40,7 +46,7 @@ scrapeChemiDPlus <-
             #print("718")
             resp <- xml2::read_html(url)
             Sys.sleep(1)
-            close(urlConn)
+            #close(urlConn)
 
             status_df <-
                 status_df %>%

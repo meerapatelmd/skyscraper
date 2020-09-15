@@ -1,0 +1,78 @@
+
+
+
+
+
+
+parseChemiResponse <-
+        function(conn,
+                 phrase,
+                 type) {
+
+                        connSchemas <-
+                                pg13::lsSchema(conn = conn)
+
+                        if (!("chemidplus" %in% connSchemas)) {
+
+                                pg13::createSchema(conn = conn,
+                                                   schema = "chemidplus")
+
+                        }
+
+                        chemiTables <- pg13::lsTables(conn = conn,
+                                                      schema = "chemidplus")
+
+
+                        stopifnot("PHRASE_LOG" %in% chemiTables)
+
+                        if ("PHRASE_RESPONSE_RESULT" %in% chemiTables) {
+
+                                phrase_response_result <-
+                                        pg13::query(conn = conn,
+                                                    sql_statement = pg13::buildQuery(distinct = TRUE,
+                                                                                     schema = "chemidplus",
+                                                                                     tableName = "phrase_response_result",
+                                                                                     whereInField = "phrase",
+                                                                                     whereInVector = phrase)) %>%
+                                        dplyr::filter(type == type)
+
+                        }
+
+                        # Proceed if:
+                        # phrase_response_result table is present: nrow(phrase_response_result) == 0
+                        # phrase_response_result table was not present
+
+                        if ("PHRASE_RESPONSE_RESULT" %in% chemiTables) {
+
+                                if (nrow(phrase_response_result) == 0) {
+
+                                        proceed <- TRUE
+
+                                } else {
+
+                                        proceed <- FALSE
+                                }
+
+
+                        } else {
+                                proceed <- TRUE
+                        }
+
+
+
+                        if (proceed) {
+
+                                status_df <-
+                                        tibble::tibble(prr_dt = Sys.time(),
+                                                       phrase = phrase,
+                                                       type = type) %>%
+                                        dplyr::mutate(url = url)
+
+
+                        }
+
+
+
+
+        }
+
