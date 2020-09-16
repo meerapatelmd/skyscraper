@@ -22,6 +22,12 @@ concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name, pl.*
                 unlist()
 
 
+
+if (!interactive()) {
+        report_filename <- paste0("~/Desktop/maintain_hemonc_phrase_log_", as.character(Sys.Date()), ".txt")
+        cat(file = report_filename)
+}
+
 error_concepts <- vector()
 total_concepts <- length(concepts)
 while (length(concepts)) {
@@ -58,9 +64,7 @@ while (length(concepts)) {
 
         } else {
 
-                report_filename <- paste0("~/Desktop/maintain_hemonc_phrase_log_", as.character(Sys.Date()), ".txt")
-
-                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename)
+                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
                 cat("\t", length(concepts), "/", total_concepts, " (", signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), " percent completed)\n", sep = "", file = report_filename, append = TRUE)
                 cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
                 cat("\t", length(error_concepts), " errors\n", sep = "", file = report_filename, append = TRUE)

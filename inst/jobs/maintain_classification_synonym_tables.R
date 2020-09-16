@@ -7,20 +7,25 @@ library(skyscraper)
 
 conn <- chariot::connectAthena()
 
-phrase_log <-
-        pg13::readTable(conn = conn,
-                        schema = "chemidplus",
-                        tableName = "phrase_log") %>%
-        as_tibble() %>%
-        mutate_all(as.character) %>%
-        rubix::normalize_all_to_na()
 
 rn_urls <-
-        phrase_log %>%
-        dplyr::filter(!is.na(rn_url)) %>%
+chariot::queryAthena("SELECT pl.*, s.scrape_datetime, s.concept_synonym_name
+                     FROM chemidplus.phrase_log pl
+                     LEFT JOIN chemidplus.synonyms s
+                     ON s.rn_url = pl.rn_url
+                     WHERE pl.rn_url <> 'NA';") %>%
+        dplyr::filter_at(vars(c(scrape_datetime,
+                                concept_synonym_name)),
+                         all_vars(is.na(.))) %>%
         dplyr::select(rn_url) %>%
         dplyr::distinct() %>%
-        unlist()
+        unlist() %>%
+        unname()
+
+if (!interactive()) {
+        report_filename <- paste0("~/Desktop/maintain_classification_synonym_tables_", as.character(Sys.Date()), ".txt")
+        cat(file = report_filename)
+}
 
 
 errors <- vector()
@@ -51,9 +56,21 @@ while (length(rn_urls)) {
 
         rn_urls <- rn_urls[-1]
 
-        secretary::typewrite(secretary::italicize(signif(100*((total-length(rn_urls))/total), digits = 2), "percent completed."))
-        secretary::typewrite(secretary::cyanTxt(length(rn_urls), "out of", total, "to go."))
-        secretary::typewrite(secretary::redTxt(length(errors), "errors."))
+        if (interactive()) {
+
+                secretary::typewrite(secretary::italicize(signif(100*((total-length(rn_urls))/total), digits = 2), "percent completed."))
+                secretary::typewrite(secretary::cyanTxt(length(rn_urls), "out of", total, "to go."))
+                secretary::typewrite(secretary::redTxt(length(errors), "errors."))
+
+        } else {
+
+                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+                cat("\t", length(rn_urls), "/", total, " (", signif(100*((total-length(rn_urls))/total), digits = 2), " percent completed)\n", sep = "", file = report_filename, append = TRUE)
+                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+                cat("\t", length(errors), " errors\n", sep = "", file = report_filename, append = TRUE)
+
+        }
+
 }
 
 
@@ -86,9 +103,21 @@ while (length(rn_urls)) {
 
         rn_urls <- rn_urls[-1]
 
-        secretary::typewrite(secretary::italicize(signif(100*((total-length(rn_urls))/total), digits = 2), "percent completed."))
-        secretary::typewrite(secretary::cyanTxt(length(rn_urls), "out of", total, "to go."))
-        secretary::typewrite(secretary::redTxt(length(errors), "errors."))
+        if (interactive()) {
+
+                secretary::typewrite(secretary::italicize(signif(100*((total-length(rn_urls))/total), digits = 2), "percent completed."))
+                secretary::typewrite(secretary::cyanTxt(length(rn_urls), "out of", total, "to go."))
+                secretary::typewrite(secretary::redTxt(length(errors), "errors."))
+
+        } else {
+
+                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+                cat("\t", length(rn_urls), "/", total, " (", signif(100*((total-length(rn_urls))/total), digits = 2), " percent completed)\n", sep = "", file = report_filename, append = TRUE)
+                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+                cat("\t", length(errors), " errors\n", sep = "", file = report_filename, append = TRUE)
+
+        }
+
 }
 
 rn_urls <- errors
@@ -120,9 +149,20 @@ while (length(rn_urls)) {
 
         rn_urls <- rn_urls[-1]
 
-        secretary::typewrite(secretary::italicize(signif(100*((total-length(rn_urls))/total), digits = 2), "percent completed."))
-        secretary::typewrite(secretary::cyanTxt(length(rn_urls), "out of", total, "to go."))
-        secretary::typewrite(secretary::redTxt(length(errors), "errors."))
+        if (interactive()) {
+
+                secretary::typewrite(secretary::italicize(signif(100*((total-length(rn_urls))/total), digits = 2), "percent completed."))
+                secretary::typewrite(secretary::cyanTxt(length(rn_urls), "out of", total, "to go."))
+                secretary::typewrite(secretary::redTxt(length(errors), "errors."))
+
+        } else {
+
+                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+                cat("\t", length(rn_urls), "/", total, " (", signif(100*((total-length(rn_urls))/total), digits = 2), " percent completed)\n", sep = "", file = report_filename, append = TRUE)
+                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+                cat("\t", length(errors), " errors\n", sep = "", file = report_filename, append = TRUE)
+
+        }
 }
 
 chariot::dcAthena(conn = conn)
