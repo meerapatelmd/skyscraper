@@ -30,6 +30,14 @@ if (!interactive()) {
 
 errors <- vector()
 total <- length(rn_urls)
+
+
+if (!interactive()) {
+        cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+        cat("### First Iteration\n", file = report_filename, append = TRUE)
+}
+
+
 while (length(rn_urls)) {
         rn_url <- rn_urls[1]
 
@@ -73,6 +81,10 @@ while (length(rn_urls)) {
 
 }
 
+if (!interactive()) {
+        cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+        cat("### Second Iteration\n", file = report_filename, append = TRUE)
+}
 
 rn_urls <- errors
 errors <- vector()
@@ -123,6 +135,13 @@ while (length(rn_urls)) {
 rn_urls <- errors
 errors <- vector()
 total <- length(rn_urls)
+
+if (!interactive()) {
+        cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+        cat("### Third Iteration\n", file = report_filename, append = TRUE)
+}
+
+
 while (length(rn_urls)) {
         rn_url <- rn_urls[1]
 
@@ -164,5 +183,11 @@ while (length(rn_urls)) {
 
         }
 }
+
+if (!interactive()) {
+        cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+        cat("### Complete\n", file = report_filename, append = TRUE)
+}
+
 
 chariot::dcAthena(conn = conn)

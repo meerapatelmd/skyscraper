@@ -30,6 +30,15 @@ if (!interactive()) {
 
 error_concepts <- vector()
 total_concepts <- length(concepts)
+
+
+if (!interactive()) {
+        cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+        cat("### First Iteration\n", file = report_filename, append = TRUE)
+}
+
+
+
 while (length(concepts)) {
         concept <- concepts[1]
 
@@ -72,6 +81,10 @@ while (length(concepts)) {
         }
 }
 
+if (!interactive()) {
+        cat("\n[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+        cat("### Second Iteration\n", file = report_filename, append = TRUE)
+}
 
 concepts <- error_concepts
 error_concepts <- vector()
@@ -116,6 +129,12 @@ while (length(concepts)) {
 
         }
 }
+
+if (!interactive()) {
+        cat("\n[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+        cat("### Third Iteration\n", file = report_filename, append = TRUE)
+}
+
 
 concepts <- error_concepts
 error_concepts <- vector()
@@ -162,6 +181,10 @@ while (length(concepts)) {
         }
 }
 
+if (!interactive()) {
+        cat("\n[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+        cat("### Complete\n", file = report_filename, append = TRUE)
+}
 
 
 chariot::dcAthena(conn = conn)
