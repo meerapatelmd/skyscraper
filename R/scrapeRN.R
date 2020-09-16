@@ -38,10 +38,34 @@ scrapeRN <-
                  rn_url,
                  sleep_time = 3) {
 
-               #rn_url <-  "https://chem.nlm.nih.gov/chemidplus/rn/9041-08-1"
-               #
-               #
-                response <- xml2::read_html(rn_url)
+                # https://chem.nlm.nih.gov/chemidplus/rn/122312-54-3
+                # https://chem.nlm.nih.gov/chemidplus/rn/74899-72-2
+                # https://chem.nlm.nih.gov/chemidplus/rn/185243-69-0
+                # https://chem.nlm.nih.gov/chemidplus/rn/134088-74-7
+                # https://chem.nlm.nih.gov/chemidplus/rn/135968-09-1
+                # https://chem.nlm.nih.gov/chemidplus/rn/196488-72-9
+                # https://chem.nlm.nih.gov/chemidplus/rn/479198-61-3
+                # https://chem.nlm.nih.gov/chemidplus/rn/124-65-2
+                # https://chem.nlm.nih.gov/chemidplus/rn/134-50-9
+                # https://chem.nlm.nih.gov/chemidplus/rn/1639-60-7
+                # https://chem.nlm.nih.gov/chemidplus/rn/62-33-9
+                # https://chem.nlm.nih.gov/chemidplus/rn/64-02-8
+                # https://chem.nlm.nih.gov/chemidplus/rn/1609655-49-3
+                # https://chem.nlm.nih.gov/chemidplus/rn/138360-83-5
+                # https://chem.nlm.nih.gov/chemidplus/rn/12629-01-5
+                # https://chem.nlm.nih.gov/chemidplus/rn/74899-71-1
+                # https://chem.nlm.nih.gov/chemidplus/rn/ [INN:NF]127-58-2
+                # https://chem.nlm.nih.gov/chemidplus/rn/209810-58-2
+                # https://chem.nlm.nih.gov/chemidplus/rn/208265-92-3
+                # https://chem.nlm.nih.gov/chemidplus/rn/121181-53-1
+                # https://chem.nlm.nih.gov/chemidplus/rn/750598-07-3
+                # https://chem.nlm.nih.gov/chemidplus/rn/852317-24-9
+                # https://chem.nlm.nih.gov/chemidplus/rn/99283-10-0
+                # https://chem.nlm.nih.gov/chemidplus/rn/267639-76-9
+                # https://chem.nlm.nih.gov/chemidplus/rn/95734-82-0
+
+
+                response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
                 Sys.sleep(sleep_time)
 
                 if (!missing(conn)) {
@@ -96,7 +120,7 @@ scrapeRN <-
                         classifications <-
                                response %>%
                                        rvest::html_nodes("#classifications li") %>%
-                                       html_text() %>%
+                                       rvest::html_text() %>%
                                tibble::as_tibble_col("concept_classification") %>%
                                dplyr::transmute(scrape_datetime = as.character(Sys.time()),
                                                 concept_classification,
@@ -185,7 +209,7 @@ scrapeRN <-
                        synonyms_content <-
                        response %>%
                                rvest::html_nodes("#names") %>%
-                               html_text()
+                               rvest::html_text()
 
 
                        synonyms_content <-
