@@ -36,6 +36,7 @@ maintainRNtoOMOP <-
                  file_report = TRUE,
                  file_report_to = "report.txt",
                  append_file_report = TRUE) {
+
                 #conn <- chariot::connectAthena()
 
 
@@ -119,12 +120,14 @@ maintainRNtoOMOP <-
                         # 4. HemOnc concept_ids and concept_name
                         hemonc <-
                         pg13::query(conn = conn,
-                                    sql_statement = "SELECT DISTINCT concept_id,concept_name
-                                                        FROM public.concept
+                                    sql_statement = "SELECT DISTINCT cs.concept_id,cs.concept_synonym_name AS concept_name
+                                                        FROM public.concept c
+                                                        LEFT JOIN public.concept_synonym cs
+                                                        ON cs.concept_id = c.concept_id
                                                         WHERE
-                                                                vocabulary_id = 'HemOnc'
-                                                                        AND invalid_reason IS NULL
-                                                                        AND domain_id = 'Drug';")
+                                                                c.vocabulary_id = 'HemOnc'
+                                                                        AND c.invalid_reason IS NULL
+                                                                        AND c.domain_id = 'Drug';")
 
                         concept_table_diff <-
                         dplyr::left_join(phrase_rn,
