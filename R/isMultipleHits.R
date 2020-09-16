@@ -26,6 +26,8 @@ isMultipleHits <-
                         rvest::html_nodes(".bodytext") %>%
                         rvest::html_text()
 
+
+                output_a <-
                         output  %>%
                         tibble::as_tibble_col(column_name = "multiple_match") %>%
                         rubix::filter_at_grepl(multiple_match,
@@ -35,38 +37,28 @@ isMultipleHits <-
                                        into = c("compound_match", "rn"),
                                        regex = "(^.*?) \\[.*?\\](.*$)") %>%
                         dplyr::mutate(rn_url = paste0("https://chem.nlm.nih.gov/chemidplus/rn/",rn)) %>%
-                        dplyr::mutate_all(stringr::str_remove_all, "No Structure")
+                        dplyr::mutate_all(stringr::str_remove_all, "No Structure") %>%
+                        dplyr::filter_at(vars(compound_match,
+                                              rn),
+                                         all_vars(!is.na(.)))
+
+                output_b <-
+                        output  %>%
+                                tibble::as_tibble_col(column_name = "multiple_match") %>%
+                                rubix::filter_at_grepl(multiple_match,
+                                                       grepl_phrase = "MW[:]{1} ",
+                                                       evaluates_to = FALSE) %>%
+                                tidyr::extract(col = multiple_match,
+                                               into = c("compound_match", "rn"),
+                                               regex = "(^.*?)([0-9]{1,}[-]{1}[0-9]{1,}[-]{1}[0-9]{1,}.*$)") %>%
+                                dplyr::mutate(rn_url = paste0("https://chem.nlm.nih.gov/chemidplus/rn/",rn)) %>%
+                                dplyr::mutate_all(stringr::str_remove_all, "No Structure") %>%
+                                dplyr::filter_at(vars(compound_match,
+                                                      rn),
+                                                 all_vars(!is.na(.)))
+
+                dplyr::bind_rows(output_a,
+                                 output_b)
 
 
-        }
-
-
-
-isSingleHit <-
-        function(response) {
-
-                output <-
-                response %>%
-                        rvest::html_node("h1") %>%
-                        rvest::html_text()
-
-
-                if (!is.na(output)) {
-                        output %>%
-                        centipede::strsplit(split = "Substance Name[:]{1}|RN[:]{1}|UNII[:]{1}", type = "before") %>%
-                        unlist() %>%
-                        tibble::as_tibble_col(column_name = "h1") %>%
-                        tidyr::extract(col = h1,
-                                        into = c("identifier_type", "identifier"),
-                                        regex = "(^.*?)[:]{1}(.*$)") %>%
-                        tidyr::pivot_wider(names_from = identifier_type,
-                                           values_from = identifier) %>%
-                        dplyr::transmute(compound_match = `Substance Name`,
-                                         rn = stringr::str_remove_all(RN, "\\s{1,}")) %>%
-                        dplyr::mutate(rn_url = paste0("https://chem.nlm.nih.gov/chemidplus/rn/",rn))
-                } else {
-                        tibble::tribble(~compound_match,
-                                        ~rn,
-                                        ~rn_url)
-                }
         }

@@ -50,6 +50,7 @@ getRN <-
         #
         #conn <- chariot::connectAthena()
         #input <- "vinblastine sulfate"
+        #input <- "Anthracycline"
 
         if (!missing(conn)) {
 
