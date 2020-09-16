@@ -1,0 +1,39 @@
+[2020-09-16 16:19:52]	maintainRNtoOMOP
+CLASSIFICATION: 5793 rows
+CONCEPT: 3180 rows
+CONCEPT_ANCESTOR: 16753 rows
+CONCEPT_RELATIONSHIP: 46 rows
+CONCEPT_SYNONYM: 113442 rows
+PHRASE_LOG: 4754 rows
+SYNONYMS: 40668 rows
+0 rows in chemiplus.phrase_log Table that do not join to a chemidplus.concept by input/concept_name and type/concept_class_id
+No diff found and zero rows appended to chemidplus.concept_synonym & chemidplus.concept_synonym
+No new chemidplus.classification_concepts found.
+
+
+[2020-09-16 16:20:53]	maintainRNtoOMOP
+CLASSIFICATION: 5793 rows
+CONCEPT: 3180 rows
+CONCEPT_ANCESTOR: 16753 rows
+CONCEPT_RELATIONSHIP: 46 rows
+CONCEPT_SYNONYM: 113442 rows
+PHRASE_LOG: 4754 rows
+SYNONYMS: 40668 rows
+0 rows in chemiplus.phrase_log Table that do not join to a chemidplus.concept by input/concept_name and type/concept_class_id
+No diff found and zero rows appended to chemidplus.concept_synonym & chemidplus.concept_synonym
+No new chemidplus.classification_concepts found.
+
+
+[2020-09-16 16:21:37]	maintainRNtoOMOP
+CLASSIFICATION: 5793 rows
+CONCEPT: 3180 rows
+CONCEPT_ANCESTOR: 16753 rows
+CONCEPT_RELATIONSHIP: 46 rows
+CONCEPT_SYNONYM: 113442 rows
+PHRASE_LOG: 4754 rows
+SYNONYMS: 40668 rows
+0 rows in chemiplus.phrase_log Table that do not join to a chemidplus.concept by input/concept_name and type/concept_class_id
+No diff found and zero rows appended to chemidplus.concept_synonym & chemidplus.concept_synonym
+No new chemidplus.classification_concepts found.
+
+

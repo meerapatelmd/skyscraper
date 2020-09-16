@@ -140,7 +140,6 @@ knitr::opts_chunk$set(
 #                    schema = "cancergov",
 #                    tableName = "concept_definition",
 #                    concept_definition_table3)
-#  
 #  pg13::dropTable(conn = conn,
 #                  schema = "cancergov",
 #                  tableName = "drug_dictionary")
@@ -288,18 +287,6 @@ knitr::opts_chunk$set(
 #      purrr::map(~pg13::dropTable(conn = conn,
 #                                  schema = "cancergov",
 #                                  tableName = .))
-
-## -----------------------------------------------------------------------------
-#  tableData <-
-#  pg13::lsTables(conn = conn,
-#                 schema = "cancergov") %>%
-#      rubix::map_names_set(~pg13::readTable(conn = conn,
-#                                            schema = "cancergov",
-#                                            tableName = .))
-#  usethis::use_data_raw(name = "tableData")
-#  
-#  broca::write_full_excel(x = tableData,
-#                          file = "data-raw/tableData.xlsx")
 
 ## ----eval=TRUE----------------------------------------------------------------
 chariot::queryAthena("SELECT * FROM cancergov.concept WHERE concept_id = 913151323")
