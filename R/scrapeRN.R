@@ -38,31 +38,7 @@ scrapeRN <-
                  rn_url,
                  sleep_time = 3) {
 
-                # https://chem.nlm.nih.gov/chemidplus/rn/122312-54-3
-                # https://chem.nlm.nih.gov/chemidplus/rn/74899-72-2
-                # https://chem.nlm.nih.gov/chemidplus/rn/185243-69-0
-                # https://chem.nlm.nih.gov/chemidplus/rn/134088-74-7
-                # https://chem.nlm.nih.gov/chemidplus/rn/135968-09-1
-                # https://chem.nlm.nih.gov/chemidplus/rn/196488-72-9
-                # https://chem.nlm.nih.gov/chemidplus/rn/479198-61-3
-                # https://chem.nlm.nih.gov/chemidplus/rn/124-65-2
-                # https://chem.nlm.nih.gov/chemidplus/rn/134-50-9
-                # https://chem.nlm.nih.gov/chemidplus/rn/1639-60-7
-                # https://chem.nlm.nih.gov/chemidplus/rn/62-33-9
-                # https://chem.nlm.nih.gov/chemidplus/rn/64-02-8
-                # https://chem.nlm.nih.gov/chemidplus/rn/1609655-49-3
-                # https://chem.nlm.nih.gov/chemidplus/rn/138360-83-5
-                # https://chem.nlm.nih.gov/chemidplus/rn/12629-01-5
-                # https://chem.nlm.nih.gov/chemidplus/rn/74899-71-1
                 # https://chem.nlm.nih.gov/chemidplus/rn/ [INN:NF]127-58-2
-                # https://chem.nlm.nih.gov/chemidplus/rn/209810-58-2
-                # https://chem.nlm.nih.gov/chemidplus/rn/208265-92-3
-                # https://chem.nlm.nih.gov/chemidplus/rn/121181-53-1
-                # https://chem.nlm.nih.gov/chemidplus/rn/750598-07-3
-                # https://chem.nlm.nih.gov/chemidplus/rn/852317-24-9
-                # https://chem.nlm.nih.gov/chemidplus/rn/99283-10-0
-                # https://chem.nlm.nih.gov/chemidplus/rn/267639-76-9
-                # https://chem.nlm.nih.gov/chemidplus/rn/95734-82-0
 
 
                 response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
@@ -205,6 +181,14 @@ scrapeRN <-
                                rvest::html_text()
 
 
+                       if (length(synonym_types) == 0) {
+                               synonym_types <-
+                               response %>%
+                                       rvest::html_nodes("#names h2") %>%
+                                       rvest::html_text()
+                       }
+
+
 
                        synonyms_content <-
                        response %>%
@@ -229,44 +213,53 @@ scrapeRN <-
 
 
 
-                       index <- list()
-                       synonym_types2 <- synonym_types
-                       while (length(synonym_types)) {
+                       if (length(synonym_types) > 1) {
+                                       index <- list()
+                                       synonym_types2 <- synonym_types
+                                       while (length(synonym_types)) {
 
-                               synonym_type <- synonym_types[1]
+                                               synonym_type <- synonym_types[1]
 
-                               index[[length(index)+1]] <-
-                                         grep(synonym_type,
-                                              synonyms_content4)
+                                               index[[length(index)+1]] <-
+                                                         grep(synonym_type,
+                                                              synonyms_content4)
 
 
-                               synonym_types <- synonym_types[-1]
+                                               synonym_types <- synonym_types[-1]
+                                       }
+
+                                       index <- unlist(index)
+                                       ending <- c((index[-1])-1,
+                                                   length(synonyms_content4))
+
+                                       df <-
+                                       data.frame(index, ending) %>%
+                                               dplyr::mutate(starting = index+1)
+
+
+                                       synonyms <-
+                                               df$starting %>%
+                                                       purrr::map2(df$ending,
+                                                                   function(x,y) synonyms_content4[x:y]) %>%
+                                                       purrr::set_names(synonym_types2) %>%
+                                                       purrr::map(tibble::as_tibble_col, "concept_synonym_name") %>%
+                                                       dplyr::bind_rows(.id = "concept_synonym_type") %>%
+                                               dplyr::transmute(scrape_datetime = as.character(Sys.time()),
+                                                                rn_url = rn_url,
+                                                                concept_synonym_type,
+                                                                concept_synonym_name
+                                                                ) %>%
+                                               dplyr::mutate_at(vars(concept_synonym_name),
+                                                                ~substr(., 1, 254)) %>%
+                                               dplyr::distinct()
+                       } else {
+                               synonyms <-
+                                       data.frame(scrape_datetime = as.character(Sys.time()),
+                                                      rn_url = rn_url,
+                                                      concept_synonym_type = "NA",
+                                                      concept_synonym_name = synonyms_content4)
+
                        }
-
-                       index <- unlist(index)
-                       ending <- c((index[-1])-1,
-                                   length(synonyms_content4))
-
-                       df <-
-                       data.frame(index, ending) %>%
-                               dplyr::mutate(starting = index+1)
-
-
-                       synonyms <-
-                               df$starting %>%
-                                       purrr::map2(df$ending,
-                                                   function(x,y) synonyms_content4[x:y]) %>%
-                                       purrr::set_names(synonym_types2) %>%
-                                       purrr::map(tibble::as_tibble_col, "concept_synonym_name") %>%
-                                       dplyr::bind_rows(.id = "concept_synonym_type") %>%
-                               dplyr::transmute(scrape_datetime = as.character(Sys.time()),
-                                                rn_url = rn_url,
-                                                concept_synonym_type,
-                                                concept_synonym_name
-                                                ) %>%
-                               dplyr::mutate_at(vars(concept_synonym_name),
-                                                ~substr(., 1, 254)) %>%
-                               dplyr::distinct()
 
 
 
