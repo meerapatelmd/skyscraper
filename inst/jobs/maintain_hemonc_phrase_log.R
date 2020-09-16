@@ -146,7 +146,7 @@ while (length(concepts)) {
                 tryCatch(
                         skyscraper::getRN(conn = conn,
                                           input = concept,
-                                          sleep_secs = 15),
+                                          sleep_secs = 20),
                         error = function(e) paste("Error")
                 )
 
@@ -187,6 +187,10 @@ if (!interactive()) {
 
         cat("### ERRORS\n", file = report_filename, append = TRUE)
         cat(error_concepts, sep = "\n", file = report_filename, append = TRUE)
+} else {
+        secretary::typewrite_bold("ERRORS:")
+        error_concepts %>%
+                purrr::map(~secretary::typewrite(., tabs = 1))
 }
 
 

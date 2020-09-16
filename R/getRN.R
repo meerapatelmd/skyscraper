@@ -33,6 +33,24 @@ getRN <-
              type = "contains",
              sleep_secs = 3) {
 
+        # tositumomab and I 131 tositumomab
+        # tositumomab and iodine-131 tositumomab
+        # trametinib dimethyl sulfoxide
+        # trastuzumab and hyaluronidase-oysk
+        # trastuzumab emtansine
+        # tretinoin
+        # trifluridine and tipiracil
+        # trifluridine/tipiracil
+        # tucidinostat
+        # uramustine
+        # valaciclovir
+        # valaciclovir Hcl
+        # valproic acid
+        # vinblastine sulfate
+        #
+        #conn <- chariot::connectAthena()
+        #input <- "vinblastine sulfate"
+
         if (!missing(conn)) {
 
                 connSchemas <-
@@ -154,12 +172,18 @@ getRN <-
                                 status_df <-
                                     status_df %>%
                                     dplyr::mutate(response_received = "FALSE",
+                                                  no_record = "NA",
                                                   response_recorded = "FALSE")  %>%
                                     dplyr::mutate(compound_match = "NA",
                                                   rn = "NA",
                                                   rn_url = "NA")
 
                         }
+
+
+                if (nrow(showConnections())) {
+                    closeAllConnections()
+                }
 
 
 
