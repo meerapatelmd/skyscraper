@@ -187,6 +187,9 @@ while (length(rn_urls)) {
 if (!interactive()) {
         cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
         cat("### Complete\n", file = report_filename, append = TRUE)
+
+        cat("### ERRORS\n", file = report_filename, append = TRUE)
+        cat(errors, sep = "\n", file = report_filename, append = TRUE)
 }
 
 
