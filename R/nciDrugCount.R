@@ -8,8 +8,11 @@
 
 nciDrugCount <-
     function() {
+
                 i <- 1
-                page_scrape <- xml2::read_html(paste0("https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=", i))
+
+                page_scrape <-
+                        xml2::read_html(paste0("https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=", i))
 
                 page_scrape %>%
                 rvest::html_nodes("#ctl36_ctl00_lblNumResults") %>%

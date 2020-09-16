@@ -5,7 +5,13 @@ library(pg13)
 library(skyscraper)
 
 
-concepts <- chariot::queryAthena("SELECT DISTINCT concept_name FROM public.concept WHERE vocabulary_id = 'HemOnc' AND invalid_reason IS NULL AND domain_id = 'Drug';")
+concepts <- chariot::queryAthena("SELECT DISTINCT concept_name
+                                 FROM public.concept
+                                 WHERE
+                                        vocabulary_id = 'HemOnc'
+                                                AND invalid_reason IS NULL
+                                                AND domain_id = 'Drug';")
+
 concepts <- unlist(concepts)
 
 
