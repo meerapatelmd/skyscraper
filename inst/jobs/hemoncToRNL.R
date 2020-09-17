@@ -17,15 +17,6 @@ runHemOncToRNL <-
 
                         concept <- concepts[1]
 
-                        # output <-
-                        #         tryCatch(
-                        #                 skyscraper::getRN(
-                        #                         conn = conn,
-                        #                         input = concept,
-                        #                         sleep_secs = 5),
-                        #                 error = function(e) paste("Error")
-                        #         )
-
                         conn <- chariot::connectAthena()
 
                         output <-
