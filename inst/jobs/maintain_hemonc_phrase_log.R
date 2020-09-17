@@ -15,7 +15,8 @@ concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name, pl.*
                                  WHERE
                                         c.vocabulary_id = 'HemOnc'
                                                 AND c.invalid_reason IS NULL
-                                                AND c.domain_id = 'Drug';") %>%
+                                                AND c.domain_id = 'Drug';",
+                                 override_cache = TRUE) %>%
                 dplyr::filter_at(vars(!concept_synonym_name),
                                  all_vars(is.na(.))) %>%
                 dplyr::select(concept_synonym_name) %>%
@@ -193,6 +194,67 @@ if (!interactive()) {
                 purrr::map(~secretary::typewrite(., tabs = 1))
 }
 
+if (!interactive()) {
+        cat("\n[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+        cat("### Fourth Iteration\n", file = report_filename, append = TRUE)
+}
 
+
+concepts <- error_concepts
+error_concepts <- vector()
+total_concepts <- length(concepts)
+while (length(concepts)) {
+        concept <- concepts[1]
+
+        output <-
+                tryCatch(
+                        skyscraper::getRN(conn = conn,
+                                          input = concept,
+                                          sleep_secs = 30),
+                        error = function(e) paste("Error")
+                )
+
+
+        if (length(output)) {
+
+                if (output == "Error") {
+
+                        error_concepts <-
+                                c(error_concepts,
+                                  concept)
+
+                }
+        }
+
+        concepts <- concepts[-1]
+
+        if (interactive()) {
+
+                secretary::typewrite(secretary::italicize(signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), "percent completed."))
+                secretary::typewrite(secretary::cyanTxt(length(concepts), "out of", total_concepts, "to go."))
+                secretary::typewrite(secretary::redTxt(length(error_concepts), "errors."))
+
+        } else {
+
+
+                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+                cat("\t", length(concepts), "/", total_concepts, " (", signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), " percent completed)\n", sep = "", file = report_filename, append = TRUE)
+                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+                cat("\t", length(error_concepts), " errors\n", sep = "", file = report_filename, append = TRUE)
+
+        }
+}
+
+if (!interactive()) {
+        cat("\n[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+        cat("### Complete\n", file = report_filename, append = TRUE)
+
+        cat("### ERRORS\n", file = report_filename, append = TRUE)
+        cat(error_concepts, sep = "\n", file = report_filename, append = TRUE)
+} else {
+        secretary::typewrite_bold("ERRORS:")
+        error_concepts %>%
+                purrr::map(~secretary::typewrite(., tabs = 1))
+}
 
 chariot::dcAthena(conn = conn)
