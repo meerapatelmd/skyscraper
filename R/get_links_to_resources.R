@@ -168,16 +168,18 @@ get_links_to_resources <-
 
 
                        links_to_resources <-
-                       response %>%
-                               rvest::html_nodes("#locators a") %>%
-                               rvest::html_attrs() %>%
-                               purrr::map(tibble::as_tibble_row) %>%
-                               dplyr::bind_rows() %>%
-                               dplyr::transmute(
-                                       scrape_datetime = Sys.time(),
-                                       resource_agency = `data-name`,
-                                       resource_link = href,
-                                       rn_url = rn_url)
+                               response %>%
+                                       rvest::html_nodes("#locators a") %>%
+                                       rvest::html_attrs() %>%
+                                       purrr::map(tibble::as_tibble_row) %>%
+                                       dplyr::bind_rows() %>%
+                                       dplyr::transmute(
+                                               scrape_datetime = Sys.time(),
+                                               resource_agency = `data-name`,
+                                               resource_link = href,
+                                               rn_url = rn_url) %>%
+                                        dplyr::filter_at(vars(resource_link),
+                                                         any_vars(nchar(.) < 255))
 
 
 

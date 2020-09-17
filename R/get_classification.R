@@ -149,7 +149,9 @@ get_classification <-
                                dplyr::transmute(c_datetime = Sys.time(),
                                                 concept_classification,
                                                 rn_url = rn_url) %>%
-                               dplyr::distinct()
+                               dplyr::distinct()   %>%
+                                dplyr::filter_at(vars(concept_classification),
+                                                 any_vars(nchar(.) < 255))
 
 
 

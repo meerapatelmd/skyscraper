@@ -168,10 +168,13 @@ get_classification_code <-
                                 unlist() %>%
                                 trimws(which = "both") %>%
                                 tibble::as_tibble_col("concept_classification") %>%
-                                dplyr::transmute(scrape_datetime = Sys.time(),
+                                dplyr::transmute(c_datetime = Sys.time(),
                                                  concept_classification,
                                                  rn_url = rn_url) %>%
-                                dplyr::distinct()
+                                dplyr::distinct() %>%
+                                rubix::filter_at_grepl(concept_classification,
+                                                       grepl_phrase = "^Substance Name|^Molecular|^Note",
+                                                       evaluates_to = FALSE)
 
 
 

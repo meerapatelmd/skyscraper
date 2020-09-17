@@ -63,22 +63,33 @@ while (length(rn_urls)) {
 
 
         response <-
+                police::try_catch_error_as_null(
                 xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
-
-        # output <-
-        #         tryCatch(
-        #                 skyscraper::scrapeRN(
-        #                          conn = conn,
-        #                          rn_url = rn_url,
-        #                          sleep_time = 5),
-        #                 error = function(e) paste("Error")
-        #         )
-
-        output <-
-                tryCatch(
-                        skyscraper::get_classification(conn = conn,
-                                                       response = )
                 )
+
+        if (is.null(response)) {
+
+                Sys.sleep(5)
+
+                response <-  police::try_catch_error_as_null(xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE")))
+
+        }
+
+
+        if (!is.null(response)) {
+
+                conn <- chariot::connectAthena()
+                output <-
+                tryCatch(
+                        get_rn_url_validity(conn = conn,
+                                            rn_url = rn_url,
+                                            response = response),
+                        error = function(e) paste("Error"))
+
+                chariot::dcAthena(conn = conn,
+                                  remove = TRUE)
+
+
 
         if (length(output)) {
 
@@ -91,7 +102,69 @@ while (length(rn_urls)) {
                 }
         }
 
+        conn <- chariot::connectAthena()
+        skyscraper::get_names_and_synonyms(conn = conn,
+                                           rn_url = rn_url,
+                                           response = response,
+                                           sleep_time = 0)
+        chariot::dcAthena(conn = conn,
+                          remove = TRUE)
+
+
+
+        conn <- chariot::connectAthena()
+        get_classification_code(conn = conn,
+                                           rn_url = rn_url,
+                                           response = response,
+                                           sleep_time = 0)
+        chariot::dcAthena(conn = conn,
+                          remove = TRUE)
+
+
+        conn <- chariot::connectAthena()
+        get_classification(conn = conn,
+                                rn_url = rn_url,
+                                response = response,
+                                sleep_time = 0)
+        chariot::dcAthena(conn = conn,
+                          remove = TRUE)
+
+
+        conn <- chariot::connectAthena()
+        get_registry_numbers(conn = conn,
+                                            rn_url = rn_url,
+                                            response = response,
+                                            sleep_time = 0)
+        chariot::dcAthena(conn = conn,
+                          remove = TRUE)
+
+
+        conn <- chariot::connectAthena()
+        get_links_to_resources(conn = conn,
+                                         rn_url = rn_url,
+                                         response = response,
+                                         sleep_time = 0)
+        chariot::dcAthena(conn = conn,
+                          remove = TRUE)
+
+        } else {
+                conn <- chariot::connectAthena()
+                get_rn_url_validity(conn = conn,
+                                    rn_url = rn_url)
+                chariot::dcAthena(conn = conn,
+                                  remove = TRUE)
+
+        }
+
+
+
+
+
+
         rn_urls <- rn_urls[-1]
+        rm(rn_url)
+        rm(response)
+        rm(output)
 
         if (interactive()) {
 

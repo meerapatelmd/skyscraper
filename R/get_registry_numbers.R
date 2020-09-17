@@ -165,7 +165,7 @@ get_registry_numbers <-
 
                        registry_numbers_content <-
                                registry_numbers_content %>%
-                               stringr::str_remove_all(pattern = "Registry Numbers")
+                               stringr::str_remove(pattern = "Registry Numbers")
 
 
                         registry_numbers_content2 <- unlist(strsplit(registry_numbers_content, split = "[\r\n\t]"))

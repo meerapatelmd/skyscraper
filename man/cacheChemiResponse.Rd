@@ -9,7 +9,7 @@
 \usage{
 getRN(conn, input, type = "contains", sleep_secs = 3)
 
-get_rn_url_validity(conn, rn_url, sleep_time = 3)
+get_rn_url_validity(conn, rn_url, response, sleep_time = 3)
 
 log_registry_number(conn, raw_concept, type = "contains", sleep_time = 3)
 }

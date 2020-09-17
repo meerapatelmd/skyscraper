@@ -18,6 +18,7 @@
 get_rn_url_validity <-
     function(conn,
              rn_url,
+             response,
              sleep_time = 3) {
 
 
@@ -76,6 +77,25 @@ get_rn_url_validity <-
         if (proceed) {
 
 
+            if (!missing(response)) {
+
+                    if (!is.null(response)) {
+
+                            status_df <-
+                                tibble::tibble(rnuv_datetime = Sys.time(),
+                                               rn_url = rn_url,
+                                               is_404 = FALSE)
+
+
+                    } else {
+                        status_df <-
+                            tibble::tibble(rnuv_datetime = Sys.time(),
+                                           rn_url = rn_url,
+                                           is_404 = is404(rn_url = rn_url))
+                        Sys.sleep(sleep_time)
+                    }
+
+            } else {
 
                 status_df <-
                     tibble::tibble(rnuv_datetime = Sys.time(),
@@ -83,6 +103,7 @@ get_rn_url_validity <-
                                    is_404 = is404(rn_url = rn_url))
 
                 Sys.sleep(sleep_time)
+            }
 
                 if (nrow(showConnections())) {
                     suppressWarnings(closeAllConnections())
