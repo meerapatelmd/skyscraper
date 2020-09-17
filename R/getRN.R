@@ -47,7 +47,7 @@ getRN <-
         # valaciclovir Hcl
         # valproic acid
         # vinblastine sulfate
-        #
+
         #conn <- chariot::connectAthena()
         #input <- "vinblastine sulfate"
         #input <- "Anthracycline"
