@@ -112,7 +112,7 @@ log_registry_number <-
 
 
                 #Remove all spaces
-                processed_concept <- stringr::str_remove_all(raw_concept, "\\s")
+                processed_concept <- stringr::str_remove_all(raw_concept, "\\s|[']{1}")
 
 
                 #url <- "https://chem.nlm.nih.gov/chemidplus/name/contains/technetiumTc99m-labeledtilmanocept"
