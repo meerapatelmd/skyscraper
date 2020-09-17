@@ -32,7 +32,9 @@ if (!interactive()) {
 }
 
 error_concepts <- vector()
+
 total_concepts <- length(concepts)
+
 while (length(concepts)) {
 
         concept <- concepts[1]
@@ -112,7 +114,7 @@ if (!interactive()) {
         cat("########### Second Iteration\n", file = report_filename, append = TRUE)
 }
 
-rm(concepts)
+
 concepts <- error_concepts
 error_concepts <- vector()
 total_concepts <- length(concepts)
