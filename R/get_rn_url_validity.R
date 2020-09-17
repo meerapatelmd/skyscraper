@@ -55,9 +55,7 @@ get_rn_url_validity <-
                                                                      schema = "chemidplus",
                                                                      tableName = "RN_URL_VALIDITY",
                                                                      whereInField = "rn_url",
-                                                                     whereInVector = rn_url)) %>%
-                        dplyr::filter(type == type) %>%
-                        dplyr::filter(response_received == "TRUE")
+                                                                     whereInVector = rn_url))
 
                 }
 

@@ -20,7 +20,7 @@ if ("RN_URL_VALIDITY" %in% chemiTables) {
                      FROM chemidplus.registry_number_log rnl
                      LEFT JOIN chemidplus.rn_url_validity v
                      ON v.rn_url = rnl.rn_url
-                     WHERE rnl.rn_url NOT NULL;",
+                     WHERE rnl.rn_url IS NOT NULL;",
                                      override_cache = TRUE) %>%
                 dplyr::filter_at(vars(c(rnuv_datetime,
                                         is_404)),
@@ -35,7 +35,7 @@ if ("RN_URL_VALIDITY" %in% chemiTables) {
                         "SELECT DISTINCT
                                 rn_url
                         FROM chemidplus.registry_number_log
-                        WHERE rn_url NOT NULL;",
+                        WHERE rn_url IS NOT NULL;",
                         override_cache = TRUE) %>%
                 dplyr::distinct() %>%
                 unlist() %>%
@@ -44,7 +44,7 @@ if ("RN_URL_VALIDITY" %in% chemiTables) {
 
 
 if (!interactive()) {
-        report_filename <- paste0("~/Desktop/maintain_classification_synonym_tables_", as.character(Sys.Date()), ".txt")
+        report_filename <- paste0("~/Desktop/maintain_chemidplus_tables_", as.character(Sys.Date()), ".txt")
         cat(file = report_filename)
 }
 
@@ -53,24 +53,32 @@ errors <- vector()
 total <- length(rn_urls)
 
 
-if (!interactive()) {
-        cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
-        cat("### First Iteration\n", file = report_filename, append = TRUE)
-}
 
+if (!interactive()) {
+        cat("########### First Iteration\n", file = report_filename, append = TRUE)
+}
 
 while (length(rn_urls)) {
         rn_url <- rn_urls[1]
 
+
+        response <-
+                xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
+
+        # output <-
+        #         tryCatch(
+        #                 skyscraper::scrapeRN(
+        #                          conn = conn,
+        #                          rn_url = rn_url,
+        #                          sleep_time = 5),
+        #                 error = function(e) paste("Error")
+        #         )
+
         output <-
                 tryCatch(
-                        skyscraper::scrapeRN(
-                                 conn = conn,
-                                 rn_url = rn_url,
-                                 sleep_time = 5),
-                        error = function(e) paste("Error")
+                        skyscraper::get_classification(conn = conn,
+                                                       response = )
                 )
-
 
         if (length(output)) {
 

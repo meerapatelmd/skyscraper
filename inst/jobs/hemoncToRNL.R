@@ -62,23 +62,48 @@ while (length(concepts)) {
                 }
         }
 
-        concepts <- concepts[-1]
         rm(output)
+
+        concepts <- concepts[-1]
+
+
+        # Getting metrics
+        # 1. current concepts length
+        # 2. completed concepts
+        # 3. percent completed
+        # 4. Error concepts
+
+        # 1
+        current_ct <- length(concepts)
+
+        # 2
+        completed_ct <- total_concepts-current_ct
+
+        # 3
+        percent_completed <- signif(((completed_ct/total_concepts)*100), digits = 2)
+
+        #4.
+        error_ct <- length(error_concepts)
+
 
         if (interactive()) {
 
-                secretary::typewrite(secretary::italicize(signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), "percent completed."))
-                secretary::typewrite(secretary::cyanTxt(length(concepts), "out of", total_concepts, "to go."))
-                secretary::typewrite(secretary::redTxt(length(error_concepts), "errors."))
+                secretary::typewrite(secretary::italicize(percent_completed), "percent completed.")
+                secretary::typewrite(secretary::cyanTxt(current_ct, "out of", total_concepts, "to go."))
+                secretary::typewrite(secretary::redTxt(error_ct, "errors."))
 
         } else {
 
-                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
-                cat("\t", length(concepts), "/", total_concepts, " (", signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), " percent completed)\n", sep = "", file = report_filename, append = TRUE)
-                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
-                cat("\t", length(error_concepts), " errors\n", sep = "", file = report_filename, append = TRUE)
+                cat(paste0("[", as.character(Sys.time()), "]"), sep = "", file = report_filename, append = TRUE)
+                cat("\t", current_ct, "/", total_concepts, " (", percent_completed, " percent completed)\n", sep = "", file = report_filename, append = TRUE)
+                cat(paste0("[", as.character(Sys.time()), "]"), sep = "", file = report_filename, append = TRUE)
+                cat("\t", error_ct, " errors\n", sep = "", file = report_filename, append = TRUE)
 
         }
+        rm(current_ct,
+           completed_ct,
+           percent_completed,
+           error_ct)
 }
 
 
@@ -87,6 +112,7 @@ if (!interactive()) {
         cat("########### Second Iteration\n", file = report_filename, append = TRUE)
 }
 
+rm(concepts)
 concepts <- error_concepts
 error_concepts <- vector()
 total_concepts <- length(concepts)
@@ -122,20 +148,43 @@ while (length(concepts)) {
         concepts <- concepts[-1]
         rm(output)
 
+        # Getting metrics
+        # 1. current concepts length
+        # 2. completed concepts
+        # 3. percent completed
+        # 4. Error concepts
+
+        # 1
+        current_ct <- length(concepts)
+
+        # 2
+        completed_ct <- total_concepts-current_ct
+
+        # 3
+        percent_completed <- signif(((completed_ct/total_concepts)*100), digits = 2)
+
+        #4.
+        error_ct <- length(error_concepts)
+
+
         if (interactive()) {
 
-                secretary::typewrite(secretary::italicize(signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), "percent completed."))
-                secretary::typewrite(secretary::cyanTxt(length(concepts), "out of", total_concepts, "to go."))
-                secretary::typewrite(secretary::redTxt(length(error_concepts), "errors."))
+                secretary::typewrite(secretary::italicize(percent_completed), "percent completed.")
+                secretary::typewrite(secretary::cyanTxt(current_ct, "out of", total_concepts, "to go."))
+                secretary::typewrite(secretary::redTxt(error_ct, "errors."))
 
         } else {
 
-                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
-                cat("\t", length(concepts), "/", total_concepts, " (", signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), " percent completed)\n", sep = "", file = report_filename, append = TRUE)
-                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
-                cat("\t", length(error_concepts), " errors\n", sep = "", file = report_filename, append = TRUE)
+                cat(paste0("[", as.character(Sys.time()), "]"), sep = "", file = report_filename, append = TRUE)
+                cat("\t", current_ct, "/", total_concepts, " (", percent_completed, " percent completed)\n", sep = "", file = report_filename, append = TRUE)
+                cat(paste0("[", as.character(Sys.time()), "]"), sep = "", file = report_filename, append = TRUE)
+                cat("\t", error_ct, " errors\n", sep = "", file = report_filename, append = TRUE)
 
         }
+        rm(current_ct,
+           completed_ct,
+           percent_completed,
+           error_ct)
 }
 
 
@@ -178,20 +227,43 @@ while (length(concepts)) {
         concepts <- concepts[-1]
         rm(output)
 
+        # Getting metrics
+        # 1. current concepts length
+        # 2. completed concepts
+        # 3. percent completed
+        # 4. Error concepts
+
+        # 1
+        current_ct <- length(concepts)
+
+        # 2
+        completed_ct <- total_concepts-current_ct
+
+        # 3
+        percent_completed <- signif(((completed_ct/total_concepts)*100), digits = 2)
+
+        #4.
+        error_ct <- length(error_concepts)
+
+
         if (interactive()) {
 
-                secretary::typewrite(secretary::italicize(signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), "percent completed."))
-                secretary::typewrite(secretary::cyanTxt(length(concepts), "out of", total_concepts, "to go."))
-                secretary::typewrite(secretary::redTxt(length(error_concepts), "errors."))
+                secretary::typewrite(secretary::italicize(percent_completed), "percent completed.")
+                secretary::typewrite(secretary::cyanTxt(current_ct, "out of", total_concepts, "to go."))
+                secretary::typewrite(secretary::redTxt(error_ct, "errors."))
 
         } else {
 
-                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
-                cat("\t", length(concepts), "/", total_concepts, " (", signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), " percent completed)\n", sep = "", file = report_filename, append = TRUE)
-                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
-                cat("\t", length(error_concepts), " errors\n", sep = "", file = report_filename, append = TRUE)
+                cat(paste0("[", as.character(Sys.time()), "]"), sep = "", file = report_filename, append = TRUE)
+                cat("\t", current_ct, "/", total_concepts, " (", percent_completed, " percent completed)\n", sep = "", file = report_filename, append = TRUE)
+                cat(paste0("[", as.character(Sys.time()), "]"), sep = "", file = report_filename, append = TRUE)
+                cat("\t", error_ct, " errors\n", sep = "", file = report_filename, append = TRUE)
 
         }
+        rm(current_ct,
+           completed_ct,
+           percent_completed,
+           error_ct)
 }
 
 
