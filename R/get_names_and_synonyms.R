@@ -36,6 +36,7 @@
 get_names_and_synonyms <-
         function(conn,
                  rn_url,
+                 response,
                  sleep_time = 3) {
 
                 # https://chem.nlm.nih.gov/chemidplus/rn/83-38-5
@@ -84,8 +85,12 @@ get_names_and_synonyms <-
                 # conn <- chariot::connectAthena()
                 # rn_url <- "https://chem.nlm.nih.gov/chemidplus/rn/12674-15-6"
 
-                response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
-                Sys.sleep(sleep_time)
+                if (missing(response)) {
+
+                        response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
+                        Sys.sleep(sleep_time)
+
+                }
 
 
                 if (!missing(conn)) {
@@ -206,7 +211,7 @@ get_names_and_synonyms <-
                                                        purrr::set_names(synonym_types2) %>%
                                                        purrr::map(tibble::as_tibble_col, "concept_synonym_name") %>%
                                                        dplyr::bind_rows(.id = "concept_synonym_type") %>%
-                                               dplyr::transmute(scrape_datetime = as.character(Sys.time()),
+                                               dplyr::transmute(nas_datetime = Sys.time(),
                                                                 rn_url = rn_url,
                                                                 concept_synonym_type,
                                                                 concept_synonym_name
@@ -216,7 +221,7 @@ get_names_and_synonyms <-
                                                dplyr::distinct()
                        } else {
                                synonyms <-
-                                       data.frame(scrape_datetime = as.character(Sys.time()),
+                                       data.frame(nas_datetime = Sys.time(),
                                                       rn_url = rn_url,
                                                       concept_synonym_type = "NA",
                                                       concept_synonym_name = synonyms_content4)
@@ -245,7 +250,7 @@ get_names_and_synonyms <-
                 }
 
                 if (nrow(showConnections())) {
-                        closeAllConnections()
+                        suppressWarnings(closeAllConnections())
                 }
 
 

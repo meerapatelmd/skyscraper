@@ -6,12 +6,12 @@ library(skyscraper)
 
 conn <- chariot::connectAthena()
 
-concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name, pl.*
+concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name, rnl.*
                                  FROM public.concept c
                                  LEFT JOIN public.concept_synonym cs
                                  ON cs.concept_id = c.concept_id
-                                 LEFT JOIN chemidplus.phrase_log pl
-                                 ON pl.input = cs.concept_synonym_name
+                                 LEFT JOIN chemidplus.registry_number_log rnl
+                                 ON rnl.raw_concept = cs.concept_synonym_name
                                  WHERE
                                         c.vocabulary_id = 'HemOnc'
                                                 AND c.invalid_reason IS NULL

@@ -36,6 +36,7 @@
 get_links_to_resources <-
         function(conn,
                  rn_url,
+                 response,
                  sleep_time = 3) {
 
                 # https://chem.nlm.nih.gov/chemidplus/rn/83-38-5
@@ -84,9 +85,12 @@ get_links_to_resources <-
                 # conn <- chariot::connectAthena()
                 # rn_url <- "https://chem.nlm.nih.gov/chemidplus/rn/12674-15-6"
 
-                response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
-                Sys.sleep(sleep_time)
+                if (missing(response)) {
 
+                        response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
+                        Sys.sleep(sleep_time)
+
+                }
 
                 if (!missing(conn)) {
 
@@ -105,7 +109,7 @@ get_links_to_resources <-
 
                         if ("LINKS_TO_RESOURCES"%in% chemiTables) {
 
-                                registry_numbers <-
+                                links_to_resources <-
                                         pg13::query(conn = conn,
                                                     sql_statement = pg13::buildQuery(distinct = TRUE,
                                                                                      schema = "chemidplus",
@@ -120,12 +124,12 @@ get_links_to_resources <-
 
                 # Proceed if:
                 # Connection was provided and no Synonyms Table exists
-                # Connection was provided and registry_numbers is nrow 0
+                # Connection was provided and links_to_resources is nrow 0
                 # No connection was provided
 
                 if (!missing(conn)) {
                         if ("LINKS_TO_RESOURCES" %in% chemiTables) {
-                                proceed <- nrow(registry_numbers) == 0
+                                proceed <- nrow(links_to_resources) == 0
                         } else {
                                 proceed <- TRUE
                         }
@@ -170,7 +174,7 @@ get_links_to_resources <-
                                purrr::map(tibble::as_tibble_row) %>%
                                dplyr::bind_rows() %>%
                                dplyr::transmute(
-                                       scrape_datetime = as.character(Sys.time()),
+                                       scrape_datetime = Sys.time(),
                                        resource_agency = `data-name`,
                                        resource_link = href,
                                        rn_url = rn_url)
@@ -204,7 +208,7 @@ get_links_to_resources <-
 
                 if (missing(conn)) {
 
-                        registry_numbers
+                        links_to_resources
 
                 }
 

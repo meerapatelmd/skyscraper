@@ -36,6 +36,7 @@
 get_classification <-
         function(conn,
                  rn_url,
+                 response,
                  sleep_time = 3) {
 
                 # https://chem.nlm.nih.gov/chemidplus/rn/83-38-5
@@ -84,8 +85,12 @@ get_classification <-
                 # conn <- chariot::connectAthena()
                 # rn_url <- "https://chem.nlm.nih.gov/chemidplus/rn/12674-15-6"
 
-                response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
-                Sys.sleep(sleep_time)
+                if (missing(response)) {
+
+                        response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
+                        Sys.sleep(sleep_time)
+
+                }
 
                 if (!missing(conn)) {
 
@@ -141,7 +146,7 @@ get_classification <-
                                        rvest::html_nodes("#classifications li") %>%
                                        rvest::html_text() %>%
                                tibble::as_tibble_col("concept_classification") %>%
-                               dplyr::transmute(scrape_datetime = as.character(Sys.time()),
+                               dplyr::transmute(c_datetime = Sys.time(),
                                                 concept_classification,
                                                 rn_url = rn_url) %>%
                                dplyr::distinct()

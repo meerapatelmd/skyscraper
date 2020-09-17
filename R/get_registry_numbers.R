@@ -36,6 +36,7 @@
 get_registry_numbers <-
         function(conn,
                  rn_url,
+                 response,
                  sleep_time = 3) {
 
                 # https://chem.nlm.nih.gov/chemidplus/rn/83-38-5
@@ -84,8 +85,12 @@ get_registry_numbers <-
                 # conn <- chariot::connectAthena()
                 # rn_url <- "https://chem.nlm.nih.gov/chemidplus/rn/12674-15-6"
 
-                response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
-                Sys.sleep(sleep_time)
+                if (missing(response)) {
+
+                        response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
+                        Sys.sleep(sleep_time)
+
+                }
 
 
                 if (!missing(conn)) {
@@ -206,7 +211,7 @@ get_registry_numbers <-
                                                        purrr::set_names(number_types2) %>%
                                                        purrr::map(tibble::as_tibble_col, "concept_registry_number") %>%
                                                        dplyr::bind_rows(.id = "concept_registry_number_type") %>%
-                                               dplyr::transmute(scrape_datetime = as.character(Sys.time()),
+                                               dplyr::transmute(scrape_datetime = Sys.time(),
                                                                 rn_url = rn_url,
                                                                 concept_registry_number_type,
                                                                 concept_registry_number
@@ -216,7 +221,7 @@ get_registry_numbers <-
                                                dplyr::distinct()
                        } else {
                                registry_numbers <-
-                                       data.frame(scrape_datetime = as.character(Sys.time()),
+                                       data.frame(scrape_datetime = Sys.time(),
                                                       rn_url = rn_url,
                                                       concept_registry_number_type = "NA",
                                                       concept_registry_number = registry_numbers_content4)
