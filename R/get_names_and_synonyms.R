@@ -1,5 +1,5 @@
 #' @title
-#' Scrape a RN URL
+#' Scrape the Names and Synonyms Section of the RN URL
 #' @description FUNCTION_DESCRIPTION
 #' @param conn PARAM_DESCRIPTION
 #' @param rn_url PARAM_DESCRIPTION
@@ -33,7 +33,7 @@
 #' @importFrom purrr map2 set_names map
 #' @importFrom magrittr %>%
 
-scrapeRN <-
+get_names_and_synonyms <-
         function(conn,
                  rn_url,
                  sleep_time = 3) {
@@ -87,87 +87,6 @@ scrapeRN <-
                 response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
                 Sys.sleep(sleep_time)
 
-                if (!missing(conn)) {
-
-                        connSchemas <-
-                                pg13::lsSchema(conn = conn)
-
-                        if (!("chemidplus" %in% connSchemas)) {
-
-                                pg13::createSchema(conn = conn,
-                                                   schema = "chemidplus")
-
-                        }
-
-                        chemiTables <- pg13::lsTables(conn = conn,
-                                                      schema = "chemidplus")
-
-                        if ("CLASSIFICATION" %in% chemiTables) {
-
-                                classification <-
-                                        pg13::query(conn = conn,
-                                                    sql_statement = pg13::buildQuery(distinct = TRUE,
-                                                                                     schema = "chemidplus",
-                                                                                     tableName = "classification",
-                                                                                     whereInField = "rn_url",
-                                                                                     whereInVector = rn_url))
-
-                        }
-
-
-                }
-
-                # Proceed if:
-                # Connection was provided and no Classificaiton Table exists
-                # Connection was provided and classification is nrow 0
-                # No connection was provided
-
-                if (!missing(conn)) {
-                        if ("CLASSIFICATION" %in% chemiTables) {
-                                proceed <- nrow(classification) == 0
-                        } else {
-                                proceed <- TRUE
-                        }
-                } else {
-                        proceed <- TRUE
-                }
-
-
-                if (proceed) {
-
-
-                        classifications <-
-                               response %>%
-                                       rvest::html_nodes("#classifications li") %>%
-                                       rvest::html_text() %>%
-                               tibble::as_tibble_col("concept_classification") %>%
-                               dplyr::transmute(scrape_datetime = as.character(Sys.time()),
-                                                concept_classification,
-                                                rn_url = rn_url) %>%
-                               dplyr::distinct()
-
-
-
-                        if (!missing(conn)) {
-
-
-                                if ("CLASSIFICATION" %in% chemiTables) {
-                                        pg13::appendTable(conn = conn,
-                                                          schema = "chemidplus",
-                                                          tableName = "classification",
-                                                          classifications)
-                                } else {
-                                        pg13::writeTable(conn = conn,
-                                                         schema = "chemidplus",
-                                                         tableName = "classification",
-                                                         classifications)
-                                }
-
-                        }
-
-
-                }
-
 
                 if (!missing(conn)) {
 
@@ -184,13 +103,13 @@ scrapeRN <-
                         chemiTables <- pg13::lsTables(conn = conn,
                                                       schema = "chemidplus")
 
-                        if ("SYNONYMS" %in% chemiTables) {
+                        if ("NAMES_AND_SYNONYMS" %in% chemiTables) {
 
                                 synonyms <-
                                         pg13::query(conn = conn,
                                                     sql_statement = pg13::buildQuery(distinct = TRUE,
                                                                                      schema = "chemidplus",
-                                                                                     tableName = "synonyms",
+                                                                                     tableName = "names_and_synonyms",
                                                                                      whereInField = "rn_url",
                                                                                      whereInVector = rn_url))
 
@@ -205,7 +124,7 @@ scrapeRN <-
                 # No connection was provided
 
                 if (!missing(conn)) {
-                        if ("SYNONYMS" %in% chemiTables) {
+                        if ("NAMES_AND_SYNONYMS" %in% chemiTables) {
                                 proceed <- nrow(synonyms) == 0
                         } else {
                                 proceed <- TRUE
@@ -309,15 +228,15 @@ scrapeRN <-
                        if (!missing(conn)) {
 
 
-                               if ("SYNONYMS" %in% chemiTables) {
+                               if ("NAMES_AND_SYNONYMS" %in% chemiTables) {
                                        pg13::appendTable(conn = conn,
                                                          schema = "chemidplus",
-                                                         tableName = "synonyms",
+                                                         tableName = "names_and_synonyms",
                                                          synonyms)
                                } else {
                                        pg13::writeTable(conn = conn,
                                                         schema = "chemidplus",
-                                                        tableName = "synonyms",
+                                                        tableName = "names_and_synonyms",
                                                         synonyms)
                                }
 
@@ -332,8 +251,7 @@ scrapeRN <-
 
                 if (missing(conn)) {
 
-                        list(CLASSIFICATIONS = classifications,
-                             SYNONYMS = synonyms)
+                        synonyms
 
                 }
 

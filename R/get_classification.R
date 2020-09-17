@@ -1,5 +1,5 @@
 #' @title
-#' Scrape a RN URL
+#' Scrape the Classification Section of RN URL
 #' @description FUNCTION_DESCRIPTION
 #' @param conn PARAM_DESCRIPTION
 #' @param rn_url PARAM_DESCRIPTION
@@ -33,7 +33,7 @@
 #' @importFrom purrr map2 set_names map
 #' @importFrom magrittr %>%
 
-scrapeRN <-
+get_classification <-
         function(conn,
                  rn_url,
                  sleep_time = 3) {
@@ -169,171 +169,9 @@ scrapeRN <-
                 }
 
 
-                if (!missing(conn)) {
-
-                        connSchemas <-
-                                pg13::lsSchema(conn = conn)
-
-                        if (!("chemidplus" %in% connSchemas)) {
-
-                                pg13::createSchema(conn = conn,
-                                                   schema = "chemidplus")
-
-                        }
-
-                        chemiTables <- pg13::lsTables(conn = conn,
-                                                      schema = "chemidplus")
-
-                        if ("SYNONYMS" %in% chemiTables) {
-
-                                synonyms <-
-                                        pg13::query(conn = conn,
-                                                    sql_statement = pg13::buildQuery(distinct = TRUE,
-                                                                                     schema = "chemidplus",
-                                                                                     tableName = "synonyms",
-                                                                                     whereInField = "rn_url",
-                                                                                     whereInVector = rn_url))
-
-                        }
-
-
-                }
-
-                # Proceed if:
-                # Connection was provided and no Synonyms Table exists
-                # Connection was provided and synonyms is nrow 0
-                # No connection was provided
-
-                if (!missing(conn)) {
-                        if ("SYNONYMS" %in% chemiTables) {
-                                proceed <- nrow(synonyms) == 0
-                        } else {
-                                proceed <- TRUE
-                        }
-                } else {
-                        proceed <- TRUE
-                }
-
-
-                if (proceed) {
-
-
-                       synonym_types <-
-                               response %>%
-                               rvest::html_nodes("#names h3") %>%
-                               rvest::html_text()
-
-
-                       if (length(synonym_types) == 0) {
-                               synonym_types <-
-                               response %>%
-                                       rvest::html_nodes("#names h2") %>%
-                                       rvest::html_text()
-                       }
-
-
-
-                       synonyms_content <-
-                       response %>%
-                               rvest::html_nodes("#names") %>%
-                               rvest::html_text()
-
-
-                       synonyms_content <-
-                               synonyms_content %>%
-                               stringr::str_remove_all(pattern = "Names and Synonyms")
-
-
-                        synonyms_content2 <- unlist(strsplit(synonyms_content, split = "[\r\n\t]"))
-
-
-                       synonyms_content3 <-
-                               stringr::str_remove_all(synonyms_content2, "[^ -~]")
-
-                       synonyms_content4 <- unlist(centipede::strsplit(synonyms_content3,
-                                                                       type = "after",
-                                                                       split = paste(synonym_types, collapse = "|")))
-
-
-
-                       if (length(synonym_types) > 1) {
-                                       index <- list()
-                                       synonym_types2 <- synonym_types
-                                       while (length(synonym_types)) {
-
-                                               synonym_type <- synonym_types[1]
-
-                                               index[[length(index)+1]] <-
-                                                         grep(synonym_type,
-                                                              synonyms_content4)
-
-
-                                               synonym_types <- synonym_types[-1]
-                                       }
-
-                                       index <- unlist(index)
-                                       ending <- c((index[-1])-1,
-                                                   length(synonyms_content4))
-
-                                       df <-
-                                       data.frame(index, ending) %>%
-                                               dplyr::mutate(starting = index+1)
-
-
-                                       synonyms <-
-                                               df$starting %>%
-                                                       purrr::map2(df$ending,
-                                                                   function(x,y) synonyms_content4[x:y]) %>%
-                                                       purrr::set_names(synonym_types2) %>%
-                                                       purrr::map(tibble::as_tibble_col, "concept_synonym_name") %>%
-                                                       dplyr::bind_rows(.id = "concept_synonym_type") %>%
-                                               dplyr::transmute(scrape_datetime = as.character(Sys.time()),
-                                                                rn_url = rn_url,
-                                                                concept_synonym_type,
-                                                                concept_synonym_name
-                                                                ) %>%
-                                               dplyr::mutate_at(vars(concept_synonym_name),
-                                                                ~substr(., 1, 254)) %>%
-                                               dplyr::distinct()
-                       } else {
-                               synonyms <-
-                                       data.frame(scrape_datetime = as.character(Sys.time()),
-                                                      rn_url = rn_url,
-                                                      concept_synonym_type = "NA",
-                                                      concept_synonym_name = synonyms_content4)
-
-                       }
-
-
-
-                       if (!missing(conn)) {
-
-
-                               if ("SYNONYMS" %in% chemiTables) {
-                                       pg13::appendTable(conn = conn,
-                                                         schema = "chemidplus",
-                                                         tableName = "synonyms",
-                                                         synonyms)
-                               } else {
-                                       pg13::writeTable(conn = conn,
-                                                        schema = "chemidplus",
-                                                        tableName = "synonyms",
-                                                        synonyms)
-                               }
-
-                       }
-
-                }
-
-                if (nrow(showConnections())) {
-                        closeAllConnections()
-                }
-
-
                 if (missing(conn)) {
 
-                        list(CLASSIFICATIONS = classifications,
-                             SYNONYMS = synonyms)
+                       classifications
 
                 }
 

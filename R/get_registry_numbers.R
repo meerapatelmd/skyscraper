@@ -1,5 +1,5 @@
 #' @title
-#' Scrape a RN URL
+#' Scrape the Registry Numbers Section of the RN URL
 #' @description FUNCTION_DESCRIPTION
 #' @param conn PARAM_DESCRIPTION
 #' @param rn_url PARAM_DESCRIPTION
@@ -33,7 +33,7 @@
 #' @importFrom purrr map2 set_names map
 #' @importFrom magrittr %>%
 
-scrapeRN <-
+get_registry_numbers <-
         function(conn,
                  rn_url,
                  sleep_time = 3) {
@@ -87,87 +87,6 @@ scrapeRN <-
                 response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
                 Sys.sleep(sleep_time)
 
-                if (!missing(conn)) {
-
-                        connSchemas <-
-                                pg13::lsSchema(conn = conn)
-
-                        if (!("chemidplus" %in% connSchemas)) {
-
-                                pg13::createSchema(conn = conn,
-                                                   schema = "chemidplus")
-
-                        }
-
-                        chemiTables <- pg13::lsTables(conn = conn,
-                                                      schema = "chemidplus")
-
-                        if ("CLASSIFICATION" %in% chemiTables) {
-
-                                classification <-
-                                        pg13::query(conn = conn,
-                                                    sql_statement = pg13::buildQuery(distinct = TRUE,
-                                                                                     schema = "chemidplus",
-                                                                                     tableName = "classification",
-                                                                                     whereInField = "rn_url",
-                                                                                     whereInVector = rn_url))
-
-                        }
-
-
-                }
-
-                # Proceed if:
-                # Connection was provided and no Classificaiton Table exists
-                # Connection was provided and classification is nrow 0
-                # No connection was provided
-
-                if (!missing(conn)) {
-                        if ("CLASSIFICATION" %in% chemiTables) {
-                                proceed <- nrow(classification) == 0
-                        } else {
-                                proceed <- TRUE
-                        }
-                } else {
-                        proceed <- TRUE
-                }
-
-
-                if (proceed) {
-
-
-                        classifications <-
-                               response %>%
-                                       rvest::html_nodes("#classifications li") %>%
-                                       rvest::html_text() %>%
-                               tibble::as_tibble_col("concept_classification") %>%
-                               dplyr::transmute(scrape_datetime = as.character(Sys.time()),
-                                                concept_classification,
-                                                rn_url = rn_url) %>%
-                               dplyr::distinct()
-
-
-
-                        if (!missing(conn)) {
-
-
-                                if ("CLASSIFICATION" %in% chemiTables) {
-                                        pg13::appendTable(conn = conn,
-                                                          schema = "chemidplus",
-                                                          tableName = "classification",
-                                                          classifications)
-                                } else {
-                                        pg13::writeTable(conn = conn,
-                                                         schema = "chemidplus",
-                                                         tableName = "classification",
-                                                         classifications)
-                                }
-
-                        }
-
-
-                }
-
 
                 if (!missing(conn)) {
 
@@ -184,13 +103,13 @@ scrapeRN <-
                         chemiTables <- pg13::lsTables(conn = conn,
                                                       schema = "chemidplus")
 
-                        if ("SYNONYMS" %in% chemiTables) {
+                        if ("REGISTRY_NUMBERS" %in% chemiTables) {
 
-                                synonyms <-
+                                registry_numbers <-
                                         pg13::query(conn = conn,
                                                     sql_statement = pg13::buildQuery(distinct = TRUE,
                                                                                      schema = "chemidplus",
-                                                                                     tableName = "synonyms",
+                                                                                     tableName = "registry_numbers",
                                                                                      whereInField = "rn_url",
                                                                                      whereInVector = rn_url))
 
@@ -201,12 +120,12 @@ scrapeRN <-
 
                 # Proceed if:
                 # Connection was provided and no Synonyms Table exists
-                # Connection was provided and synonyms is nrow 0
+                # Connection was provided and registry_numbers is nrow 0
                 # No connection was provided
 
                 if (!missing(conn)) {
-                        if ("SYNONYMS" %in% chemiTables) {
-                                proceed <- nrow(synonyms) == 0
+                        if ("REGISTRY_NUMBERS" %in% chemiTables) {
+                                proceed <- nrow(registry_numbers) == 0
                         } else {
                                 proceed <- TRUE
                         }
@@ -218,89 +137,89 @@ scrapeRN <-
                 if (proceed) {
 
 
-                       synonym_types <-
+                       number_types <-
                                response %>%
-                               rvest::html_nodes("#names h3") %>%
+                               rvest::html_nodes("#numbers h3") %>%
                                rvest::html_text()
 
 
-                       if (length(synonym_types) == 0) {
-                               synonym_types <-
+                       if (length(number_types) == 0) {
+                               number_types <-
                                response %>%
-                                       rvest::html_nodes("#names h2") %>%
+                                       rvest::html_nodes("#numbers h2") %>%
                                        rvest::html_text()
                        }
 
 
 
-                       synonyms_content <-
+                       registry_numbers_content <-
                        response %>%
-                               rvest::html_nodes("#names") %>%
+                               rvest::html_nodes("#numbers") %>%
                                rvest::html_text()
 
 
-                       synonyms_content <-
-                               synonyms_content %>%
-                               stringr::str_remove_all(pattern = "Names and Synonyms")
+                       registry_numbers_content <-
+                               registry_numbers_content %>%
+                               stringr::str_remove_all(pattern = "Registry Numbers")
 
 
-                        synonyms_content2 <- unlist(strsplit(synonyms_content, split = "[\r\n\t]"))
+                        registry_numbers_content2 <- unlist(strsplit(registry_numbers_content, split = "[\r\n\t]"))
 
 
-                       synonyms_content3 <-
-                               stringr::str_remove_all(synonyms_content2, "[^ -~]")
+                       registry_numbers_content3 <-
+                               stringr::str_remove_all(registry_numbers_content2, "[^ -~]")
 
-                       synonyms_content4 <- unlist(centipede::strsplit(synonyms_content3,
+                       registry_numbers_content4 <- unlist(centipede::strsplit(registry_numbers_content3,
                                                                        type = "after",
-                                                                       split = paste(synonym_types, collapse = "|")))
+                                                                       split = paste(number_types, collapse = "|")))
 
 
 
-                       if (length(synonym_types) > 1) {
+                       if (length(number_types) > 1) {
                                        index <- list()
-                                       synonym_types2 <- synonym_types
-                                       while (length(synonym_types)) {
+                                       number_types2 <- number_types
+                                       while (length(number_types)) {
 
-                                               synonym_type <- synonym_types[1]
+                                               synonym_type <- number_types[1]
 
                                                index[[length(index)+1]] <-
                                                          grep(synonym_type,
-                                                              synonyms_content4)
+                                                              registry_numbers_content4)
 
 
-                                               synonym_types <- synonym_types[-1]
+                                               number_types <- number_types[-1]
                                        }
 
                                        index <- unlist(index)
                                        ending <- c((index[-1])-1,
-                                                   length(synonyms_content4))
+                                                   length(registry_numbers_content4))
 
                                        df <-
                                        data.frame(index, ending) %>%
                                                dplyr::mutate(starting = index+1)
 
 
-                                       synonyms <-
+                                       registry_numbers <-
                                                df$starting %>%
                                                        purrr::map2(df$ending,
-                                                                   function(x,y) synonyms_content4[x:y]) %>%
-                                                       purrr::set_names(synonym_types2) %>%
-                                                       purrr::map(tibble::as_tibble_col, "concept_synonym_name") %>%
-                                                       dplyr::bind_rows(.id = "concept_synonym_type") %>%
+                                                                   function(x,y) registry_numbers_content4[x:y]) %>%
+                                                       purrr::set_names(number_types2) %>%
+                                                       purrr::map(tibble::as_tibble_col, "concept_registry_number") %>%
+                                                       dplyr::bind_rows(.id = "concept_registry_number_type") %>%
                                                dplyr::transmute(scrape_datetime = as.character(Sys.time()),
                                                                 rn_url = rn_url,
-                                                                concept_synonym_type,
-                                                                concept_synonym_name
+                                                                concept_registry_number_type,
+                                                                concept_registry_number
                                                                 ) %>%
-                                               dplyr::mutate_at(vars(concept_synonym_name),
+                                               dplyr::mutate_at(vars(concept_registry_number),
                                                                 ~substr(., 1, 254)) %>%
                                                dplyr::distinct()
                        } else {
-                               synonyms <-
+                               registry_numbers <-
                                        data.frame(scrape_datetime = as.character(Sys.time()),
                                                       rn_url = rn_url,
-                                                      concept_synonym_type = "NA",
-                                                      concept_synonym_name = synonyms_content4)
+                                                      concept_registry_number_type = "NA",
+                                                      concept_registry_number = registry_numbers_content4)
 
                        }
 
@@ -309,16 +228,16 @@ scrapeRN <-
                        if (!missing(conn)) {
 
 
-                               if ("SYNONYMS" %in% chemiTables) {
+                               if ("REGISTRY_NUMBERS" %in% chemiTables) {
                                        pg13::appendTable(conn = conn,
                                                          schema = "chemidplus",
-                                                         tableName = "synonyms",
-                                                         synonyms)
+                                                         tableName = "REGISTRY_NUMBERS",
+                                                         registry_numbers)
                                } else {
                                        pg13::writeTable(conn = conn,
                                                         schema = "chemidplus",
-                                                        tableName = "synonyms",
-                                                        synonyms)
+                                                        tableName = "REGISTRY_NUMBERS",
+                                                        registry_numbers)
                                }
 
                        }
@@ -332,8 +251,7 @@ scrapeRN <-
 
                 if (missing(conn)) {
 
-                        list(CLASSIFICATIONS = classifications,
-                             SYNONYMS = synonyms)
+                        registry_numbers
 
                 }
 
