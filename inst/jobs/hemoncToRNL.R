@@ -89,9 +89,56 @@ if (!interactive()) {
         cat("########### First Iteration\n", file = report_filename, append = TRUE)
 }
 
-error_concepts <-
-runHemOncToRNL(concepts = concepts,
-               sleep_time = 5)
+error_concepts <- vector()
+total_concepts <- length(concepts)
+while (length(concepts)) {
+
+        concept <- concepts[1]
+
+        conn <- chariot::connectAthena()
+
+        output <-
+                tryCatch(
+                        log_registry_number(conn = conn,
+                                            raw_concept = concept,
+                                            sleep_time = 5),
+                        error = function(e) paste("Error")
+                )
+
+        chariot::dcAthena(conn = conn,
+                          remove = TRUE)
+
+
+        if (length(output)) {
+
+                if (output == "Error") {
+
+                        error_concepts <-
+                                c(error_concepts,
+                                  concept)
+
+                }
+        }
+
+        concepts <- concepts[-1]
+        rm(output)
+
+        if (interactive()) {
+
+                secretary::typewrite(secretary::italicize(signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), "percent completed."))
+                secretary::typewrite(secretary::cyanTxt(length(concepts), "out of", total_concepts, "to go."))
+                secretary::typewrite(secretary::redTxt(length(error_concepts), "errors."))
+
+        } else {
+
+                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+                cat("\t", length(concepts), "/", total_concepts, " (", signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), " percent completed)\n", sep = "", file = report_filename, append = TRUE)
+                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+                cat("\t", length(error_concepts), " errors\n", sep = "", file = report_filename, append = TRUE)
+
+        }
+}
+
 
 
 if (!interactive()) {
@@ -99,10 +146,55 @@ if (!interactive()) {
 }
 
 concepts <- error_concepts
-rm(error_concepts)
+error_concepts <- vector()
+total_concepts <- length(concepts)
+while (length(concepts)) {
 
-runHemOncToRNL(concepts = concepts,
-               sleep_time = 10)
+        concept <- concepts[1]
+
+        conn <- chariot::connectAthena()
+
+        output <-
+                tryCatch(
+                        log_registry_number(conn = conn,
+                                            raw_concept = concept,
+                                            sleep_time = 10),
+                        error = function(e) paste("Error")
+                )
+
+        chariot::dcAthena(conn = conn,
+                          remove = TRUE)
+
+
+        if (length(output)) {
+
+                if (output == "Error") {
+
+                        error_concepts <-
+                                c(error_concepts,
+                                  concept)
+
+                }
+        }
+
+        concepts <- concepts[-1]
+        rm(output)
+
+        if (interactive()) {
+
+                secretary::typewrite(secretary::italicize(signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), "percent completed."))
+                secretary::typewrite(secretary::cyanTxt(length(concepts), "out of", total_concepts, "to go."))
+                secretary::typewrite(secretary::redTxt(length(error_concepts), "errors."))
+
+        } else {
+
+                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+                cat("\t", length(concepts), "/", total_concepts, " (", signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), " percent completed)\n", sep = "", file = report_filename, append = TRUE)
+                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+                cat("\t", length(error_concepts), " errors\n", sep = "", file = report_filename, append = TRUE)
+
+        }
+}
 
 
 if (!interactive()) {
@@ -110,10 +202,55 @@ if (!interactive()) {
 }
 
 concepts <- error_concepts
-rm(error_concepts)
+error_concepts <- vector()
+total_concepts <- length(concepts)
+while (length(concepts)) {
 
-runHemOncToRNL(concepts = concepts,
-               sleep_time = 20)
+        concept <- concepts[1]
+
+        conn <- chariot::connectAthena()
+
+        output <-
+                tryCatch(
+                        log_registry_number(conn = conn,
+                                            raw_concept = concept,
+                                            sleep_time = 20),
+                        error = function(e) paste("Error")
+                )
+
+        chariot::dcAthena(conn = conn,
+                          remove = TRUE)
+
+
+        if (length(output)) {
+
+                if (output == "Error") {
+
+                        error_concepts <-
+                                c(error_concepts,
+                                  concept)
+
+                }
+        }
+
+        concepts <- concepts[-1]
+        rm(output)
+
+        if (interactive()) {
+
+                secretary::typewrite(secretary::italicize(signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), "percent completed."))
+                secretary::typewrite(secretary::cyanTxt(length(concepts), "out of", total_concepts, "to go."))
+                secretary::typewrite(secretary::redTxt(length(error_concepts), "errors."))
+
+        } else {
+
+                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+                cat("\t", length(concepts), "/", total_concepts, " (", signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), " percent completed)\n", sep = "", file = report_filename, append = TRUE)
+                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+                cat("\t", length(error_concepts), " errors\n", sep = "", file = report_filename, append = TRUE)
+
+        }
+}
 
 
 if (!interactive()) {
