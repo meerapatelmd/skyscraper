@@ -63,7 +63,7 @@ runHemOncToRNL <-
 
 
 if (!interactive()) {
-        report_filename <- paste0("~/Desktop/maintain_hemonc_phrase_log_", as.character(Sys.Date()), ".txt")
+        report_filename <- paste0("~/Desktop/hemonc_to_registry_number_log_", as.character(Sys.Date()), ".txt")
         cat(file = report_filename)
 }
 
