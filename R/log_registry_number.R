@@ -161,9 +161,9 @@ log_registry_number <-
                                     status_df <-
                                         status_df %>%
                                         dplyr::mutate(response_recorded = "FALSE") %>%
-                                        dplyr::mutate(compound_match = "NA",
-                                                      rn = "NA",
-                                                      rn_url = "NA")
+                                        dplyr::mutate(compound_match = NA,
+                                                      rn = NA,
+                                                      rn_url = NA)
 
 
                                 }
@@ -174,11 +174,11 @@ log_registry_number <-
                                 status_df <-
                                     status_df %>%
                                     dplyr::mutate(response_received = "FALSE",
-                                                  no_record = "NA",
+                                                  no_record = NA,
                                                   response_recorded = "FALSE")  %>%
-                                    dplyr::mutate(compound_match = "NA",
-                                                  rn = "NA",
-                                                  rn_url = "NA")
+                                    dplyr::mutate(compound_match = NA,
+                                                  rn = NA,
+                                                  rn_url = NA)
 
                         }
 

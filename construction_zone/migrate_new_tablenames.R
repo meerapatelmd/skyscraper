@@ -85,3 +85,27 @@ pg13::writeTable(conn = conn,
 pg13::dropTable(conn = conn,
                 schema = "chemidplus",
                 tableName = "saved")
+
+
+
+registry_number_log <-
+        pg13::readTable(conn = conn,
+                        schema = "chemidplus",
+                        tableName = "registry_number_log")
+
+pg13::renameTable(conn = conn,
+                  schema = "chemidplus",
+                  tableName = "registry_number_log",
+                  newTableName = "saved")
+
+
+new_registry_number_log <-
+        registry_number_log %>%
+        mutate(compound_match = na_if(compound_match, "NA")) %>%
+        mutate(rn = na_if(rn, "NA")) %>%
+        mutate(rn_url = na_if(rn_url, "NA"))
+
+pg13::writeTable(conn = conn,
+                 schema = "chemidplus",
+                 tableName = "registry_number_log",
+                 new_registry_number_log)

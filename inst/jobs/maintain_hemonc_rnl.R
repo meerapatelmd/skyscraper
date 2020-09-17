@@ -4,7 +4,77 @@ library(chariot)
 library(pg13)
 library(skyscraper)
 
-conn <- chariot::connectAthena()
+
+
+#### Function
+runHemOncToRNL <-
+        function(concepts,
+                 sleep_time) {
+                while (length(concepts)) {
+                        error_concepts <- vector()
+                        total_concepts <- length(concepts)
+
+
+                        concept <- concepts[1]
+
+                        # output <-
+                        #         tryCatch(
+                        #                 skyscraper::getRN(
+                        #                         conn = conn,
+                        #                         input = concept,
+                        #                         sleep_secs = 5),
+                        #                 error = function(e) paste("Error")
+                        #         )
+
+                        conn <- chariot::connectAthena()
+
+                        output <-
+                                tryCatch(
+                                        log_registry_number(conn = conn,
+                                                            raw_concept = concept,
+                                                            sleep_time = sleep_time),
+                                        error = function(e) paste("Error")
+                                )
+
+                        chariot::dcAthena(conn = conn,
+                                          remove = TRUE)
+
+
+                        if (length(output)) {
+
+                                if (output == "Error") {
+
+                                        error_concepts <<-
+                                                c(error_concepts,
+                                                  concept)
+
+                                }
+                        }
+
+                        concepts <- concepts[-1]
+
+                        if (interactive()) {
+
+                                secretary::typewrite(secretary::italicize(signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), "percent completed."))
+                                secretary::typewrite(secretary::cyanTxt(length(concepts), "out of", total_concepts, "to go."))
+                                secretary::typewrite(secretary::redTxt(length(error_concepts), "errors."))
+
+                        } else {
+
+                                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+                                cat("\t", length(concepts), "/", total_concepts, " (", signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), " percent completed)\n", sep = "", file = report_filename, append = TRUE)
+                                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
+                                cat("\t", length(error_concepts), " errors\n", sep = "", file = report_filename, append = TRUE)
+
+                        }
+                }
+        }
+
+
+if (!interactive()) {
+        report_filename <- paste0("~/Desktop/maintain_hemonc_phrase_log_", as.character(Sys.Date()), ".txt")
+        cat(file = report_filename)
+}
 
 concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name, rnl.*
                                  FROM public.concept c
@@ -23,34 +93,38 @@ concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name, rnl.*
                 unlist()
 
 
-
 if (!interactive()) {
-        report_filename <- paste0("~/Desktop/maintain_hemonc_phrase_log_", as.character(Sys.Date()), ".txt")
-        cat(file = report_filename)
+        cat("########### First Iteration\n", file = report_filename, append = TRUE)
 }
 
-error_concepts <- vector()
-total_concepts <- length(concepts)
-
-
-if (!interactive()) {
-        cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
-        cat("### First Iteration\n", file = report_filename, append = TRUE)
-}
-
-
+error_concepts <-
+runHemOncToRNL(concepts = concepts,
+               sleep_time = 5)
 
 while (length(concepts)) {
         concept <- concepts[1]
 
+        # output <-
+        #         tryCatch(
+        #                 skyscraper::getRN(
+        #                         conn = conn,
+        #                         input = concept,
+        #                         sleep_secs = 5),
+        #                 error = function(e) paste("Error")
+        #         )
+
+        conn <- chariot::connectAthena()
+
         output <-
                 tryCatch(
-                        skyscraper::getRN(
-                                conn = conn,
-                                input = concept,
-                                sleep_secs = 5),
+                        log_registry_number(conn = conn,
+                                                        raw_concept = concept,
+                                                        sleep_time = 5),
                         error = function(e) paste("Error")
                 )
+
+        chariot::dcAthena(conn = conn,
+                          remove = TRUE)
 
 
         if (length(output)) {
