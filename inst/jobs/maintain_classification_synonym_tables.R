@@ -13,7 +13,8 @@ chariot::queryAthena("SELECT pl.*, s.scrape_datetime, s.concept_synonym_name
                      FROM chemidplus.phrase_log pl
                      LEFT JOIN chemidplus.synonyms s
                      ON s.rn_url = pl.rn_url
-                     WHERE pl.rn_url <> 'NA';") %>%
+                     WHERE pl.rn_url <> 'NA';",
+                     override_cache = TRUE) %>%
         dplyr::filter_at(vars(c(scrape_datetime,
                                 concept_synonym_name)),
                          all_vars(is.na(.))) %>%
