@@ -89,6 +89,7 @@ if (!interactive()) {
         cat("########### First Iteration\n", file = report_filename, append = TRUE)
 }
 
+error_concepts <-
 runHemOncToRNL(concepts = concepts,
                sleep_time = 5)
 
