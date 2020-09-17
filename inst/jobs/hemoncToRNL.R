@@ -11,7 +11,7 @@ runHemOncToRNL <-
         function(concepts,
                  sleep_time) {
                 while (length(concepts)) {
-                        error_concepts <<- vector()
+                        error_concepts <- vector()
                         total_concepts <- length(concepts)
 
 
@@ -35,7 +35,7 @@ runHemOncToRNL <-
 
                                 if (output == "Error") {
 
-                                        error_concepts <<-
+                                        error_concepts <-
                                                 c(error_concepts,
                                                   concept)
 
@@ -59,6 +59,7 @@ runHemOncToRNL <-
 
                         }
                 }
+                return(error_concepts)
         }
 
 
