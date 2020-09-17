@@ -5,15 +5,30 @@ library(pg13)
 library(skyscraper)
 
 
+concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name, rnl.*
+                                 FROM public.concept c
+                                 LEFT JOIN public.concept_synonym cs
+                                 ON cs.concept_id = c.concept_id
+                                 LEFT JOIN chemidplus.registry_number_log rnl
+                                 ON rnl.raw_concept = cs.concept_synonym_name
+                                 WHERE
+                                        c.vocabulary_id = 'HemOnc'
+                                                AND c.invalid_reason IS NULL
+                                                AND c.domain_id = 'Drug';",
+                                 override_cache = TRUE) %>%
+        dplyr::filter_at(vars(!concept_synonym_name),
+                         all_vars(is.na(.))) %>%
+        dplyr::select(concept_synonym_name) %>%
+        unlist()
 
 #### Function
 runHemOncToRNL <-
         function(concepts,
                  sleep_time) {
-                while (length(concepts)) {
-                        error_concepts <- vector()
-                        total_concepts <- length(concepts)
+                error_concepts <- vector()
+                total_concepts <- length(concepts)
 
+                while (length(concepts)) {
 
                         concept <- concepts[1]
 
@@ -43,6 +58,7 @@ runHemOncToRNL <-
                         }
 
                         concepts <- concepts[-1]
+                        rm(output)
 
                         if (interactive()) {
 
@@ -67,22 +83,6 @@ if (!interactive()) {
         report_filename <- paste0("~/Desktop/hemonc_to_registry_number_log_", as.character(Sys.Date()), ".txt")
         cat(file = report_filename)
 }
-
-concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name, rnl.*
-                                 FROM public.concept c
-                                 LEFT JOIN public.concept_synonym cs
-                                 ON cs.concept_id = c.concept_id
-                                 LEFT JOIN chemidplus.registry_number_log rnl
-                                 ON rnl.raw_concept = cs.concept_synonym_name
-                                 WHERE
-                                        c.vocabulary_id = 'HemOnc'
-                                                AND c.invalid_reason IS NULL
-                                                AND c.domain_id = 'Drug';",
-                                 override_cache = TRUE) %>%
-                dplyr::filter_at(vars(!concept_synonym_name),
-                                 all_vars(is.na(.))) %>%
-                dplyr::select(concept_synonym_name) %>%
-                unlist()
 
 
 if (!interactive()) {
