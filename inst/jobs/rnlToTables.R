@@ -5,23 +5,43 @@ library(pg13)
 library(skyscraper)
 
 
+# RNL to Validity Table
 conn <- chariot::connectAthena()
+chemiTables <-
+pg13::lsTables(conn = conn,
+               schema = "chemidplus")
+chariot::dcAthena(conn = conn,
+                  remove = TRUE)
 
+if ("RN_URL_VALIDITY" %in% chemiTables) {
+        rn_urls <-
+                chariot::queryAthena(
+                    "SELECT rnl.*, v.rnuv_datetime, v.is_404
+                     FROM chemidplus.registry_number_log rnl
+                     LEFT JOIN chemidplus.rn_url_validity v
+                     ON v.rn_url = rnl.rn_url
+                     WHERE rnl.rn_url NOT NULL;",
+                                     override_cache = TRUE) %>%
+                dplyr::filter_at(vars(c(rnuv_datetime,
+                                        is_404)),
+                                 all_vars(is.na(.))) %>%
+                dplyr::select(rn_url) %>%
+                dplyr::distinct() %>%
+                unlist() %>%
+                unname()
+} else {
+        rn_urls <-
+                chariot::queryAthena(
+                        "SELECT DISTINCT
+                                rn_url
+                        FROM chemidplus.registry_number_log
+                        WHERE rn_url NOT NULL;",
+                        override_cache = TRUE) %>%
+                dplyr::distinct() %>%
+                unlist() %>%
+                unname()
+}
 
-rn_urls <-
-chariot::queryAthena("SELECT pl.*, s.scrape_datetime, s.concept_synonym_name
-                     FROM chemidplus.phrase_log pl
-                     LEFT JOIN chemidplus.synonyms s
-                     ON s.rn_url = pl.rn_url
-                     WHERE pl.rn_url <> 'NA';",
-                     override_cache = TRUE) %>%
-        dplyr::filter_at(vars(c(scrape_datetime,
-                                concept_synonym_name)),
-                         all_vars(is.na(.))) %>%
-        dplyr::select(rn_url) %>%
-        dplyr::distinct() %>%
-        unlist() %>%
-        unname()
 
 if (!interactive()) {
         report_filename <- paste0("~/Desktop/maintain_classification_synonym_tables_", as.character(Sys.Date()), ".txt")

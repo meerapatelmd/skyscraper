@@ -21,64 +21,6 @@ concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name, rnl.*
         dplyr::select(concept_synonym_name) %>%
         unlist()
 
-#### Function
-runHemOncToRNL <-
-        function(concepts,
-                 sleep_time) {
-                error_concepts <- vector()
-                total_concepts <- length(concepts)
-
-                while (length(concepts)) {
-
-                        concept <- concepts[1]
-
-                        conn <- chariot::connectAthena()
-
-                        output <-
-                                tryCatch(
-                                        log_registry_number(conn = conn,
-                                                            raw_concept = concept,
-                                                            sleep_time = sleep_time),
-                                        error = function(e) paste("Error")
-                                )
-
-                        chariot::dcAthena(conn = conn,
-                                          remove = TRUE)
-
-
-                        if (length(output)) {
-
-                                if (output == "Error") {
-
-                                        error_concepts <-
-                                                c(error_concepts,
-                                                  concept)
-
-                                }
-                        }
-
-                        concepts <- concepts[-1]
-                        rm(output)
-
-                        if (interactive()) {
-
-                                secretary::typewrite(secretary::italicize(signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), "percent completed."))
-                                secretary::typewrite(secretary::cyanTxt(length(concepts), "out of", total_concepts, "to go."))
-                                secretary::typewrite(secretary::redTxt(length(error_concepts), "errors."))
-
-                        } else {
-
-                                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
-                                cat("\t", length(concepts), "/", total_concepts, " (", signif(100*((total_concepts-length(concepts))/total_concepts), digits = 2), " percent completed)\n", sep = "", file = report_filename, append = TRUE)
-                                cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
-                                cat("\t", length(error_concepts), " errors\n", sep = "", file = report_filename, append = TRUE)
-
-                        }
-                }
-                return(error_concepts)
-        }
-
-
 if (!interactive()) {
         report_filename <- paste0("~/Desktop/hemonc_to_registry_number_log_", as.character(Sys.Date()), ".txt")
         cat(file = report_filename)
