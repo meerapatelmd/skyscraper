@@ -39,6 +39,8 @@ scrapeDrugPage <-
              random = TRUE,
              progress_bar = TRUE) {
 
+            .Deprecated()
+
             df <-
                     df %>%
                     dplyr::rename_all(tolower)

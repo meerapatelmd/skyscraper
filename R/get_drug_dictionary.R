@@ -30,11 +30,12 @@
 
 
 
-get_drug <-
+get_drug_dictionary <-
     function(conn,
              max_page = 50) {
 
             output <- list()
+
         for (i in 1:max_page) {
 
 

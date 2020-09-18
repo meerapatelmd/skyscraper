@@ -33,6 +33,9 @@ getRN <-
              type = "contains",
              sleep_secs = 3) {
 
+
+        .Deprecated("log_registry_number")
+
         # tositumomab and I 131 tositumomab
         # tositumomab and iodine-131 tositumomab
         # trametinib dimethyl sulfoxide

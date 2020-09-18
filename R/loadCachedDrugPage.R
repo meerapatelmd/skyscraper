@@ -22,6 +22,8 @@
 loadCachedDrugPage <-
     function(df, output.var = "loadCachedDrugPage_results") {
 
+            .Deprecated()
+
             if (exists(output.var, envir = globalenv())) {
                     answer <- readline(prompt = paste0("output.var ", output.var, " already exists. Continue? [Y/n] "))
                     if (answer == "n") {

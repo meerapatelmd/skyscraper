@@ -38,6 +38,8 @@ scrapeRN <-
                  rn_url,
                  sleep_time = 3) {
 
+                .Deprecated()
+
                 # https://chem.nlm.nih.gov/chemidplus/rn/83-38-5
                 # https://chem.nlm.nih.gov/chemidplus/rn/97232-34-3
                 # https://chem.nlm.nih.gov/chemidplus/rn/499313-74-3

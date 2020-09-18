@@ -8,6 +8,7 @@
 
 nciDrugCount <-
     function() {
+            .Deprecated("nci_count")
 
                 i <- 1
 

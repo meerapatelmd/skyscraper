@@ -9,6 +9,8 @@
 nciDrugDetailLinks <-
     function(max_page = 50) {
 
+            .Deprecated("get_drug_detail_links")
+
             output <- list()
 
             for (i in 1:max_page) {

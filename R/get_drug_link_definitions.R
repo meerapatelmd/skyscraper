@@ -37,6 +37,9 @@ get_drug_link_definitions <-
              sleep_time = 5) {
 
 
+            .Deprecated()
+
+
             nciDD <- scrapeDictionary(max_page = 39)
 
             stopifnot(nrow(nciDD) == drugCount)

@@ -35,6 +35,8 @@
 scrapeDictionary <-
     function(max_page = 39) {
 
+            .Deprecated("get_drug_dictionary")
+
         for (i in 1:max_page) {
 
                 if (i == 1) {

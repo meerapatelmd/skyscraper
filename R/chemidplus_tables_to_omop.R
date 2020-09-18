@@ -30,6 +30,10 @@ chemidplus_tables_to_omop <-
 
                 #conn <- chariot::connectAthena()
 
+                pg13::send(conn = conn,
+                SqlRender::readSql(sourceFile = pg13::sourceFilePath("sql",
+                                                                     FileName = "chemidplus_omop_ddl.sql",
+                                                                     package = "skyscraper")))
 
                 chemiTables <- pg13::lsTables(conn = conn,
                                               schema = "chemidplus")

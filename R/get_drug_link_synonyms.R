@@ -79,7 +79,7 @@ get_drug_link_synonym <-
 
                     #drug_link <- "https://www.cancer.gov/publications/dictionaries/cancer-drug/def/792667"
 
-                    drug_link <<- drug_links[1]
+                    drug_link <- drug_links[1]
 
 
                     response <-
