@@ -185,10 +185,10 @@ get_registry_numbers <-
                                        number_types2 <- number_types
                                        while (length(number_types)) {
 
-                                               synonym_type <- number_types[1]
+                                               number_type <- number_types[1]
 
                                                index[[length(index)+1]] <-
-                                                         grep(synonym_type,
+                                                         grep(number_type,
                                                               registry_numbers_content4)
 
 
@@ -211,7 +211,7 @@ get_registry_numbers <-
                                                        purrr::set_names(number_types2) %>%
                                                        purrr::map(tibble::as_tibble_col, "concept_registry_number") %>%
                                                        dplyr::bind_rows(.id = "concept_registry_number_type") %>%
-                                               dplyr::transmute(scrape_datetime = Sys.time(),
+                                               dplyr::transmute(rn_datetime = Sys.time(),
                                                                 rn_url = rn_url,
                                                                 concept_registry_number_type,
                                                                 concept_registry_number
@@ -221,7 +221,7 @@ get_registry_numbers <-
                                                dplyr::distinct()
                        } else {
                                registry_numbers <-
-                                       data.frame(scrape_datetime = Sys.time(),
+                                       data.frame(rn_datetime = Sys.time(),
                                                       rn_url = rn_url,
                                                       concept_registry_number_type = "NA",
                                                       concept_registry_number = registry_numbers_content4)
