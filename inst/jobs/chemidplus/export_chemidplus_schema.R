@@ -7,7 +7,7 @@ library(rubix)
 library(glitter)
 library(sinew)
 
-outputPath <- "~/GitHub/chemidplusData/data-raw/"
+outputPath <- path.expand("~/GitHub/chemidplusData/data-raw/")
 
 conn <- chariot::connectAthena()
 chemiTables <-
@@ -32,7 +32,7 @@ chemiData %>%
 loadLines <-
 chemiTables %>%
         purrr::map2(basename(outputPaths),
-                    function(x, y) paste0(x, " <- broca::simply_read_csv('~/GitHub/chemidplusData/data-raw/", y, "')")) %>%
+                    function(x, y) paste0(x, " <- broca::simply_read_csv('", outputPath, y, "')")) %>%
         unlist()
 
 usethisLines <-
@@ -43,7 +43,8 @@ readr::write_lines(c("library(broca)",
                      usethisLines),
                    path = paste0(outputPath, "DATASET.R"))
 
-source("~/GitHub/chemidplusData/data-raw/DATASET.R")
+source(path.expand("~/GitHub/chemidplusData/data-raw/DATASET.R"),
+       local = TRUE)
 
 
 paste0("chemiData$", names(chemiData)) %>%
@@ -61,6 +62,7 @@ paste0("chemiData$", names(chemiData)) %>%
         cat(file = "~/GitHub/chemidplusData/R/data.R")
 
 
+current_wd <- getwd()
 setwd("~/GitHub/chemidplusData/")
 glitter::docPushInstall(commit_message = "automated data refresh", has_vignettes = FALSE)
-
+setwd(current_wd)
