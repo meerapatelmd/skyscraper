@@ -17,6 +17,7 @@ rn_urls <-
         unlist() %>%
         unname()
 
+rn_urls <- sample(rn_urls)
 
 
 if (!interactive()) {
@@ -33,6 +34,7 @@ if (!interactive()) {
 }
 
 while (length(rn_urls)) {
+
         rn_url <- rn_urls[1]
 
 
@@ -41,11 +43,14 @@ while (length(rn_urls)) {
                 xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
                 )
 
+        Sys.sleep(5)
+
         if (is.null(response)) {
 
-                Sys.sleep(5)
 
                 response <-  police::try_catch_error_as_null(xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE")))
+
+                Sys.sleep(5)
 
         }
 
@@ -133,17 +138,20 @@ while (length(rn_urls)) {
                 chariot::dcAthena(conn = conn,
                                   remove = TRUE)
 
+                errors <-
+                        c(errors,
+                          rn_url)
 
-                if (length(output)) {
-
-                        if (output == "Error") {
-
-                                errors <-
-                                        c(errors,
-                                          rn_url)
-
-                        }
-                }
+                # if (length(output)) {
+                #
+                #         if (output == "Error") {
+                #
+                #                 errors <-
+                #                         c(errors,
+                #                           rn_url)
+                #
+                #         }
+                # }
 
 
         }
@@ -155,6 +163,10 @@ while (length(rn_urls)) {
         rm(rn_url)
         rm(response)
         rm(output)
+
+        if (nrow(showConnections())) {
+                closeAllConnections()
+        }
 
         if (interactive()) {
 
@@ -190,11 +202,14 @@ while (length(rn_urls)) {
                         xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
                 )
 
+        Sys.sleep(10)
+
         if (is.null(response)) {
 
-                Sys.sleep(10)
 
                 response <-  police::try_catch_error_as_null(xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE")))
+
+                Sys.sleep(10)
 
         }
 
@@ -283,16 +298,20 @@ while (length(rn_urls)) {
                                   remove = TRUE)
 
 
-                if (length(output)) {
+                errors <-
+                        c(errors,
+                          rn_url)
 
-                        if (output == "Error") {
-
-                                errors <-
-                                        c(errors,
-                                          rn_url)
-
-                        }
-                }
+                # if (length(output)) {
+                #
+                #         if (output == "Error") {
+                #
+                #                 errors <-
+                #                         c(errors,
+                #                           rn_url)
+                #
+                #         }
+                # }
 
 
         }
@@ -304,6 +323,11 @@ while (length(rn_urls)) {
         rm(rn_url)
         rm(response)
         rm(output)
+
+
+        if (nrow(showConnections())) {
+                closeAllConnections()
+        }
 
         if (interactive()) {
 
@@ -340,11 +364,16 @@ while (length(rn_urls)) {
                         xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
                 )
 
+        Sys.sleep(20)
+
         if (is.null(response)) {
 
-                Sys.sleep(20)
+
 
                 response <-  police::try_catch_error_as_null(xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE")))
+
+
+                Sys.sleep(20)
 
         }
 
@@ -433,16 +462,21 @@ while (length(rn_urls)) {
                                   remove = TRUE)
 
 
-                if (length(output)) {
+                errors <-
+                        c(errors,
+                          rn_url)
 
-                        if (output == "Error") {
 
-                                errors <-
-                                        c(errors,
-                                          rn_url)
-
-                        }
-                }
+                # if (length(output)) {
+                #
+                #         if (output == "Error") {
+                #
+                #                 errors <-
+                #                         c(errors,
+                #                           rn_url)
+                #
+                #         }
+                # }
 
 
         }
@@ -454,6 +488,10 @@ while (length(rn_urls)) {
         rm(rn_url)
         rm(response)
         rm(output)
+
+        if (nrow(showConnections())) {
+                closeAllConnections()
+        }
 
         if (interactive()) {
 
