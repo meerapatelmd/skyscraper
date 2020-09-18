@@ -43,12 +43,12 @@ readr::write_lines(c("library(broca)",
                      usethisLines),
                    path = paste0(outputPath, "DATASET.R"))
 
-source(path.expand("~/GitHub/chemidplusData/data-raw/DATASET.R"),
+source(paste0(outputPath, "DATASET.R"),
        local = TRUE)
 
 
 paste0("chemiData$", names(chemiData)) %>%
-        purrr::map(sinew::makeOxygen, print = FALSE) %>%
+        purrr::map(makeOxygen, print = FALSE) %>%
         purrr::map2(names(chemiData), function(x,y)
                 stringr::str_replace(string = x,
                                      pattern = "(.*\")(.*)(\")",
