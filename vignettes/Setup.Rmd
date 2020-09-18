@@ -158,7 +158,7 @@ pg13::dropTable(conn = conn,
                 tableName = "drug_dictionary")
 
 
-drugLinks <- skyscraper::nciDrugDetailLinks(max_page = 39)
+drugLinks <- skyscraper::nciDrugDetailLinks()
 stopifnot(nrow(drugLinks) == drugCount)
 
 
