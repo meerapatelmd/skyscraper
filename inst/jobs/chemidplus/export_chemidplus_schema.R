@@ -5,6 +5,7 @@ library(pg13)
 library(skyscraper)
 library(rubix)
 library(glitter)
+library(sinew)
 
 outputPath <- "~/GitHub/chemidplusData/data-raw/"
 
@@ -17,7 +18,6 @@ chemiTables %>%
         rubix::map_names_set(~pg13::readTable(conn = conn,
                                               schema = "chemidplus",
                                               tableName = .))
-
 chariot::dcAthena(conn = conn)
 
 
@@ -32,7 +32,7 @@ chemiData %>%
 loadLines <-
 chemiTables %>%
         purrr::map2(basename(outputPaths),
-                    function(x, y) paste0(x, " <- broca::simply_read_csv('data-raw/", y, "')")) %>%
+                    function(x, y) paste0(x, " <- broca::simply_read_csv('~/GitHub/chemidplusData/data-raw/", y, "')")) %>%
         unlist()
 
 usethisLines <-
@@ -43,9 +43,24 @@ readr::write_lines(c("library(broca)",
                      usethisLines),
                    path = paste0(outputPath, "DATASET.R"))
 
+source("~/GitHub/chemidplusData/data-raw/DATASET.R")
+
+
+paste0("chemiData$", names(chemiData)) %>%
+        purrr::map(sinew::makeOxygen, print = FALSE) %>%
+        purrr::map2(names(chemiData), function(x,y)
+                stringr::str_replace(string = x,
+                                     pattern = "(.*\")(.*)(\")",
+                                     replacement = paste0("\\1", y, "\\3"))) %>%
+        purrr::map2(names(chemiData), function(x,y)
+                stringr::str_replace(string = x,
+                                     pattern = "DATASET_TITLE",
+                                     replacement = y)) %>%
+        unlist() %>%
+        paste(collapse = "\n\n") %>%
+        cat(file = "~/GitHub/chemidplusData/R/data.R")
+
+
 setwd("~/GitHub/chemidplusData/")
-source("data-raw/DATASET.R",
-       local = TRUE)
 glitter::docPushInstall(commit_message = "automated data refresh", has_vignettes = FALSE)
 
-chariot::dcAthena(conn = conn)

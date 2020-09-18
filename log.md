@@ -1,3 +1,34 @@
 Timestamp	Activity Type	Function	File	Details
 2020-09-16 18:06:20	read	read_clipboard		
 2020-09-16 18:06:30	read	read_clipboard		
+2020-09-18 16:58:31	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/CLASSIFICATION.csv	
+2020-09-18 16:58:31	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/CONCEPT.csv	
+2020-09-18 16:58:31	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/CONCEPT_ANCESTOR.csv	
+2020-09-18 16:58:31	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/CONCEPT_RELATIONSHIP.csv	
+2020-09-18 16:58:31	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/CONCEPT_SYNONYM.csv	
+2020-09-18 16:58:31	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/LINKS_TO_RESOURCES.csv	
+2020-09-18 16:58:32	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/NAMES_AND_SYNONYMS.csv	
+2020-09-18 16:58:32	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/REGISTRY_NUMBER_LOG.csv	
+2020-09-18 16:58:32	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/REGISTRY_NUMBERS.csv	
+2020-09-18 16:58:32	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/RN_URL_VALIDITY.csv	
+2020-09-18 16:58:32	read	simply_read_csv	data-raw/CLASSIFICATION.csv	
+2020-09-18 17:00:09	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/CLASSIFICATION.csv	
+2020-09-18 17:00:09	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/CONCEPT.csv	
+2020-09-18 17:00:09	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/CONCEPT_ANCESTOR.csv	
+2020-09-18 17:00:09	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/CONCEPT_RELATIONSHIP.csv	
+2020-09-18 17:00:09	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/CONCEPT_SYNONYM.csv	
+2020-09-18 17:00:10	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/LINKS_TO_RESOURCES.csv	
+2020-09-18 17:00:10	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/NAMES_AND_SYNONYMS.csv	
+2020-09-18 17:00:10	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/REGISTRY_NUMBER_LOG.csv	
+2020-09-18 17:00:10	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/REGISTRY_NUMBERS.csv	
+2020-09-18 17:00:10	write	simply_write_csv	~/GitHub/chemidplusData/data-raw/RN_URL_VALIDITY.csv	
+2020-09-18 17:00:10	read	simply_read_csv	~/GitHub/chemidplusData/data-raw/CLASSIFICATION.csv	
+2020-09-18 17:00:10	read	simply_read_csv	~/GitHub/chemidplusData/data-raw/CONCEPT.csv	
+2020-09-18 17:00:10	read	simply_read_csv	~/GitHub/chemidplusData/data-raw/CONCEPT_ANCESTOR.csv	
+2020-09-18 17:00:10	read	simply_read_csv	~/GitHub/chemidplusData/data-raw/CONCEPT_RELATIONSHIP.csv	
+2020-09-18 17:00:10	read	simply_read_csv	~/GitHub/chemidplusData/data-raw/CONCEPT_SYNONYM.csv	
+2020-09-18 17:00:11	read	simply_read_csv	~/GitHub/chemidplusData/data-raw/LINKS_TO_RESOURCES.csv	
+2020-09-18 17:00:11	read	simply_read_csv	~/GitHub/chemidplusData/data-raw/NAMES_AND_SYNONYMS.csv	
+2020-09-18 17:00:11	read	simply_read_csv	~/GitHub/chemidplusData/data-raw/REGISTRY_NUMBER_LOG.csv	
+2020-09-18 17:00:11	read	simply_read_csv	~/GitHub/chemidplusData/data-raw/REGISTRY_NUMBERS.csv	
+2020-09-18 17:00:11	read	simply_read_csv	~/GitHub/chemidplusData/data-raw/RN_URL_VALIDITY.csv	
