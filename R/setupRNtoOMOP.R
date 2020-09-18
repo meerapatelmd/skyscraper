@@ -29,6 +29,9 @@
 setupRNtoOMOP <-
         function(conn) {
                 #conn <- chariot::connectAthena()
+                #
+
+                .Deprecated(new = "chemidplus_tables_to_omop")
 
 
                 chemiTables <- pg13::lsTables(conn = conn,

@@ -22,6 +22,9 @@
 ddlCancerGovSchema <-
         function(conn) {
 
+
+                .Deprecated()
+
                 cgTables <-
                 pg13::lsTables(conn = conn,
                                schema = "cancergov")
