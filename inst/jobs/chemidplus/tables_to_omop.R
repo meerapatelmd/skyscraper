@@ -3,11 +3,10 @@ library(chariot)
 library(pg13)
 library(skyscraper)
 
+path_to_report <- paste0("~/Desktop/chemidplus_tables_to_omop_", Sys.Date(), ".txt")
 conn <- chariot::connectAthena()
-
-
-skyscraper::maintainRNtoOMOP(conn = conn,
-                             file_report_to = paste0("~/Desktop/maintain_rn_to_omop_", Sys.Date(), ".txt"))
-
-
-chariot::dcAthena(conn)
+skyscraper::chemidplus_tables_to_omop(
+                                conn = conn,
+                                file_report_to = path_to_report)
+chariot::dcAthena(conn,
+                  remove = TRUE)

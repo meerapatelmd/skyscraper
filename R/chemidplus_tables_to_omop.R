@@ -1,29 +1,20 @@
 #' @title
-#' Maintain the RN Tables into OMOP Vocabulary Tables
-#'
-#' @description
-#' This function appends the Concept, Concept Synonym, Concept Ancestor, and Concept Relationship Tables from the Classification, Synonyms, and Phrase Log Tables in the chemidplus schema. If the Concept, Concept Synonym, Concept Ancestor, and/or Concept Relationship Tables do not already exist in the chemidplus Schema, an error will be thrown and the setupRNtoOMOP function should be run instead.
-#'
-#' @param conn Postgres connection
-#'
-#' @details
-#' concept_class_id is the search type. For broader search types such as "contains", there will be the same synonyms matched to different concept ids such as 35101002 & 35100499
-#'
+#' ETL the ChemiDPlus Tables to OMOP Vocabulary Architecture
 #' @seealso
 #'  \code{\link[pg13]{lsTables}},\code{\link[pg13]{readTable}},\code{\link[pg13]{query}},\code{\link[pg13]{appendTable}}
-#'  \code{\link[purrr]{map}}
+#'  \code{\link[rubix]{map_names_set}},\code{\link[rubix]{mutate_all_as_char}},\code{\link[rubix]{normalize_all_to_na}},\code{\link[rubix]{make_identifier}}
+#'  \code{\link[purrr]{map}},\code{\link[purrr]{map2}}
 #'  \code{\link[tibble]{as_tibble}}
-#'  \code{\link[rubix]{mutate_all_as_char}},\code{\link[rubix]{normalize_all_to_na}},\code{\link[rubix]{make_identifier}}
 #'  \code{\link[dplyr]{filter}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{select}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{filter_all}},\code{\link[dplyr]{group_by}}
 #'  \code{\link[tidyr]{extract}}
 #'  \code{\link[chariot]{queryAthena}},\code{\link[chariot]{filterValid}}
 #'  \code{\link[stringr]{str_remove}}
-#' @rdname maintainRNtoOMOP
+#' @rdname chemidplus_tables_to_omop
 #' @export
 #' @importFrom pg13 lsTables readTable query appendTable
-#' @importFrom purrr map
+#' @importFrom rubix map_names_set mutate_all_as_char normalize_all_to_na make_identifier
+#' @importFrom purrr map map2
 #' @importFrom tibble as_tibble
-#' @importFrom rubix mutate_all_as_char normalize_all_to_na make_identifier
 #' @importFrom dplyr filter mutate select distinct left_join transmute filter_at inner_join group_by ungroup
 #' @importFrom tidyr extract
 #' @importFrom chariot queryAthena filterValid
@@ -31,13 +22,11 @@
 #' @importFrom magrittr %>%
 
 
-maintainRNtoOMOP <-
+chemidplus_tables_to_omop <-
         function(conn,
                  file_report = TRUE,
-                 file_report_to = "report.txt",
+                 file_report_to = paste0("chemidplus_tables_to_omop_", Sys.Date(),".txt"),
                  append_file_report = TRUE) {
-
-                .Deprecated(new = "chemidplus_tables_to_omop")
 
                 #conn <- chariot::connectAthena()
 
@@ -61,37 +50,41 @@ maintainRNtoOMOP <-
 
 
                 if (file_report) {
-                        report <- paste0("[",as.character(Sys.time()), "]\tmaintainRNtoOMOP")
+                        report <- paste0("[",as.character(Sys.time()), "]")
 
                         report <-
-                              c(report,
+                              c("#################################",
+                                report,
+                                "#################################",
+                                "ROW_COUNTS[0]",
                                 chemiTableData %>%
                                         purrr::map2(names(chemiTableData),
                                                     function(x,y) paste0(y, ": ", x, " rows")) %>%
-                                        unlist()
+                                        unlist(),
+                                "\n"
                               )
                 }
 
 
 
-                # Pair Phrase_Log Diffs back with concept_id
-                # 1. Join the phrase log with the concept table in the chemidplus concept table on the input and type.
-                # 2. Filter for any NA concept_ids, meaning that there are new phrase_log observations that need processing
+                # Pair registry_number_log Diffs back with concept_id
+                # 1. Join the Registry Number Log with the concept table in the chemidplus concept table on the raw_concept and type.
+                # 2. Filter for any NA concept_ids, meaning that there are new registry_number_log observations that need processing
                 # If there are new phrases only:
-                #       3. All unique input, rn, and type diffs are filtered for any NA rn
+                #       3. All unique raw_concept, rn, and type diffs are filtered for any NA rn
                 #       4. Join with HemOnc Vocabulary (Concept Table) that are valid, in the Drug domain
-                #       5. Create concept_table input and filter out any concept_id == NA
+                #       5. Create concept_table raw_concept and filter out any concept_id == NA
                 #       6. Append Concept Table with the diff
 
                 #1.
-                phrase_rn <-
+                registry_number_log_diff <-
                         pg13::query(conn = conn,
-                                    sql_statement = "SELECT c.concept_id, pl.input, pl.type, pl.rn
-                                                        FROM chemidplus.phrase_log pl
+                                    sql_statement = "SELECT c.concept_id, rnl.raw_concept, rnl.type, rnl.rn
+                                                        FROM chemidplus.registry_number_log rnl
                                                         LEFT JOIN chemidplus.concept c
-                                                        ON c.concept_name = pl.input
-                                                                AND c.concept_class_id = pl.type
-                                                        WHERE pl.no_record = 'FALSE'") %>%
+                                                        ON c.concept_name = rnl.raw_concept
+                                                                AND c.concept_class_id = rnl.type
+                                                        WHERE rnl.no_record = 'FALSE'") %>%
                 #2.
                         tibble::as_tibble() %>%
                         rubix::mutate_all_as_char() %>%
@@ -104,18 +97,18 @@ maintainRNtoOMOP <-
 
                         report <-
                                 c(report,
-                                  paste0(nrow(phrase_rn),
-                                         " rows in chemiplus.phrase_log Table that do not join to a chemidplus.concept by input/concept_name and type/concept_class_id"))
+                                  paste0(nrow(registry_number_log_diff),
+                                         " new rows found in the Chemidplus Registry Number Log Table.[1]"))
 
                 }
 
 
-                if (nrow(phrase_rn)) {
+                if (nrow(registry_number_log_diff)) {
 
                         # 3.
-                        phrase_rn <-
-                                phrase_rn %>%
-                                dplyr::select(input,rn,type) %>%
+                        registry_number_log_diff <-
+                                registry_number_log_diff %>%
+                                dplyr::select(raw_concept,rn,type) %>%
                                 dplyr::distinct() %>%
                                 dplyr::filter(!is.na(rn))
 
@@ -132,9 +125,9 @@ maintainRNtoOMOP <-
                                                                         AND c.domain_id = 'Drug';")
 
                         concept_table_diff <-
-                        dplyr::left_join(phrase_rn,
+                        dplyr::left_join(registry_number_log_diff,
                                          hemonc,
-                                         by = c("input" = "concept_name"))
+                                         by = c("raw_concept" = "concept_name"))
 
 
                         # 5.
@@ -142,7 +135,7 @@ maintainRNtoOMOP <-
                                 concept_table_diff  %>%
                                 dplyr::transmute(
                                                 concept_id,
-                                                concept_name = input,
+                                                concept_name = raw_concept,
                                                 domain_id = "Drug",
                                                 vocabulary_id = "ChemiDPlus",
                                                 concept_class_id = type,
@@ -163,7 +156,7 @@ maintainRNtoOMOP <-
                                 report <-
                                         c(report,
                                           paste0(nrow(concept_table_diff),
-                                                 " rows appended to chemidplus.concept"))
+                                                 " rows added to the ChemiDPlus Concept Table.[2]"))
                         }
 
 
@@ -180,7 +173,7 @@ maintainRNtoOMOP <-
                         synonyms_table <-
                                 pg13::readTable(conn = conn,
                                                 schema = "chemidplus",
-                                                tableName = "synonyms") %>%
+                                                tableName = "names_and_synonyms") %>%
                                 dplyr::select(rn_url, concept_synonym_name) %>%
                                 tidyr::extract(col = rn_url,
                                                into = "rn",
@@ -216,7 +209,7 @@ maintainRNtoOMOP <-
                                 report <-
                                         c(report,
                                           paste0(nrow(concept_synonym_table),
-                                                 " rows appended to chemidplus.concept_synonym"))
+                                                 " rows added to the ChemiDPlus Concept Synonym Table.[3]"))
                         }
 
                 } else {
@@ -224,7 +217,8 @@ maintainRNtoOMOP <-
                         if (file_report) {
                                 report <-
                                         c(report,
-                                          "No diff found and zero rows appended to chemidplus.concept_synonym & chemidplus.concept_synonym")
+                                          "0 rows added to the ChemiDPlus Concept Table.[2]",
+                                          "0 rows added to the ChemiDPlus Concept Synonym Table.[3]")
                         }
 
                 }
@@ -302,7 +296,7 @@ maintainRNtoOMOP <-
                         if (file_report) {
                                 report <-
                                         c(report,
-                                          paste0(nrow(concept_table_diff), " new chemidplus.classification_concepts added to chemidplus.concept")
+                                          paste0(nrow(concept_table_diff), " new ChemiDPlus Classification Concepts added to the ChemiDPlus Concept Table.[4]")
                                         )
                         }
 
@@ -347,7 +341,7 @@ maintainRNtoOMOP <-
                         if (file_report) {
                                 report <-
                                         c(report,
-                                          paste0(nrow(concept_ancestor_table), " new chemidplus.classification_concepts added to chemidplus.concept_ancestor")
+                                          paste0(nrow(concept_ancestor_table), " new ChemiDPlus Classification Concepts added to the ChemiDPlus Concept Ancestor Table.[5]")
                                         )
                         }
 
@@ -394,7 +388,7 @@ maintainRNtoOMOP <-
                         if (file_report) {
                                 report <-
                                         c(report,
-                                          paste0(nrow(concept_relationship_table), " new chemidplus.classification_concepts added to chemidplus.concept_relationship")
+                                          paste0(nrow(concept_relationship_table), " new ChemiDPlus Classification Concepts added to the ChemiDPlus Concept Relationship Table.[6]")
                                         )
                         }
 
@@ -406,15 +400,45 @@ maintainRNtoOMOP <-
                         if (file_report) {
                                 report <-
                                         c(report,
-                                          "No new chemidplus.classification_concepts found.")
+                                          "0 new ChemiDPlus Classification Concepts added to the ChemiDPlus Concept Table.[4]",
+                                          "0 new ChemiDPlus Classification Concepts added to the ChemiDPlus Concept Ancestor Table.[5]",
+                                          "0 new ChemiDPlus Classification Concepts added to the ChemiDPlus Concept Relationship Table.[6]")
                         }
                 }
 
 
+
                 if (file_report) {
+
+                        # Update Row Counts
+                        chemiTableData <-
+                                chemiTables %>%
+                                rubix::map_names_set(~pg13::readTable(conn = conn,
+                                                                      schema ="chemidplus",
+                                                                      tableName = .)) %>%
+                                purrr::map(~nrow(.))
 
                         report <-
                                 c(report,
+                                  "\n",
+                                  "UPDATED_ROW_COUNTS",
+                                  chemiTableData %>%
+                                          purrr::map2(names(chemiTableData),
+                                                      function(x,y) paste0(y, ": ", x, " rows")) %>%
+                                          unlist()
+                                )
+
+                        report <-
+                                c(report,
+                                  "\n",
+                                  "[0] row counts of all tables in the ChemiDPlus Schema.",
+                                  "[1] Each unique concept name (`raw_concept`) is scraped for the Registry Number and then added to the Registry Number Log Table. The Registry Number Log Table is then joined back to the Chemidplus Concept Table. This is a count for all the `raw_concept` and `type` observations that did not join to a `concept_id` in the ChemiDPlus Concept Table.",
+                                  "[2] Each diff in [1] is rejoined with all Valid, Drug Domain HemOnc Concepts in the OMOP Concept Table to map the `raw_concept` to a Concept Id.",
+                                  "[3] Diff in [2] is joined to the ChemiDPlus Concept Synonym Table by the Registry Number.",
+                                  "[4] Unique Classification Concepts (`classification_concept`) from the ChemiDPlus Classification Table that are not in the ChemiDPlus Concept Table where the Standard Concept is 'C'.",
+                                  "[5] Unique Classification Concepts (`classification_concept`) from the ChemiDPlus Classification Table that are not in the ChemiDPlus Concept Ancestor Table where the Standard Concept is 'C'.",
+                                  "[6] New Classification Concepts that join with an ATC Classification from the Principle OMOP Concept Table that are added to the ChemiDPlus Concept Relationship Table.",
+                                  "#################################",
                                   "\n")
                         cat(report,
                             file = file_report_to,

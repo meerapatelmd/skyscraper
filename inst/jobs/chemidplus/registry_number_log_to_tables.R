@@ -20,7 +20,7 @@ rn_urls <-
 
 
 if (!interactive()) {
-        report_filename <- paste0("~/Desktop/rnl_to_chemidplus_tables_", as.character(Sys.Date()), ".txt")
+        report_filename <- paste0("~/Desktop/registry_number_log_to_tables_", as.character(Sys.Date()), ".txt")
         cat(file = report_filename)
 }
 
