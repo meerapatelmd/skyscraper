@@ -31,9 +31,24 @@
 #' @importFrom rvest html_nodes html_table
 #' @importFrom magrittr %>%
 
-get_drug_link_synonym <-
+get_drug_link_definitions <-
     function(conn,
+             max_page = 50,
              sleep_time = 5) {
+
+
+            nciDD <- scrapeDictionary(max_page = 39)
+
+            stopifnot(nrow(nciDD) == drugCount)
+
+
+            pg13::dropTable(conn = conn,
+                            schema = "cancergov",
+                            tableName = "drug_dictionary")
+            pg13::writeTable(conn = conn,
+                             schema = "cancergov",
+                             tableName = "drug_dictionary",
+                             nciDD)
 
 
 
@@ -42,11 +57,11 @@ get_drug_link_synonym <-
 
 
             if ("DRUG_LINK_SYNONYM" %in% cgTables) {
-                    current_drug_link_synonym_table <-
+                    current_drug_link_definition_table <-
                             pg13::query(conn = conn,
                                         pg13::buildQuery(distinct = TRUE,
                                                          schema = "cancergov",
-                                                         tableName = "drug_link_synonym"))
+                                                         tableName = "DRUG_LINK_DEFINITIONS"))
 
                     drug_link_table0 <-
                             pg13::readTable(conn = conn,
@@ -56,7 +71,7 @@ get_drug_link_synonym <-
 
                     drug_link_table <-
                             dplyr::left_join(drug_link_table0,
-                                             current_drug_link_synonym_table,
+                                             current_drug_link_definition_table,
                                              by = "drug_link") %>%
                             dplyr::filter(is.na(dls_datetime)) %>%
                             dplyr::select(all_of(colnames(drug_link_table0)))
@@ -79,7 +94,7 @@ get_drug_link_synonym <-
 
                     #drug_link <- "https://www.cancer.gov/publications/dictionaries/cancer-drug/def/792667"
 
-                    drug_link <<- drug_links[1]
+                    drug_link <- drug_links[1]
 
 
                     response <-
@@ -106,75 +121,74 @@ get_drug_link_synonym <-
                     if (!is.null(response)) {
 
 
-                            xml2::xml_find_all(response, ".//br") %>% xml2::xml_add_sibling("p", "\n")
-
-                            xml2::xml_find_all(response, ".//br") %>% xml2::xml_remove()
+                            # xml2::xml_find_all(response, ".//br") %>% xml2::xml_add_sibling("p", "\n")
+                            #
+                            # xml2::xml_find_all(response, ".//br") %>% xml2::xml_remove()
 
 
                             results <-
                                     police::try_catch_error_as_null(
                                     response %>%
-                                            rvest::html_nodes("table") %>%
-                                            rvest::html_table()
+                                            rvest::html_nodes(".definition") %>%
+                                            rvest::html_text() %>%
+                                            strsplit(split = "\r\n") %>%
+                                            unlist() %>%
+                                            trimws(which = "both") %>%
+                                            centipede::no_blank()
                                     )
+
 
 
                             if (length(results)) {
 
+
                                     output  <-
-                                            dplyr::bind_rows(results) %>%
-                                            tidyr::separate_rows(X2,
-                                                                 sep = "\n") %>%
-                                            dplyr::transmute(dls_datetime = Sys.time(),
-                                                             drug_link = drug_link,
-                                                             X1,
-                                                             X2) %>%
-                                            dplyr::filter_at(vars(X1,X2),
-                                                             ~nchar(.) < 255)
+                                            data.frame(dld_datetime = Sys.time(),
+                                                       drug_link = drug_link,
+                                                       drug_link_definition = results[1])
 
 
 
                                     cgTables <- pg13::lsTables(conn = conn,
                                                               schema = "cancergov")
 
-                                    if ("DRUG_LINK_SYNONYM" %in% cgTables) {
+                                    if ("DRUG_LINK_DEFINITIONS" %in% cgTables) {
 
                                             pg13::appendTable(conn = conn,
                                                               schema = "cancergov",
-                                                              tableName = "drug_link_synonym",
+                                                              tableName = "DRUG_LINK_DEFINITIONS",
                                                               output)
 
 
                                     } else {
                                             pg13::writeTable(conn = conn,
                                                              schema = "cancergov",
-                                                             tableName = "drug_link_synonym",
+                                                             tableName = "DRUG_LINK_DEFINITIONS",
                                                              output)
                                     }
 
 
                             } else {
-                                    output <-
-                                            data.frame(dls_datetime = Sys.time(),
+                                    output  <-
+                                            data.frame(dld_datetime = Sys.time(),
                                                        drug_link = drug_link,
-                                                       X1 = NA,
-                                                       X2 = NA)
+                                                       drug_link_definition = NA)
 
                                     cgTables <- pg13::lsTables(conn = conn,
                                                                schema = "cancergov")
 
-                                    if ("DRUG_LINK_SYNONYM" %in% cgTables) {
+                                    if ("DRUG_LINK_DEFINITIONS" %in% cgTables) {
 
                                             pg13::appendTable(conn = conn,
                                                               schema = "cancergov",
-                                                              tableName = "drug_link_synonym",
+                                                              tableName = "DRUG_LINK_DEFINITIONS",
                                                               output)
 
 
                                     } else {
                                             pg13::writeTable(conn = conn,
                                                              schema = "cancergov",
-                                                             tableName = "drug_link_synonym",
+                                                             tableName = "DRUG_LINK_DEFINITIONS",
                                                              output)
                                     }
                             }

@@ -145,7 +145,7 @@ knitr::opts_chunk$set(
 #                  tableName = "drug_dictionary")
 #  
 #  
-#  drugLinks <- skyscraper::nciDrugDetailLinks(max_page = 39)
+#  drugLinks <- nciDrugDetailLinks()
 #  stopifnot(nrow(drugLinks) == drugCount)
 #  
 #  
@@ -154,6 +154,7 @@ knitr::opts_chunk$set(
 #  skyscraper::loadCachedDrugPage(df = drugLinks)
 #  
 #  stopifnot(length(loadCachedDrugPage_results)==drugCount)
+#  
 #  failed_to_scrape <-
 #      loadCachedDrugPage_results %>%
 #      purrr::keep(function(x) any(is.na(x$X1)))
