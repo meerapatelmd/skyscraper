@@ -129,6 +129,13 @@ while (length(concepts)) {
                 cat("\t", error_ct, " errors\n", sep = "", file = report_filename, append = TRUE)
 
         }
+
+        if ((completed_ct %% 10) == 0) {
+                skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+                                                       schema = "chemidplus")
+        }
+
+
         rm(current_ct,
            completed_ct,
            percent_completed,
