@@ -46,7 +46,7 @@ while (length(concepts)) {
 
         output <-
                 tryCatch(
-                        log_registry_number(conn = conn,
+                        skyscraper::log_registry_number(conn = conn,
                                             raw_concept = concept,
                                             sleep_time = 5),
                         error = function(e) paste("Error")
@@ -130,7 +130,7 @@ while (length(concepts)) {
 
         output <-
                 tryCatch(
-                        log_registry_number(conn = conn,
+                        skyscraper::log_registry_number(conn = conn,
                                             raw_concept = concept,
                                             sleep_time = 10),
                         error = function(e) paste("Error")
@@ -210,7 +210,7 @@ while (length(concepts)) {
 
         output <-
                 tryCatch(
-                        log_registry_number(conn = conn,
+                        skyscraper::log_registry_number(conn = conn,
                                             raw_concept = concept,
                                             sleep_time = 20),
                         error = function(e) paste("Error")
@@ -289,7 +289,7 @@ while (length(concepts)) {
 
         output <-
                 tryCatch(
-                        log_registry_number(conn = conn,
+                        skyscraper::log_registry_number(conn = conn,
                                             raw_concept = concept,
                                             sleep_time = 30),
                         error = function(e) paste("Error")
