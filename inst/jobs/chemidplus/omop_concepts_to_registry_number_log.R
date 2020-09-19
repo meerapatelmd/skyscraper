@@ -5,7 +5,23 @@ library(pg13)
 library(skyscraper)
 
 
-concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name
+hemonc <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name, rnl.*
+                                 FROM public.concept c
+                                 LEFT JOIN public.concept_synonym cs
+                                 ON cs.concept_id = c.concept_id
+                                 LEFT JOIN chemidplus.registry_number_log rnl
+                                 ON rnl.raw_concept = cs.concept_synonym_name
+                                 WHERE
+                                        c.vocabulary_id = 'HemOnc'
+                                                AND c.invalid_reason IS NULL
+                                                AND c.domain_id = 'Drug';",
+                                 override_cache = TRUE) %>%
+        dplyr::filter_at(vars(!concept_synonym_name),
+                         all_vars(is.na(.))) %>%
+        dplyr::select(concept_synonym_name) %>%
+        unlist()
+
+rxnorm <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name
                                  FROM public.concept_ancestor ca
                                  INNER JOIN public.concept c
                                  ON c.concept_id = ca.descendant_concept_id
@@ -25,10 +41,15 @@ concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name
         unname()
 
 
+concepts <- c(hemonc,
+              rxnorm) %>%
+                unique()
+
+
 concepts <- sample(concepts)
 
 if (!interactive()) {
-        report_filename <- paste0("~/Desktop/hemonc_to_registry_number_log_", as.character(Sys.Date()), ".txt")
+        report_filename <- paste0("~/Desktop/omop_concepts_to_registry_number_log_", as.character(Sys.Date()), ".txt")
         cat(file = report_filename)
 }
 
@@ -49,7 +70,7 @@ while (length(concepts)) {
 
         output <-
                 tryCatch(
-                        log_registry_number(conn = conn,
+                        skyscraper::log_registry_number(conn = conn,
                                             raw_concept = concept,
                                             sleep_time = 5),
                         error = function(e) paste("Error")
@@ -133,7 +154,7 @@ while (length(concepts)) {
 
         output <-
                 tryCatch(
-                        log_registry_number(conn = conn,
+                        skyscraper::log_registry_number(conn = conn,
                                             raw_concept = concept,
                                             sleep_time = 10),
                         error = function(e) paste("Error")
@@ -213,7 +234,7 @@ while (length(concepts)) {
 
         output <-
                 tryCatch(
-                        log_registry_number(conn = conn,
+                        skyscraper::log_registry_number(conn = conn,
                                             raw_concept = concept,
                                             sleep_time = 20),
                         error = function(e) paste("Error")
@@ -292,7 +313,7 @@ while (length(concepts)) {
 
         output <-
                 tryCatch(
-                        log_registry_number(conn = conn,
+                        skyscraper::log_registry_number(conn = conn,
                                             raw_concept = concept,
                                             sleep_time = 30),
                         error = function(e) paste("Error")
