@@ -5,21 +5,24 @@ library(pg13)
 library(skyscraper)
 
 
-concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name, rnl.*
-                                 FROM public.concept c
+concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name
+                                 FROM public.concept_ancestor ca
+                                 INNER JOIN public.concept c
+                                 ON c.concept_id = ca.descendant_concept_id
                                  LEFT JOIN public.concept_synonym cs
                                  ON cs.concept_id = c.concept_id
                                  LEFT JOIN chemidplus.registry_number_log rnl
                                  ON rnl.raw_concept = cs.concept_synonym_name
-                                 WHERE
-                                        c.vocabulary_id = 'HemOnc'
-                                                AND c.invalid_reason IS NULL
-                                                AND c.domain_id = 'Drug';",
+                                 WHERE ca.ancestor_concept_id = 21601386
+                                 AND c.invalid_reason IS NULL
+                                 AND c.vocabulary_id IN ('RxNorm', 'RxNorm Extension')
+                                 AND c.concept_class_id IN ('Ingredient', 'Precise Ingredient')
+                                 AND cs.language_concept_id = 4180186
+                                 AND rnl_datetime IS NULL
+                                 ;",
                                  override_cache = TRUE) %>%
-        dplyr::filter_at(vars(!concept_synonym_name),
-                         all_vars(is.na(.))) %>%
-        dplyr::select(concept_synonym_name) %>%
-        unlist()
+        unlist() %>%
+        unname()
 
 
 concepts <- sample(concepts)

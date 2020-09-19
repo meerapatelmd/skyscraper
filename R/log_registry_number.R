@@ -2,7 +2,7 @@
 #' Get the Registry Number for a Given String
 #'
 #' @description
-#' Cache the response to an API call to "https://chem.nlm.nih.gov/chemidplus/name/", type, "/",  processed_concept" if it already has not been done so or if it has been, but the response returned NULL to retry querying. If a connection to a Postgres database is provided, the timestamp, processed_concept, type, url, whether a response was received at the time of the timestamp, and if the response is cached. Response Received field is NA if a cached object with the url as the key. If a connection to a Postgres database is provided, the dataframe is written to a `PHRASE_LOG` table in a `chemidplus` schema.
+#' Cache the response to an API call to "https://chem.nlm.nih.gov/chemidplus/name/", search_type, "/",  processed_concept" if it already has not been done so or if it has been, but the response returned NULL to retry querying. If a connection to a Postgres database is provided, the timestamp, processed_concept, type, url, whether a response was received at the time of the timestamp, and if the response is cached. Response Received field is NA if a cached object with the url as the key. If a connection to a Postgres database is provided, the dataframe is written to a `PHRASE_LOG` table in a `chemidplus` schema.
 #'
 #' @param conn          (optional) Connection to a Postgres Database.
 #' @param raw_concept   Raw concept to search
@@ -52,6 +52,10 @@ log_registry_number <-
         #raw_concept <- "Interleukin-2"
         #raw_concept <- "Anthracycline"
 
+        #raw_concept <- "olmutinib"
+        #
+
+        search_type <- type
 
         if (!missing(conn)) {
 
@@ -77,7 +81,7 @@ log_registry_number <-
                                                                      tableName = "REGISTRY_NUMBER_LOG",
                                                                      whereInField = "raw_concept",
                                                                      whereInVector = raw_concept)) %>%
-                        dplyr::filter(type == type) %>%
+                        dplyr::filter(type == search_type) %>%
                         dplyr::filter(response_received == "TRUE")
 
                 }
@@ -116,14 +120,14 @@ log_registry_number <-
 
 
                 #url <- "https://chem.nlm.nih.gov/chemidplus/name/contains/technetiumTc99m-labeledtilmanocept"
-                url <- paste0("https://chem.nlm.nih.gov/chemidplus/name/", type, "/",  processed_concept)
+                url <- paste0("https://chem.nlm.nih.gov/chemidplus/name/", search_type, "/",  processed_concept)
 
 
                 status_df <-
                     tibble::tibble(rnl_datetime = Sys.time(),
                                    raw_concept = raw_concept,
                                    processed_concept = processed_concept,
-                                   type = type) %>%
+                                   type = search_type) %>%
                     dplyr::mutate(url = url)
 
 

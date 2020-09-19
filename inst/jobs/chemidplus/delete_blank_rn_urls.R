@@ -125,6 +125,7 @@ input_b <-
     unlist() %>%
     unname()
 
-input <- c(input_a,
+new_input <- c(input_a,
            input_b) %>%
     unique()
+

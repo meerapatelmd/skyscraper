@@ -5,7 +5,7 @@ library(pg13)
 library(skyscraper)
 
 
-concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name, rnl.*
+contains_concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name, rnl.type
                                  FROM public.concept c
                                  LEFT JOIN public.concept_synonym cs
                                  ON cs.concept_id = c.concept_id
@@ -14,18 +14,32 @@ concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name, rnl.*
                                  WHERE
                                         c.vocabulary_id = 'HemOnc'
                                                 AND c.invalid_reason IS NULL
-                                                AND c.domain_id = 'Drug';",
-                                 override_cache = TRUE) %>%
-        dplyr::filter_at(vars(!concept_synonym_name),
-                         all_vars(is.na(.))) %>%
-        dplyr::select(concept_synonym_name) %>%
-        unlist()
+                                                AND c.domain_id = 'Drug'
+                                                AND rnl.rnl_datetime IS NOT NULL
+                                                AND rnl.type = 'contains';",
+                                 override_cache = TRUE)
 
+equals_concepts <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name, rnl.type
+                                 FROM public.concept c
+                                 LEFT JOIN public.concept_synonym cs
+                                 ON cs.concept_id = c.concept_id
+                                 LEFT JOIN chemidplus.registry_number_log rnl
+                                 ON rnl.raw_concept = cs.concept_synonym_name
+                                 WHERE
+                                        c.vocabulary_id = 'HemOnc'
+                                                AND c.invalid_reason IS NULL
+                                                AND c.domain_id = 'Drug'
+                                                AND rnl.rnl_datetime IS NOT NULL
+                                                AND rnl.type = 'equals';",
+                                          override_cache = TRUE)
+
+concepts <-
+        contains_concepts$concept_synonym_name[!(contains_concepts$concept_synonym_name %in% equals_concepts$concept_synonym_name)]
 
 concepts <- sample(concepts)
 
 if (!interactive()) {
-        report_filename <- paste0("~/Desktop/hemonc_to_registry_number_log_", as.character(Sys.Date()), ".txt")
+        report_filename <- paste0("~/Desktop/hemonc_equals_to_registry_number_log_", as.character(Sys.Date()), ".txt")
         cat(file = report_filename)
 }
 
@@ -48,6 +62,7 @@ while (length(concepts)) {
                 tryCatch(
                         log_registry_number(conn = conn,
                                             raw_concept = concept,
+                                            type = "equals",
                                             sleep_time = 5),
                         error = function(e) paste("Error")
                 )

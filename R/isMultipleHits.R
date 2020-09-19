@@ -100,8 +100,14 @@ isMultipleHits <-
                                                       rn),
                                                  all_vars(!is.na(.)))
 
-                dplyr::bind_rows(output_a,
+                output <-
+                        dplyr::bind_rows(output_a,
                                  output_b)  %>%
+                        dplyr::distinct()
+
+
+                if (nrow(output)) {
+                        output %>%
                         tibble::as_tibble() %>%
                         rubix::normalize_all_to_na() %>%
                         dplyr::transmute(compound_match,
@@ -109,7 +115,9 @@ isMultipleHits <-
                                          rn_url = ifelse(!is.na(rn),
                                                          paste0("https://chem.nlm.nih.gov/chemidplus/rn/", rn),
                                                          NA))
+                } else {
+                        tibble::tribble(~compound_match, ~rn, ~rn_url)
                 }
-
+                }
 
         }
