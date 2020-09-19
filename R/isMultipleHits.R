@@ -26,15 +26,15 @@ isMultipleHits <-
                         rvest::html_nodes(".bodytext") %>%
                         rvest::html_text()
 
+
                 chem_names <-
                 response %>%
                         rvest::html_nodes(".chem-name") %>%
                         rvest::html_text() %>%
                         paste(collapse = "|")
 
-
-
                 output_a <-
+                        police::try_catch_error_as_null(
                         output  %>%
                         tibble::as_tibble_col(column_name = "multiple_match") %>%
                         rubix::filter_at_grepl(multiple_match,
@@ -47,7 +47,36 @@ isMultipleHits <-
                         dplyr::mutate_all(stringr::str_remove_all, "No Structure") %>%
                         dplyr::filter_at(vars(compound_match,
                                               rn),
-                                         all_vars(!is.na(.)))
+                                         all_vars(!is.na(.))))
+
+
+                if (is.null(output_a)) {
+
+                        chem_name_vector <-
+                                response %>%
+                                rvest::html_nodes(".chem-name") %>%
+                                rvest::html_text()
+
+                                output  %>%
+                                                tibble::as_tibble_col(column_name = "multiple_match") %>%
+                                                rubix::filter_at_grepl(multiple_match,
+                                                                       grepl_phrase = "MW[:]{1} ",
+                                                                       evaluates_to = FALSE) %>%
+                                dplyr::mutate(compound_match = chem_name_vector) %>%
+                                dplyr::mutate(nchar_compound_name = nchar(compound_match)) %>%
+                                dplyr::mutate(string_start_rn = nchar_compound_name+1) %>%
+                                dplyr::mutate(total_nchar = nchar(multiple_match)) %>%
+                                dplyr::mutate(rn = substr(multiple_match, string_start_rn, total_nchar)) %>%
+                                dplyr::mutate_all(stringr::str_remove_all, "No Structure") %>%
+                                dplyr::filter_at(vars(compound_match,
+                                                      rn),
+                                                 all_vars(!is.na(.))) %>%
+                                dplyr::transmute(compound_match,
+                                              rn,
+                                              rn_url = paste0("https://chem.nlm.nih.gov/chemidplus/rn/", rn)) %>%
+                                dplyr::distinct()
+
+                } else {
 
                 output_b <-
                         output  %>%
@@ -66,6 +95,7 @@ isMultipleHits <-
 
                 dplyr::bind_rows(output_a,
                                  output_b)
+                }
 
 
         }

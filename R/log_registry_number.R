@@ -49,7 +49,7 @@ log_registry_number <-
         # vinblastine sulfate
 
         #conn <- chariot::connectAthena()
-        #raw_concept <- "vinblastine sulfate"
+        #raw_concept <- "Interleukin-2"
         #raw_concept <- "Anthracycline"
 
 
