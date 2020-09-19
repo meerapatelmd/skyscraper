@@ -115,6 +115,16 @@ while (length(concepts)) {
                 cat("\t", error_ct, " errors\n", sep = "", file = report_filename, append = TRUE)
 
         }
+
+
+        if ((completed_ct %% 50) == 0) {
+                skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+                                                       schema = "chemidplus")
+        }
+
+
+
+
         rm(current_ct,
            completed_ct,
            percent_completed,
@@ -126,7 +136,8 @@ while (length(concepts)) {
 if (!interactive()) {
         cat("########### Second Iteration\n", file = report_filename, append = TRUE)
 }
-
+skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+                                       schema = "chemidplus")
 
 concepts <- error_concepts
 error_concepts <- vector()
@@ -197,6 +208,16 @@ while (length(concepts)) {
                 cat("\t", error_ct, " errors\n", sep = "", file = report_filename, append = TRUE)
 
         }
+
+
+        if ((completed_ct %% 25) == 0) {
+                skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+                                                       schema = "chemidplus")
+        }
+
+
+
+
         rm(current_ct,
            completed_ct,
            percent_completed,
@@ -207,6 +228,8 @@ while (length(concepts)) {
 if (!interactive()) {
         cat("########### Third Iteration\n", file = report_filename, append = TRUE)
 }
+skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+                                       schema = "chemidplus")
 
 concepts <- error_concepts
 error_concepts <- vector()
@@ -277,6 +300,16 @@ while (length(concepts)) {
                 cat("\t", error_ct, " errors\n", sep = "", file = report_filename, append = TRUE)
 
         }
+
+
+        if ((completed_ct %% 10) == 0) {
+                skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+                                                       schema = "chemidplus")
+        }
+
+
+
+
         rm(current_ct,
            completed_ct,
            percent_completed,
@@ -286,6 +319,8 @@ while (length(concepts)) {
 if (!interactive()) {
         cat("########### Fourth Iteration\n", file = report_filename, append = TRUE)
 }
+skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+                                       schema = "chemidplus")
 
 concepts <- error_concepts
 error_concepts <- vector()
@@ -356,11 +391,26 @@ while (length(concepts)) {
                 cat("\t", error_ct, " errors\n", sep = "", file = report_filename, append = TRUE)
 
         }
+
+
+        if ((completed_ct %% 5) == 0) {
+                skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+                                                       schema = "chemidplus")
+        }
+
+
+
         rm(current_ct,
            completed_ct,
            percent_completed,
            error_ct)
 }
+
+
+
+skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+                                       schema = "chemidplus")
+
 
 if (!interactive()) {
         cat("########### COMPLETE\n", file = report_filename, append = TRUE)

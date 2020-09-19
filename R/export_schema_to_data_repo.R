@@ -50,9 +50,11 @@ export_schema_to_data_repo <-
 
                         data_raw_path <- paste0(target_dir, "/data-raw/")
                         data_path <- paste0(target_dir, "/data/")
+                        r_path <-  paste0(target_dir, "/R/")
 
                         cave::create_dir_if_not_exist(data_raw_path)
                         cave::create_dir_if_not_exist(data_path)
+                        cave::create_dir_if_not_exist(r_path)
 
                         conn <- chariot::connectAthena()
                         Tables <-
@@ -137,10 +139,13 @@ export_schema_to_data_repo <-
                                                              replacement = y)) %>%
                                 unlist() %>%
                                 paste(collapse = "\n\n") %>%
-                                cat(file = paste0(target_dir, "/data.R"))
+                                cat(file = paste0(r_path, "/data.R"))
 
 
                         glitter::docPushInstall(commit_message = "automated data refresh", has_vignettes = FALSE)
+
+                        rm(list = "Data",
+                           envir = global_env())
 
                         if (interactive()) {
                                 setwd(current_wd)

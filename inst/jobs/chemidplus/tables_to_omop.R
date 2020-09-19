@@ -10,3 +10,7 @@ skyscraper::chemidplus_tables_to_omop(
                                 file_report_to = path_to_report)
 chariot::dcAthena(conn,
                   remove = TRUE)
+
+
+skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+                                       schema = "chemidplus")

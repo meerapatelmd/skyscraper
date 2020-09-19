@@ -82,19 +82,7 @@ pg13::dropTable(conn = conn,
                 tableName = "old_registry_number_log")
 
 chariot::dcAthena(conn = conn)
-}
 
-
-input <-
-    chariot::queryAthena(
-        "
-SELECT DISTINCT raw_concept
-        	FROM chemidplus.registry_number_log rnl
-        	WHERE rnl.rn_url LIKE 'https://chem.nlm.nih.gov/chemidplus/rn/ %';
-",
-override_cache = TRUE
-    ) %>%
-    unlist()
 
 input_a <-
     chariot::queryAthena(
@@ -129,3 +117,7 @@ new_input <- c(input_a,
            input_b) %>%
     unique()
 
+
+skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+                                       schema = "chemidplus")
+}
