@@ -116,7 +116,7 @@ chemidplus_tables_to_omop <-
                                 dplyr::distinct() %>%
                                 dplyr::filter(!is.na(rn))
 
-                        # 4. HemOnc concept_ids and concept_name
+                        # 4. HemOnc + RxNorm Ingredient concept_ids and concept_name
                         hemonc <-
                         pg13::query(conn = conn,
                                     sql_statement = "SELECT DISTINCT cs.concept_id,cs.concept_synonym_name AS concept_name
@@ -128,10 +128,26 @@ chemidplus_tables_to_omop <-
                                                                         AND c.invalid_reason IS NULL
                                                                         AND c.domain_id = 'Drug';")
 
+                        rxnorm <-
+                                pg13::query(conn = conn,
+                                            sql_statement = "SELECT DISTINCT cs.concept_id, cs.concept_synonym_name AS concept_name
+                                 FROM public.concept_ancestor ca
+                                 INNER JOIN public.concept c
+                                 ON c.concept_id = ca.descendant_concept_id
+                                 LEFT JOIN public.concept_synonym cs
+                                 ON cs.concept_id = c.concept_id
+                                 WHERE ca.ancestor_concept_id = 21601386
+                                 AND c.invalid_reason IS NULL
+                                 AND c.vocabulary_id IN ('RxNorm', 'RxNorm Extension')
+                                 AND c.concept_class_id IN ('Ingredient', 'Precise Ingredient')
+                                 AND cs.language_concept_id = 4180186")
+
                         concept_table_diff <-
                         dplyr::left_join(registry_number_log_diff,
-                                         hemonc,
-                                         by = c("raw_concept" = "concept_name"))
+                                         dplyr::bind_rows(hemonc,
+                                                          rxnorm),
+                                         by = c("raw_concept" = "concept_name")) %>%
+                                dplyr::distinct()
 
 
                         # 5.
@@ -254,17 +270,25 @@ chemidplus_tables_to_omop <-
                 # 2.
                 classification_table_diff <-
                         pg13::query(conn = conn,
-                                    sql_statement = "SELECT DISTINCT cl.concept_classification,cl.rn_url,c.concept_id
-                                                        FROM chemidplus.classification cl
-                                                        LEFT JOIN chemidplus.concept c
-                                                        ON cl.concept_classification = c.concept_name
-                                                        WHERE c.standard_concept = 'C'") %>%
-                        tibble::as_tibble() %>%
-                        rubix::mutate_all_as_char() %>%
-                        rubix::normalize_all_to_na() %>%
-                        dplyr::filter(is.na(concept_id)) %>%
-                        dplyr::select(-concept_id) %>%
-                        dplyr::distinct() %>%
+                                    sql_statement =
+                                    "
+                                    WITH distinct_classes AS (
+                                            SELECT DISTINCT cl.concept_classification, cl.rn_url
+                                            FROM chemidplus.classification cl
+                                    ),
+                                    concept_classes AS (
+                                            SELECT *
+                                            FROM chemidplus.concept
+                                            WHERE standard_concept = 'C'
+                                    )
+
+                                    SELECT DISTINCT concept_classification, rn_url
+                                    FROM distinct_classes
+                                    LEFT JOIN concept_classes
+                                    ON concept_name = concept_classification
+                                    WHERE concept_id IS NULL
+                                    ;
+                                    ") %>%
                         tidyr::extract(col = rn_url,
                                        into = "rn",
                                        regex = "^.*[/]{1}(.*$)")
@@ -310,7 +334,7 @@ chemidplus_tables_to_omop <-
                         concept_ancestor_table <-
                                 dplyr::left_join(classification_table_diff,
                                                  concept_table_diff,
-                                                 by = c("concept_classification" = "concept_name")) %>%
+                                                 by = "concept_id") %>%
                                 dplyr::transmute(ancestor_concept_id = concept_id,
                                                  ancestor_concept_name = concept_classification,
                                                  descendant_concept_code = rn)
