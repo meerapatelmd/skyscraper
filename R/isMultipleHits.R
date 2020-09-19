@@ -57,6 +57,7 @@ isMultipleHits <-
                                 rvest::html_nodes(".chem-name") %>%
                                 rvest::html_text()
 
+
                                 output  %>%
                                                 tibble::as_tibble_col(column_name = "multiple_match") %>%
                                                 rubix::filter_at_grepl(multiple_match,
@@ -68,13 +69,19 @@ isMultipleHits <-
                                 dplyr::mutate(total_nchar = nchar(multiple_match)) %>%
                                 dplyr::mutate(rn = substr(multiple_match, string_start_rn, total_nchar)) %>%
                                 dplyr::mutate_all(stringr::str_remove_all, "No Structure") %>%
+                                rubix::rm_multibyte_chars() %>%
                                 dplyr::filter_at(vars(compound_match,
                                                       rn),
                                                  all_vars(!is.na(.))) %>%
+                                dplyr::distinct() %>%
+                                tibble::as_tibble() %>%
+                                rubix::normalize_all_to_na() %>%
                                 dplyr::transmute(compound_match,
                                               rn,
-                                              rn_url = paste0("https://chem.nlm.nih.gov/chemidplus/rn/", rn)) %>%
-                                dplyr::distinct()
+                                              rn_url = ifelse(!is.na(rn),
+                                                              paste0("https://chem.nlm.nih.gov/chemidplus/rn/", rn),
+                                                              NA))
+
 
                 } else {
 
@@ -94,7 +101,14 @@ isMultipleHits <-
                                                  all_vars(!is.na(.)))
 
                 dplyr::bind_rows(output_a,
-                                 output_b)
+                                 output_b)  %>%
+                        tibble::as_tibble() %>%
+                        rubix::normalize_all_to_na() %>%
+                        dplyr::transmute(compound_match,
+                                         rn,
+                                         rn_url = ifelse(!is.na(rn),
+                                                         paste0("https://chem.nlm.nih.gov/chemidplus/rn/", rn),
+                                                         NA))
                 }
 
 
