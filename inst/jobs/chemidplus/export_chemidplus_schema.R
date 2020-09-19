@@ -7,6 +7,7 @@ library(rubix)
 library(glitter)
 library(sinew)
 
+
 current_wd <- getwd()
 target_dir <- path.expand("~/GitHub/chemidplusData/")
 setwd(target_dir)
@@ -15,9 +16,9 @@ outputPath <- paste0(target_dir, "data-raw/")
 conn <- chariot::connectAthena()
 chemiTables <-
         pg13::lsTables(conn = conn,
-                 schema = "chemidplus")
+                       schema = "chemidplus")
 chemiData <-
-chemiTables %>%
+        chemiTables %>%
         rubix::map_names_set(~pg13::readTable(conn = conn,
                                               schema = "chemidplus",
                                               tableName = .))
@@ -33,7 +34,7 @@ chemiData %>%
 
 
 loadLines <-
-chemiTables %>%
+        chemiTables %>%
         purrr::map2(basename(outputPaths),
                     function(x, y) paste0(x, " <- broca::simply_read_csv('", outputPath, y, "')")) %>%
         unlist()
@@ -50,9 +51,27 @@ readr::write_lines(c("library(broca)\n",
                      usethisLines),
                    path = paste0(outputPath, "DATASET.R"))
 
-
+setwd(target_dir)
 source(paste0(outputPath, "DATASET.R"),
-       local = TRUE)
+       local = FALSE)
+
+secretary::press_enter()
+
+if (interactive()) {
+        data_dir <- paste0(target_dir, "data")
+        cave::create_dir_if_not_exist(data_dir)
+
+        current_files <- list.files("data", full.names = T)
+        new_location <-
+                stringr::str_replace_all(current_files,
+                                         pattern = "(^.*data)([/]{1}.*)",
+                                         replacement = paste0(data_dir, "\\2"))
+
+
+        mapply(file.copy, from = current_files, to = new_location, overwrite = TRUE)
+
+
+}
 
 
 paste0("chemiData$", names(chemiData)) %>%
@@ -73,3 +92,4 @@ paste0("chemiData$", names(chemiData)) %>%
 glitter::docPushInstall(commit_message = "automated data refresh", has_vignettes = FALSE)
 
 setwd(current_wd)
+
