@@ -1,9 +1,12 @@
 #' @title
 #' Export a Schema in a Postgres Database to a Repo
+#'
 #' @description
 #' There should be a Data Repo on the local machine that is linked to the schema.
+#'
 #' @param target_dir Directory where the schema data will be exported to
 #' @param schema Schema
+#'
 #' @seealso
 #'  \code{\link[cave]{create_dir_if_not_exist}}
 #'  \code{\link[chariot]{connectAthena}},\code{\link[chariot]{dcAthena}}
@@ -15,7 +18,9 @@
 #'  \code{\link[sinew]{makeOxygen}}
 #'  \code{\link[stringr]{str_replace}}
 #'  \code{\link[glitter]{docPushInstall}}
+#'
 #' @rdname export_schema_to_data_repo
+#'
 #' @export
 #' @importFrom cave create_dir_if_not_exist
 #' @importFrom chariot connectAthena dcAthena
