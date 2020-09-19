@@ -9,16 +9,21 @@ library(police)
 rn_urls <-
         chariot::queryAthena(
                 "SELECT DISTINCT
-                        rn_url
-                FROM chemidplus.registry_number_log
-                WHERE rn_url IS NOT NULL AND rn_url NOT IN (
-                SELECT rn_url
-                FROM chemidplus.rn_url_validity
-                );",
+                        rnl.*, rnuv.rnuv_datetime, rnuv.is_404
+                FROM chemidplus.rn_url_validity rnuv
+                LEFT JOIN chemidplus.registry_number_log rnl
+                ON rnl.rn_url = rnuv.rn_url
+                WHERE rnuv.rn_url IS NOT NULL AND rnuv.is_404 = 'TRUE';",
                 override_cache = TRUE) %>%
-        dplyr::distinct() %>%
-        unlist() %>%
-        unname()
+        dplyr::distinct()
+
+
+URL <- "https://chem.nlm.nih.gov/chemidplus/name/contains/Abacin"
+response <- xml2::read_html(x = URL)
+chem_name <-
+response %>%
+        rvest::html_nodes(".chem-name") %>%
+        rvest::html_text()
 
 
 rn_urls <- sample(rn_urls)

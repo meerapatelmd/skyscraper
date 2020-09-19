@@ -26,6 +26,13 @@ isMultipleHits <-
                         rvest::html_nodes(".bodytext") %>%
                         rvest::html_text()
 
+                chem_names <-
+                response %>%
+                        rvest::html_nodes(".chem-name") %>%
+                        rvest::html_text() %>%
+                        paste(collapse = "|")
+
+
 
                 output_a <-
                         output  %>%
@@ -35,7 +42,7 @@ isMultipleHits <-
                                                evaluates_to = FALSE) %>%
                         tidyr::extract(col = multiple_match,
                                        into = c("compound_match", "rn"),
-                                       regex = "(^.*?) \\[.*?\\](.*$)") %>%
+                                       regex = paste0("(^", chem_names, ") \\[.*?\\](.*$)")) %>%
                         dplyr::mutate(rn_url = paste0("https://chem.nlm.nih.gov/chemidplus/rn/",rn)) %>%
                         dplyr::mutate_all(stringr::str_remove_all, "No Structure") %>%
                         dplyr::filter_at(vars(compound_match,
@@ -50,7 +57,7 @@ isMultipleHits <-
                                                        evaluates_to = FALSE) %>%
                                 tidyr::extract(col = multiple_match,
                                                into = c("compound_match", "rn"),
-                                               regex = "(^.*?)([0-9]{1,}[-]{1}[0-9]{1,}[-]{1}[0-9]{1,}.*$)") %>%
+                                               regex = paste0("(^", chem_names, ")([0-9]{1,}[-]{1}[0-9]{1,}[-]{1}[0-9]{1,}.*$)")) %>%
                                 dplyr::mutate(rn_url = paste0("https://chem.nlm.nih.gov/chemidplus/rn/",rn)) %>%
                                 dplyr::mutate_all(stringr::str_remove_all, "No Structure") %>%
                                 dplyr::filter_at(vars(compound_match,

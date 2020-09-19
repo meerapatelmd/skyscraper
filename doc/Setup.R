@@ -3,6 +3,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   echo=TRUE,
   eval=FALSE,
+  cache=TRUE,
   comment = "#>"
 )
 
