@@ -170,6 +170,9 @@ if (length(rn_urls)) {
                                 closeAllConnections()
                         }
 
+                        #Metrics
+                        completed_ct <- length(rn_urls)
+
                         if (interactive()) {
 
                                 secretary::typewrite(secretary::italicize(signif(100*((total-length(rn_urls))/total), digits = 2), "percent completed."))
@@ -183,6 +186,11 @@ if (length(rn_urls)) {
                                 cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
                                 cat("\t", length(errors), " errors\n", sep = "", file = report_filename, append = TRUE)
 
+                        }
+
+                        if ((completed_ct %% 50) == 0) {
+                                skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+                                                                       schema = "chemidplus")
                         }
 
                 }
@@ -345,6 +353,14 @@ if (length(rn_urls)) {
                                 cat("\t", length(errors), " errors\n", sep = "", file = report_filename, append = TRUE)
 
                         }
+
+                        #Metrics
+                        completed_ct <- length(rn_urls)
+                        if ((completed_ct %% 25) == 0) {
+                                skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+                                                                       schema = "chemidplus")
+                        }
+
                 }
 
 
@@ -508,6 +524,13 @@ if (length(rn_urls)) {
                                 cat("[", as.character(Sys.time()), "]", sep = "", file = report_filename, append = TRUE)
                                 cat("\t", length(errors), " errors\n", sep = "", file = report_filename, append = TRUE)
 
+                        }
+
+                        #Metrics
+                        completed_ct <- length(rn_urls)
+                        if ((completed_ct %% 10) == 0) {
+                                skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+                                                                       schema = "chemidplus")
                         }
                 }
 
