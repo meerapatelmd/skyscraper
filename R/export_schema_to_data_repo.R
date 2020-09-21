@@ -4,7 +4,7 @@
 #' @description
 #' There should be a Data Repo on the local machine that is linked to the schema.
 #'
-#' @param target_dir Directory where the schema data will be exported to
+#' @param target_dir Local repo where the schema data will be exported to. If it does not already exist on the local drive, it should be cloned beforehand.
 #' @param schema Schema
 #'
 #' @seealso

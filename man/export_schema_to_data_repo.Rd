@@ -7,7 +7,7 @@
 export_schema_to_data_repo(target_dir, schema)
 }
 \arguments{
-\item{target_dir}{Directory where the schema data will be exported to}
+\item{target_dir}{Local repo where the schema data will be exported to. If it does not already exist on the local drive, it should be cloned beforehand.}
 
 \item{schema}{Schema}
 }
