@@ -19,6 +19,7 @@ get_rn_url_validity <-
     function(conn,
              rn_url,
              response,
+             schema = "chemidplus",
              sleep_time = 3) {
 
 
@@ -27,22 +28,22 @@ get_rn_url_validity <-
                 connSchemas <-
                     pg13::lsSchema(conn = conn)
 
-                if (!("chemidplus" %in% connSchemas)) {
+                if (!(schema %in% connSchemas)) {
 
                     pg13::createSchema(conn = conn,
-                                       schema = "chemidplus")
+                                       schema = schema)
 
                 }
 
                 chemiTables <- pg13::lsTables(conn = conn,
-                                              schema = "chemidplus")
+                                              schema = schema)
 
                 if ("RN_URL_VALIDITY" %in% chemiTables) {
 
                     rn_url_validity <-
                         pg13::query(conn = conn,
                                     sql_statement = pg13::buildQuery(distinct = TRUE,
-                                                                     schema = "chemidplus",
+                                                                     schema = schema,
                                                                      tableName = "RN_URL_VALIDITY",
                                                                      whereInField = "rn_url",
                                                                      whereInVector = rn_url))
@@ -116,29 +117,29 @@ get_rn_url_validity <-
                         connSchemas <-
                             pg13::lsSchema(conn = conn)
 
-                        if (!("chemidplus" %in% connSchemas)) {
+                        if (!(schema %in% connSchemas)) {
 
                             pg13::createSchema(conn = conn,
-                                               schema = "chemidplus")
+                                               schema = schema)
 
                         }
 
 
                         chemiTables <-
                             pg13::lsTables(conn = conn,
-                                           schema = "chemidplus")
+                                           schema = schema)
 
                         if ("RN_URL_VALIDITY" %in% chemiTables) {
 
                             pg13::appendTable(conn = conn,
-                                              schema = "chemidplus",
+                                              schema = schema,
                                               tableName = "RN_URL_VALIDITY",
                                               status_df)
 
                         } else {
 
                             pg13::writeTable(conn = conn,
-                                              schema = "chemidplus",
+                                              schema = schema,
                                               tableName = "RN_URL_VALIDITY",
                                               status_df)
                         }

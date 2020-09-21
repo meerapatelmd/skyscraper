@@ -9,9 +9,21 @@
 \usage{
 getRN(conn, input, type = "contains", sleep_secs = 3)
 
-get_rn_url_validity(conn, rn_url, response, sleep_time = 3)
+get_rn_url_validity(
+  conn,
+  rn_url,
+  response,
+  schema = "chemidplus",
+  sleep_time = 3
+)
 
-log_registry_number(conn, raw_concept, type = "contains", sleep_time = 3)
+log_registry_number(
+  conn,
+  raw_concept,
+  type = "contains",
+  sleep_time = 3,
+  schema = "chemidplus"
+)
 }
 \arguments{
 \item{conn}{(optional) Connection to a Postgres Database.}

@@ -13,15 +13,39 @@
 \alias{scrapeRN}
 \title{Scrape the Classification Section of RN URL}
 \usage{
-get_classification(conn, rn_url, response, sleep_time = 3)
+get_classification(
+  conn,
+  rn_url,
+  response,
+  schema = "chemidplus",
+  sleep_time = 3
+)
 
-get_classification_code(conn, rn_url, response, sleep_time = 3)
+get_classification_code(
+  conn,
+  rn_url,
+  response,
+  schema = "chemidplus",
+  sleep_time = 3
+)
 
-get_links_to_resources(conn, rn_url, response, sleep_time = 3)
+get_links_to_resources(
+  conn,
+  rn_url,
+  response,
+  schema = "chemidplus",
+  sleep_time = 3
+)
 
-get_names_and_synonyms(conn, rn_url, response, sleep_time = 3)
+get_names_and_synonyms(
+  conn,
+  rn_url,
+  response,
+  schema = "chemidplus",
+  sleep_time = 3
+)
 
-get_registry_numbers(conn, rn_url, response, sleep_time = 3)
+get_registry_numbers(conn, rn_url, response, schema = schema, sleep_time = 3)
 
 is404(rn_url)
 

@@ -37,6 +37,7 @@ get_links_to_resources <-
         function(conn,
                  rn_url,
                  response,
+                 schema = "chemidplus",
                  sleep_time = 3) {
 
                 # https://chem.nlm.nih.gov/chemidplus/rn/83-38-5
@@ -97,22 +98,22 @@ get_links_to_resources <-
                         connSchemas <-
                                 pg13::lsSchema(conn = conn)
 
-                        if (!("chemidplus" %in% connSchemas)) {
+                        if (!(schema %in% connSchemas)) {
 
                                 pg13::createSchema(conn = conn,
-                                                   schema = "chemidplus")
+                                                   schema = schema)
 
                         }
 
                         chemiTables <- pg13::lsTables(conn = conn,
-                                                      schema = "chemidplus")
+                                                      schema = schema)
 
                         if ("LINKS_TO_RESOURCES"%in% chemiTables) {
 
                                 links_to_resources <-
                                         pg13::query(conn = conn,
                                                     sql_statement = pg13::buildQuery(distinct = TRUE,
-                                                                                     schema = "chemidplus",
+                                                                                     schema = schema,
                                                                                      tableName = "LINKS_TO_RESOURCES",
                                                                                      whereInField = "rn_url",
                                                                                      whereInVector = rn_url))
@@ -174,7 +175,7 @@ get_links_to_resources <-
                                        purrr::map(tibble::as_tibble_row) %>%
                                        dplyr::bind_rows() %>%
                                        dplyr::transmute(
-                                               scrape_datetime = Sys.time(),
+                                               ltr_datetime = Sys.time(),
                                                resource_agency = `data-name`,
                                                resource_link = href,
                                                rn_url = rn_url) %>%
@@ -189,12 +190,12 @@ get_links_to_resources <-
 
                                if ("LINKS_TO_RESOURCES" %in% chemiTables) {
                                        pg13::appendTable(conn = conn,
-                                                         schema = "chemidplus",
+                                                         schema = schema,
                                                          tableName = "LINKS_TO_RESOURCES",
                                                          links_to_resources)
                                } else {
                                        pg13::writeTable(conn = conn,
-                                                        schema = "chemidplus",
+                                                        schema = schema,
                                                         tableName = "LINKS_TO_RESOURCES",
                                                         links_to_resources)
                                }

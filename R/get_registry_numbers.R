@@ -37,6 +37,7 @@ get_registry_numbers <-
         function(conn,
                  rn_url,
                  response,
+                 schema = schema,
                  sleep_time = 3) {
 
                 # https://chem.nlm.nih.gov/chemidplus/rn/83-38-5
@@ -98,22 +99,22 @@ get_registry_numbers <-
                         connSchemas <-
                                 pg13::lsSchema(conn = conn)
 
-                        if (!("chemidplus" %in% connSchemas)) {
+                        if (!(schema %in% connSchemas)) {
 
                                 pg13::createSchema(conn = conn,
-                                                   schema = "chemidplus")
+                                                   schema = schema)
 
                         }
 
                         chemiTables <- pg13::lsTables(conn = conn,
-                                                      schema = "chemidplus")
+                                                      schema = schema)
 
                         if ("REGISTRY_NUMBERS" %in% chemiTables) {
 
                                 registry_numbers <-
                                         pg13::query(conn = conn,
                                                     sql_statement = pg13::buildQuery(distinct = TRUE,
-                                                                                     schema = "chemidplus",
+                                                                                     schema = schema,
                                                                                      tableName = "registry_numbers",
                                                                                      whereInField = "rn_url",
                                                                                      whereInVector = rn_url))
@@ -235,12 +236,12 @@ get_registry_numbers <-
 
                                if ("REGISTRY_NUMBERS" %in% chemiTables) {
                                        pg13::appendTable(conn = conn,
-                                                         schema = "chemidplus",
+                                                         schema = schema,
                                                          tableName = "REGISTRY_NUMBERS",
                                                          registry_numbers)
                                } else {
                                        pg13::writeTable(conn = conn,
-                                                        schema = "chemidplus",
+                                                        schema = schema,
                                                         tableName = "REGISTRY_NUMBERS",
                                                         registry_numbers)
                                }

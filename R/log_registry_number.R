@@ -31,7 +31,8 @@ log_registry_number <-
     function(conn,
              raw_concept,
              type = "contains",
-             sleep_time = 3) {
+             sleep_time = 3,
+             schema = "chemidplus") {
 
         # tositumomab and I 131 tositumomab
         # tositumomab and iodine-131 tositumomab
@@ -62,22 +63,22 @@ log_registry_number <-
                 connSchemas <-
                     pg13::lsSchema(conn = conn)
 
-                if (!("chemidplus" %in% connSchemas)) {
+                if (!(schema %in% connSchemas)) {
 
                     pg13::createSchema(conn = conn,
-                                       schema = "chemidplus")
+                                       schema = schema)
 
                 }
 
                 chemiTables <- pg13::lsTables(conn = conn,
-                                              schema = "chemidplus")
+                                              schema = schema)
 
                 if ("REGISTRY_NUMBER_LOG" %in% chemiTables) {
 
                     registry_number_log <-
                         pg13::query(conn = conn,
                                     sql_statement = pg13::buildQuery(distinct = TRUE,
-                                                                     schema = "chemidplus",
+                                                                     schema = schema,
                                                                      tableName = "REGISTRY_NUMBER_LOG",
                                                                      whereInField = "raw_concept",
                                                                      whereInVector = raw_concept)) %>%
@@ -198,36 +199,36 @@ log_registry_number <-
                         connSchemas <-
                             pg13::lsSchema(conn = conn)
 
-                        if (!("chemidplus" %in% connSchemas)) {
+                        if (!(schema %in% connSchemas)) {
 
                             pg13::createSchema(conn = conn,
-                                               schema = "chemidplus")
+                                               schema = schema)
 
                         }
 
 
                         chemiTables <-
                             pg13::lsTables(conn = conn,
-                                           schema = "chemidplus")
+                                           schema = schema)
 
                         if ("REGISTRY_NUMBER_LOG" %in% chemiTables) {
 
                             pg13::appendTable(conn = conn,
-                                              schema = "chemidplus",
+                                              schema = schema,
                                               tableName = "REGISTRY_NUMBER_LOG",
                                               status_df)
 
                         } else {
 
                             pg13::writeTable(conn = conn,
-                                              schema = "chemidplus",
+                                              schema = schema,
                                               tableName = "REGISTRY_NUMBER_LOG",
                                               status_df)
                         }
 
                 } else {
 
-                    status_df
+                    return(status_df)
 
                 }
         }
