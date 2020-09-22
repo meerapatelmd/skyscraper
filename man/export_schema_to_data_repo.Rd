@@ -14,7 +14,7 @@ export_schema_to_data_repo(conn, schema, target_dir)
 \item{target_dir}{Path to the local repo where the schema data will be exported to. If it does not already exist locally, it should be cloned beforehand.}
 }
 \description{
-Export and Push a skyscraper Schema to its Data Package Repository
+Local maintenance functions are meant to be used to export and instantiate/update a local skyscraper schema with the Data Package Repo. This is important for keeping data updated on one machine when there have been additions made to the Remote Data Package Repository.
 }
 \section{Exporting Schemas}{
 

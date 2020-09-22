@@ -1,7 +1,7 @@
 #' @title
 #' Export and Push a skyscraper Schema to its Data Package Repository
 #'
-#' @inherits local_maintenance_functions description
+#' @inherit local_maintenance_functions description
 #'
 #' @inheritSection local_maintenance_functions Exporting Schemas
 #'
