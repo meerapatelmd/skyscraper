@@ -20,7 +20,9 @@
 get_response <-
         function(rn_url,
                  sleep_time = 3) {
+
                 response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
                 Sys.sleep(sleep_time)
+
                 response
         }

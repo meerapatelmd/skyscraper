@@ -2,7 +2,7 @@
 #' Update Schemas with a Data Package
 #'
 #' @description
-#' Update any of the Postgres schemas governed by the skyscraper Package with the data found in its corresponding Data Package. The map from the skyscraper schema to its Data Package Repository is stored and maintained in \code{\link{map_schema}}.
+#' Instantiate or Update any of the Postgres schemas governed by the skyscraper Package with the data found in its corresponding Data Package. The map from the skyscraper schema to its Data Package Repository is stored and maintained by \code{\link{map_schema}}.
 #'
 #' @param conn                  Postgres connection
 #' @param schemas               Character vector of length 1 or more of the schemas to update
