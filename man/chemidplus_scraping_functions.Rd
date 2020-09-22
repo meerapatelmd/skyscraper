@@ -6,7 +6,7 @@
 \arguments{
 \item{conn}{Postgres connection object}
 
-\item{rn_url}{Registry number URL to read}
+\item{rn_url}{Registry number URL to read that also serves as an Identifier}
 
 \item{response}{(optional) "xml_document" "xml_node" class object returned by xml2::read_html for the `rn_url` argument. Providing a response from a single HTML read reduces the chance of encountering a HTTP 503 error when parsing multiple sections from a single URL. If a response argument is missing, a response is read. Followed by the `sleep_time` in seconds.}
 
@@ -22,6 +22,33 @@ All ChemiDPlus Scraping Functions operate on a Registry Number URL (`rn_url`). T
 }
 \section{Names and Synonyms}{
 
-The "Names and Synonyms" Section scraped results contain a Timestamp, RN URL (Identifier). If the section has subheadings, the subheading is scraped as the Synonym Type along with the Synonym itself.
+The "Names and Synonyms" Section scraped results contain a Timestamp, RN URL. If the section has subheadings, the subheading is scraped as the Synonym Type along with the Synonym itself.
+}
+
+\section{Classification}{
+
+The "Classification" Section results contain a Timestamp, RN URL, and the drug classifications on the page.
+}
+
+\section{Links to Resources}{
+
+The "Links to Resources" Section derives all the HTML links to other data and web sources for the drug. The results include a Timestamp, RN URL, and the Resource Agency and its HTML link.
+}
+
+\section{Registry Numbers}{
+
+The "Registry Numbers" Section contains other identifiers for the given drug at other Agencies.
+}
+
+\section{Registry Number Log Table}{
+
+The REGISTRY_NUMBER_LOG Table is the landing table for any ChemiDPlus searches using skyscrape. It is the place where a source concept is searched based on a given set of parameters and all the possible Registry Numbers (RN) that source concept can be associated with in ChemiDPlus. The Registry Number then serves as a jump-off point from where a second RN URL is read and split based on the sections, and read into their corresponding ChemiDPlus Tables.
+
+The Table logs the Raw Concept, the processed version of the Concept (ie removed spaces and error-throwing characters to generate a valid search URL for the Concept), the type of search (ie equals or contains), and the final search URL used to read a search result. A series of booleans are performed to determine whether the search was performed (ie a response was received), and if the results were for any records, and if these records were saved. If an RN was found, it is included along with the full URL associated with the URL.
+}
+
+\section{RN URL Validity Table}{
+
+The RN_URL_VALIDITY Table logs whether a HTTP 404 Error was recorded for a RN URL found in the REGISTRY_NUMBER_LOG Table for QA purposes.
 }
 

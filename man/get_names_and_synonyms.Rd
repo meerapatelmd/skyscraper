@@ -15,7 +15,7 @@ get_names_and_synonyms(
 \arguments{
 \item{conn}{Postgres connection object}
 
-\item{rn_url}{Registry number URL to read}
+\item{rn_url}{Registry number URL to read that also serves as an Identifier}
 
 \item{response}{(optional) "xml_document" "xml_node" class object returned by xml2::read_html for the `rn_url` argument. Providing a response from a single HTML read reduces the chance of encountering a HTTP 503 error when parsing multiple sections from a single URL. If a response argument is missing, a response is read. Followed by the `sleep_time` in seconds.}
 
@@ -31,7 +31,7 @@ All ChemiDPlus Scraping Functions operate on a Registry Number URL (`rn_url`). T
 }
 \section{Names and Synonyms}{
 
-The "Names and Synonyms" Section scraped results contain a Timestamp, RN URL (Identifier). If the section has subheadings, the subheading is scraped as the Synonym Type along with the Synonym itself.
+The "Names and Synonyms" Section scraped results contain a Timestamp, RN URL. If the section has subheadings, the subheading is scraped as the Synonym Type along with the Synonym itself.
 }
 
 \seealso{
