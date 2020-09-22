@@ -1,10 +1,10 @@
 #' @title
 #' Scrape and Parse Synonyms in Drug Details Link
 #'
-#' @inherit cancergov_parsing_functions description
-#' @inheritSection cancergov_parsing_functions Web Source Types
-#' @inheritSection cancergov_parsing_functions Drug Detail Links
-#' @inheritParams cancergov_parsing_functions
+#' @inherit cancergov_functions description
+#' @inheritSection cancergov_functions Web Source Types
+#' @inheritSection cancergov_functions Drug Detail Links
+#' @inheritParams cancergov_functions
 #' @param sleep_time Seconds in between xml2::read_html calls on a URL, Default: 5
 #'
 #' @seealso
@@ -15,7 +15,7 @@
 #'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_table}}
 #'  \code{\link[tidyr]{separate_rows}}
 #' @rdname get_drug_link_synonym
-#' @family cancergov parsing
+#' @family cancergov
 #' @export
 #' @importFrom pg13 lsTables query buildQuery readTable appendTable writeTable
 #' @importFrom dplyr left_join filter select bind_rows transmute filter_at

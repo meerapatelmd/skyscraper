@@ -15,7 +15,7 @@ get_drug_detail_links(conn, max_page = 50)
 .}
 }
 \description{
-These functions parse the NCI Drug Dictionary found at CancerGov.org.
+These functions scrape and parse the NCI Drug Dictionary found at CancerGov.org.
 }
 \section{Web Source Types}{
 
@@ -34,7 +34,8 @@ The links to Drug Pages are scraped from the Data Dictionary URL over the maximu
  \code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{filter}}
  \code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
 
-Other cancergov parsing: 
+Other cancergov: 
+\code{\link{get_drug_dictionary}()},
 \code{\link{get_drug_link_synonym}()}
 }
-\concept{cancergov parsing}
+\concept{cancergov}

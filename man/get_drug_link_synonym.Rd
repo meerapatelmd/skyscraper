@@ -12,7 +12,7 @@ get_drug_link_synonym(conn, sleep_time = 5)
 \item{sleep_time}{Seconds in between xml2::read_html calls on a URL, Default: 5}
 }
 \description{
-These functions parse the NCI Drug Dictionary found at CancerGov.org.
+These functions scrape and parse the NCI Drug Dictionary found at CancerGov.org.
 }
 \section{Web Source Types}{
 
@@ -32,7 +32,8 @@ The links to Drug Pages are scraped from the Data Dictionary URL over the maximu
  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_table}}
  \code{\link[tidyr]{separate_rows}}
 
-Other cancergov parsing: 
-\code{\link{get_drug_detail_links}()}
+Other cancergov: 
+\code{\link{get_drug_detail_links}()},
+\code{\link{get_drug_dictionary}()}
 }
-\concept{cancergov parsing}
+\concept{cancergov}

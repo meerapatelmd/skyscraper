@@ -12,8 +12,9 @@ isNoRecord(response)
 \description{
 There are 2 HTML responses involved in ChemiDPlus scraping. The first HTML response is associated with the concept search while the second is for the 1 to 5 Registry Numbers and their URLs if records were found. The ChemiDPlus parsing functions delineate the response into 3 groups: searches the resulted in no records, a single record, or multiple records (currently limited to parsing a maximum of 5 records).
 }
-\section{}{
+\section{No Records}{
 
+If the ChemiDPlus search url response contained the phrase "The following query produced no records:", it is marked as not having any records.
 }
 
 \seealso{

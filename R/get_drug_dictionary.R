@@ -1,10 +1,10 @@
 #' @title
 #' Scrape the NCI Drug Dictionary
 #'
-#' @inherit cancergov_parsing_functions description
-#' @inheritSection cancergov_parsing_functions Web Source Types
-#' @inheritSection cancergov_parsing_functions Drug Dictionary
-#' @inheritParams cancergov_parsing_functions
+#' @inherit cancergov_functions description
+#' @inheritSection cancergov_functions Web Source Types
+#' @inheritSection cancergov_functions Drug Dictionary
+#' @inheritParams cancergov_functions
 #'
 #' @return
 #' A Drug Dictionary Table in a `cancergov` schema if a Drug Dictionary Table didn't already exist. Otherwise, the new drugs are appended to the existing table.
@@ -19,6 +19,8 @@
 #'  \code{\link[stringr]{str_replace}}
 #'
 #' @export
+#' @rdname get_drug_dictionary
+#' @family cancergov
 #'
 #' @importFrom tibble tibble
 #' @importFrom secretary typewrite

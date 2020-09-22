@@ -1,10 +1,10 @@
 #' @title
 #' Get the URLS of all the Drug Pages in the Drug Dictionary
 #'
-#' @inherit cancergov_parsing_functions description
-#' @inheritSection cancergov_parsing_functions Web Source Types
-#' @inheritSection cancergov_parsing_functions Drug Detail Links
-#' @inheritParams cancergov_parsing_functions
+#' @inherit cancergov_functions description
+#' @inheritSection cancergov_functions Web Source Types
+#' @inheritSection cancergov_functions Drug Detail Links
+#' @inheritParams cancergov_functions
 #'
 #' @seealso
 #'  \code{\link[xml2]{read_xml}}
@@ -15,7 +15,7 @@
 #'
 #' @rdname get_drug_detail_links
 #'
-#' @family cancergov parsing
+#' @family cancergov
 #'
 #' @export
 #'

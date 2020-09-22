@@ -1,8 +1,8 @@
 #' @title
-#' CancerGov Parsing Functions
+#' CancerGov Functions
 #'
 #' @description
-#' These functions parse the NCI Drug Dictionary found at CancerGov.org.
+#' These functions scrape and parse the NCI Drug Dictionary found at CancerGov.org.
 #'
 #' @section
 #' Web Source Types:
@@ -23,5 +23,5 @@
 #'
 #' .
 #'
-#' @name cancergov_parsing_functions
+#' @name cancergov_functions
 NULL

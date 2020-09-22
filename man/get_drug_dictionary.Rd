@@ -18,7 +18,7 @@ get_drug_dictionary(conn, max_page = 50)
 A Drug Dictionary Table in a `cancergov` schema if a Drug Dictionary Table didn't already exist. Otherwise, the new drugs are appended to the existing table.
 }
 \description{
-These functions parse the NCI Drug Dictionary found at CancerGov.org.
+These functions scrape and parse the NCI Drug Dictionary found at CancerGov.org.
 }
 \section{Web Source Types}{
 
@@ -38,4 +38,9 @@ The listed drug names and their definitions are scraped from the Drug Dictionary
  \code{\link[purrr]{map}},\code{\link[purrr]{keep}},\code{\link[purrr]{transpose}}
  \code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate_all}}
  \code{\link[stringr]{str_replace}}
+
+Other cancergov: 
+\code{\link{get_drug_detail_links}()},
+\code{\link{get_drug_link_synonym}()}
 }
+\concept{cancergov}

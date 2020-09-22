@@ -3,7 +3,7 @@
 #'
 #' @inherit chemidplus_parsing_functions description
 #'
-#' @inheritSection chemidplus_parsing_functions No Record
+#' @inheritSection chemidplus_parsing_functions No Records
 #'
 #' @inheritParams chemidplus_parsing_functions
 #'
