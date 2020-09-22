@@ -28,7 +28,7 @@ if (new_count != starting_count) {
 
 if (!interactive()) {
         report_file <- paste0("~/Desktop/cancergov_02_get_drug_link_synonyms_", Sys.Date(), ".txt")
-        cat(paste0("[", Sys.time(), "]\tStarting Count: ", starting_count), file = report_file, append = TRUE)
-        cat(paste0("[", Sys.time(), "]\tNew Count: ", new_count), file = report_file, append = TRUE)
+        cat(paste0("[", Sys.time(), "]\tStarting Count: ", starting_count), sep = "\n", file = report_file, append = TRUE)
+        cat(paste0("[", Sys.time(), "]\tNew Count: ", new_count), sep = "\n", file = report_file, append = TRUE)
 }
 
