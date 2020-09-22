@@ -16,6 +16,7 @@
 #' This function operates on the dataframe returned by \code{\link{map_schema}}. This dataframe is then filtered for the `schemas` argument, if provided, or is otherwise run to completion on all schemas. Since this function cascade drops a schema before repopulating it with package data, the arguments are structured in such a way that a user has to call for a complete refresh of all possible schemas by setting the `all` argument to `TRUE` in order to prevent data loss due to bugs.
 #'
 #' The Namespace for all the Data Packages are unloaded at the start of execution to prevent the wrong Data Package from being loaded into the wrong schema since the dataframe names are duplicated across packages. Without a forced update, the corresponding Data Package is first installed only if there is a new version of the package detected when installing from GitHub. The fresh install of the Data Package is loaded, all columns with a "datetime" string match are converted to "POSIXct" "POSIXt", and then populates the schema after the present schema is dropped. In a forced update, the corresponding Data Package is force-installed and the schema is dropped and refreshed regardless of whether or not a difference has been detected in the Data Package GitHub repo.
+#' @inheritSection  local_maintenance_functions Update Schemas
 #'
 #' @seealso
 #'  \code{\link[rubix]{filter_for}},\code{\link[rubix]{map_names_set}}
@@ -25,8 +26,13 @@
 #'  \code{\link[pg13]{dropSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{writeTable}}
 #'  \code{\link[dplyr]{mutate_all}}
 #'  \code{\link[lubridate]{ymd_hms}}
+#'
 #' @rdname update_schemas
+#'
+#' @family local maintenance
+#'
 #' @export
+#'
 #' @importFrom rubix filter_for map_names_set
 #' @importFrom purrr map map2
 #' @importFrom utils capture.output

@@ -19,13 +19,18 @@ update_schemas(conn, schemas, all = FALSE, force_update = FALSE)
 Postgres schemas are dropped and repopulated with data found in the corresponding Data Package.
 }
 \description{
-Update any of the Postgres schemas governed by the skyscraper Package with the data found in its corresponding Data Package. The map from the skyscraper schema to its Data Package Repository is stored and maintained in \code{\link{map_schema}}.
+Instantiate or Update any of the Postgres schemas governed by the skyscraper Package with the data found in its corresponding Data Package. The map from the skyscraper schema to its Data Package Repository is stored and maintained by \code{\link{map_schema}}.
 }
 \details{
 This function operates on the dataframe returned by \code{\link{map_schema}}. This dataframe is then filtered for the `schemas` argument, if provided, or is otherwise run to completion on all schemas. Since this function cascade drops a schema before repopulating it with package data, the arguments are structured in such a way that a user has to call for a complete refresh of all possible schemas by setting the `all` argument to `TRUE` in order to prevent data loss due to bugs.
 
 The Namespace for all the Data Packages are unloaded at the start of execution to prevent the wrong Data Package from being loaded into the wrong schema since the dataframe names are duplicated across packages. Without a forced update, the corresponding Data Package is first installed only if there is a new version of the package detected when installing from GitHub. The fresh install of the Data Package is loaded, all columns with a "datetime" string match are converted to "POSIXct" "POSIXt", and then populates the schema after the present schema is dropped. In a forced update, the corresponding Data Package is force-installed and the schema is dropped and refreshed regardless of whether or not a difference has been detected in the Data Package GitHub repo.
 }
+\section{Update Schemas}{
+
+Checking Schema Status is not a required prerequisite to update skyscraper schemas. However, if the status is checked before running an update, the update needs to be run with force_update set to `TRUE` since the execution of the update occurs on the condition of requiring a new installation, which the \code{\link{schema_status}} would have already executed.
+}
+
 \seealso{
 \code{\link[rubix]{filter_for}},\code{\link[rubix]{map_names_set}}
  \code{\link[purrr]{map}},\code{\link[purrr]{map2}}
@@ -34,4 +39,8 @@ The Namespace for all the Data Packages are unloaded at the start of execution t
  \code{\link[pg13]{dropSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{writeTable}}
  \code{\link[dplyr]{mutate_all}}
  \code{\link[lubridate]{ymd_hms}}
+
+Other local maintenance: 
+\code{\link{schema_status}()}
 }
+\concept{local maintenance}
