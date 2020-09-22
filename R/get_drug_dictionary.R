@@ -1,13 +1,13 @@
 #' @title
 #' Scrape the NCI Drug Dictionary
 #'
-#' @description
-#' Scrape the drug names and their definitions from all the pages of the NCI Drug Dictionary (https://www.cancer.gov/publications/dictionaries/cancer-drug)
-#'
-#' @param max_page Maximum page to scrape, Default: 39
+#' @inherit cancergov_parsing_functions description
+#' @inheritSection cancergov_parsing_functions Web Source Types
+#' @inheritSection cancergov_parsing_functions Drug Dictionary
+#' @inheritParams cancergov_parsing_functions
 #'
 #' @return
-#' A data frame
+#' A Drug Dictionary Table in a `cancergov` schema if a Drug Dictionary Table didn't already exist. Otherwise, the new drugs are appended to the existing table.
 #'
 #' @seealso
 #'  \code{\link[tibble]{tibble}}
@@ -19,6 +19,7 @@
 #'  \code{\link[stringr]{str_replace}}
 #'
 #' @export
+#'
 #' @importFrom tibble tibble
 #' @importFrom secretary typewrite
 #' @importFrom xml2 read_html

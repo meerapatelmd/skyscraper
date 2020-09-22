@@ -2,13 +2,39 @@
 % Please edit documentation in R/get_drug_detail_links.R
 \name{get_drug_detail_links}
 \alias{get_drug_detail_links}
-\title{Get the Links to Drug Pages}
+\title{Get the URLS of all the Drug Pages in the Drug Dictionary}
 \usage{
 get_drug_detail_links(conn, max_page = 50)
 }
 \arguments{
-\item{max_page}{maximum page for the base url https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=}
+\item{conn}{Postgres connection object}
+
+\item{max_page}{maximum page number to iterate the scrape over in the "https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=" path, Default: 50
+
+
+.}
 }
 \description{
-Get the Links to Drug Pages
+These functions parse the NCI Drug Dictionary found at CancerGov.org.
 }
+\section{Web Source Types}{
+
+The NCI Drug Dictionary has 2 data sources that run in parallel. The first source is the Drug Dictionary itself at \href{https://www.cancer.gov/publications/dictionaries/cancer-drug}{https://www.cancer.gov/publications/dictionaries/cancer-drug}. The other source are the individual drug pages, called Drug Detail Links in skyscraper, that contain tables of synonyms, including investigational names.
+}
+
+\section{Drug Detail Links}{
+
+The links to Drug Pages are scraped from the Data Dictionary URL over the maximum page number and are saved to a Drug Link Table in the `cancergov` schema. The URLs in the Drug Link Table are then scraped for any HTML Tables of synonyms and the results are written to a Drug Link Synonym Table.
+}
+
+\seealso{
+\code{\link[xml2]{read_xml}}
+ \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
+ \code{\link[tibble]{tibble}}
+ \code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{filter}}
+ \code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
+
+Other cancergov parsing: 
+\code{\link{get_drug_link_synonym}()}
+}
+\concept{cancergov parsing}

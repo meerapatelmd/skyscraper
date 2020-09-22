@@ -1,10 +1,30 @@
-#' Get the Links to Drug Pages
-#' @import xml2
-#' @import rvest
-#' @import tibble
-#' @import dplyr
-#' @param max_page maximum page for the base url https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=
+#' @title
+#' Get the URLS of all the Drug Pages in the Drug Dictionary
+#'
+#' @inherit cancergov_parsing_functions description
+#' @inheritSection cancergov_parsing_functions Web Source Types
+#' @inheritSection cancergov_parsing_functions Drug Detail Links
+#' @inheritParams cancergov_parsing_functions
+#'
+#' @seealso
+#'  \code{\link[xml2]{read_xml}}
+#'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
+#'  \code{\link[tibble]{tibble}}
+#'  \code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{filter}}
+#'  \code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
+#'
+#' @rdname get_drug_detail_links
+#'
+#' @family cancergov parsing
+#'
 #' @export
+#'
+#' @importFrom xml2 read_html
+#' @importFrom rvest html_nodes html_text html_children html_attr
+#' @importFrom tibble tibble
+#' @importFrom dplyr bind_rows mutate transmute distinct left_join filter
+#' @importFrom pg13 lsTables query buildQuery appendTable writeTable
+#' @importFrom magrittr %>%
 
 get_drug_detail_links  <-
     function(conn,

@@ -10,8 +10,11 @@ A package for scraping, storing, and querying drug data across disparate web and
 }
 \section{Web Sources}{
 
+
 ChemiDPlus: \href{https://chem.nlm.nih.gov/chemidplus/}{https://chem.nlm.nih.gov/chemidplus/}
-NCI Drug Dictionary
+
+NCI Drug Dictionary: \href{https://www.cancer.gov/publications/dictionaries/}{https://www.cancer.gov/publications/dictionaries/}
+
 UpToDate
 }
 

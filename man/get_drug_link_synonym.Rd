@@ -2,18 +2,37 @@
 % Please edit documentation in R/get_drug_link_synonyms.R
 \name{get_drug_link_synonym}
 \alias{get_drug_link_synonym}
-\title{Scrape a Drug HTML Page}
+\title{Scrape and Parse Synonyms in Drug Details Link}
 \usage{
 get_drug_link_synonym(conn, sleep_time = 5)
 }
+\arguments{
+\item{conn}{Postgres connection object}
+
+\item{sleep_time}{Seconds in between xml2::read_html calls on a URL, Default: 5}
+}
 \description{
-Scrape the Tables in the Drug Page of the NCI Drug Dictionary if one exists
+These functions parse the NCI Drug Dictionary found at CancerGov.org.
 }
+\section{Web Source Types}{
+
+The NCI Drug Dictionary has 2 data sources that run in parallel. The first source is the Drug Dictionary itself at \href{https://www.cancer.gov/publications/dictionaries/cancer-drug}{https://www.cancer.gov/publications/dictionaries/cancer-drug}. The other source are the individual drug pages, called Drug Detail Links in skyscraper, that contain tables of synonyms, including investigational names.
+}
+
+\section{Drug Detail Links}{
+
+The links to Drug Pages are scraped from the Data Dictionary URL over the maximum page number and are saved to a Drug Link Table in the `cancergov` schema. The URLs in the Drug Link Table are then scraped for any HTML Tables of synonyms and the results are written to a Drug Link Synonym Table.
+}
+
 \seealso{
-\code{\link[dplyr]{select_all}}
- \code{\link[tibble]{rownames}},\code{\link[tibble]{c("tibble", "tibble")}}
- \code{\link[progress]{progress_bar}}
- \code{\link[secretary]{typewrite}},\code{\link[secretary]{character(0)}}
- \code{\link[xml2]{read_xml}}
+\code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{readTable}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
+ \code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{filter}},\code{\link[dplyr]{select}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{filter_all}}
+ \code{\link[police]{try_catch_error_as_null}}
+ \code{\link[xml2]{read_xml}},\code{\link[xml2]{xml_find_all}},\code{\link[xml2]{xml_replace}}
  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_table}}
+ \code{\link[tidyr]{separate_rows}}
+
+Other cancergov parsing: 
+\code{\link{get_drug_detail_links}()}
 }
+\concept{cancergov parsing}

@@ -1,22 +1,28 @@
 #' @title
-#' Scrape a Drug HTML Page
+#' Scrape and Parse Synonyms in Drug Details Link
 #'
-#' @description
-#' Scrape the Tables in the Drug Page of the NCI Drug Dictionary if one exists
+#' @inherit cancergov_parsing_functions description
+#' @inheritSection cancergov_parsing_functions Web Source Types
+#' @inheritSection cancergov_parsing_functions Drug Detail Links
+#' @inheritParams cancergov_parsing_functions
+#' @param sleep_time Seconds in between xml2::read_html calls on a URL, Default: 5
+#'
 #' @seealso
-#'  \code{\link[dplyr]{select_all}}
-#'  \code{\link[tibble]{rownames}},\code{\link[tibble]{c("tibble", "tibble")}}
-#'  \code{\link[progress]{progress_bar}}
-#'  \code{\link[secretary]{typewrite}},\code{\link[secretary]{character(0)}}
-#'  \code{\link[xml2]{read_xml}}
+#'  \code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{readTable}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
+#'  \code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{filter}},\code{\link[dplyr]{select}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{filter_all}}
+#'  \code{\link[police]{try_catch_error_as_null}}
+#'  \code{\link[xml2]{read_xml}},\code{\link[xml2]{xml_find_all}},\code{\link[xml2]{xml_replace}}
 #'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_table}}
+#'  \code{\link[tidyr]{separate_rows}}
+#' @rdname get_drug_link_synonym
+#' @family cancergov parsing
 #' @export
-#' @importFrom dplyr rename_all
-#' @importFrom tibble rowid_to_column tibble
-#' @importFrom progress progress_bar
-#' @importFrom secretary typewrite redTxt
-#' @importFrom xml2 read_html
+#' @importFrom pg13 lsTables query buildQuery readTable appendTable writeTable
+#' @importFrom dplyr left_join filter select bind_rows transmute filter_at
+#' @importFrom police try_catch_error_as_null
+#' @importFrom xml2 read_html xml_find_all xml_add_sibling xml_remove
 #' @importFrom rvest html_nodes html_table
+#' @importFrom tidyr separate_rows
 #' @importFrom magrittr %>%
 
 get_drug_link_synonym <-
@@ -79,7 +85,7 @@ get_drug_link_synonym <-
 
                     if (is.null(response)) {
 
-                            response <<-
+                            response <-
                                     police::try_catch_error_as_null(
                                             xml2::read_html(drug_link)
                                     )
