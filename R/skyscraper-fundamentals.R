@@ -3,7 +3,7 @@
 #'
 #' @section
 #' Web Sources:
-#' ChemiDPlus: \href{https://chem.nlm.nih.gov/chemidplus/}
+#' ChemiDPlus: \href{https://chem.nlm.nih.gov/chemidplus/}{https://chem.nlm.nih.gov/chemidplus/}
 #' NCI Drug Dictionary
 #' UpToDate
 #'
