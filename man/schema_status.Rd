@@ -7,7 +7,7 @@
 schema_status()
 }
 \description{
-Local maintenance functions are meant to be used to instantiate or update a local skyscraper schema with the Data Package Repo. This is important for keeping data updated on one machine when there have been additions made to the Remote Data Package Repository.
+Local maintenance functions are meant to be used to export and instantiate/update a local skyscraper schema with the Data Package Repo. This is important for keeping data updated on one machine when there have been additions made to the Remote Data Package Repository.
 }
 \section{Check Schema Status}{
 
@@ -21,6 +21,7 @@ All the Data Packages in the Schema Map returned by \code{\link{map_schema}} are
  \code{\link[devtools]{remote-reexports}}
 
 Other local maintenance: 
+\code{\link{export_schema_to_data_repo}()},
 \code{\link{update_schemas}()}
 }
 \concept{local maintenance}

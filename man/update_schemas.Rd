@@ -41,6 +41,7 @@ Checking Schema Status is not a required prerequisite to update skyscraper schem
  \code{\link[lubridate]{ymd_hms}}
 
 Other local maintenance: 
+\code{\link{export_schema_to_data_repo}()},
 \code{\link{schema_status}()}
 }
 \concept{local maintenance}

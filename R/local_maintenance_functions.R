@@ -2,7 +2,7 @@
 #' Skyscraper Local Data Maintenance Functions
 #'
 #' @description
-#' Local maintenance functions are meant to be used to instantiate or update a local skyscraper schema with the Data Package Repo. This is important for keeping data updated on one machine when there have been additions made to the Remote Data Package Repository.
+#' Local maintenance functions are meant to be used to export and instantiate/update a local skyscraper schema with the Data Package Repo. This is important for keeping data updated on one machine when there have been additions made to the Remote Data Package Repository.
 #'
 #' @section
 #' Check Schema Status:
@@ -11,6 +11,10 @@
 #' @section
 #' Update Schemas:
 #' Checking Schema Status is not a required prerequisite to update skyscraper schemas. However, if the status is checked before running an update, the update needs to be run with force_update set to `TRUE` since the execution of the update occurs on the condition of requiring a new installation, which the \code{\link{schema_status}} would have already executed.
+#'
+#' @section
+#' Exporting Schemas:
+#' Exporting schemas requires having a local clone of its Data Package Repository. The tables for the given schema are written to csvs in the "data-raw/", along with a refresh of DATASET.R where the usethis::use_raw_data() function is called. The R/data.R is also rewritten with updates on the dataframe dimensions. The updated local repo is then repackaged and pushed to the remote.
 #'
 #' @name local_maintenance_functions
 NULL

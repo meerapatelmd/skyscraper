@@ -1,11 +1,13 @@
 #' @title
-#' Export a Schema in a Postgres Database to a Repo
+#' Export and Push a skyscraper Schema to its Data Package Repository
 #'
-#' @description
-#' There should be a Data Repo on the local machine that is linked to the schema.
+#' @inherits local_maintenance_functions description
 #'
-#' @param target_dir Local repo where the schema data will be exported to. If it does not already exist on the local drive, it should be cloned beforehand.
-#' @param schema Schema
+#' @inheritSection local_maintenance_functions Exporting Schemas
+#'
+#' @param conn          Postgres connection for `schema` argument
+#' @param schema        Schema to export
+#' @param target_dir    Path to the local repo where the schema data will be exported to. If it does not already exist locally, it should be cloned beforehand.
 #'
 #' @seealso
 #'  \code{\link[cave]{create_dir_if_not_exist}}
@@ -20,6 +22,8 @@
 #'  \code{\link[glitter]{docPushInstall}}
 #'
 #' @rdname export_schema_to_data_repo
+#'
+#' @family local maintenance
 #'
 #' @export
 #' @importFrom cave create_dir_if_not_exist
@@ -36,10 +40,19 @@
 
 
 export_schema_to_data_repo <-
-        function(target_dir,
-                 schema) {
+        function(conn,
+                 schema,
+                target_dir) {
                         # target_dir <- "/Users/meerapatel/GitHub/chemidplusData/"
                         # schema <- "chemidplus"
+
+                        schema_map <- map_schema()
+
+                        # Unload Namespaces
+                        unloadPackages <- schema_map$dataPackage
+
+                        unloadPackages %>%
+                                purrr::map(~unloadNamespace(.))
 
 
                         target_dir <- path.expand(target_dir)
@@ -56,7 +69,7 @@ export_schema_to_data_repo <-
                         cave::create_dir_if_not_exist(data_path)
                         cave::create_dir_if_not_exist(r_path)
 
-                        conn <- chariot::connectAthena()
+
                         Tables <-
                                 pg13::lsTables(conn = conn,
                                                schema = schema)
@@ -65,7 +78,6 @@ export_schema_to_data_repo <-
                                 rubix::map_names_set(~pg13::readTable(conn = conn,
                                                                       schema = schema,
                                                                       tableName = .))
-                        chariot::dcAthena(conn = conn)
 
 
                         data_raw_paths <- paste0(data_raw_path, "/", names(Data), ".csv")

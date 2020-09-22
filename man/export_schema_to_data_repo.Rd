@@ -2,18 +2,25 @@
 % Please edit documentation in R/export_schema_to_data_repo.R
 \name{export_schema_to_data_repo}
 \alias{export_schema_to_data_repo}
-\title{Export a Schema in a Postgres Database to a Repo}
+\title{Export and Push a skyscraper Schema to its Data Package Repository}
 \usage{
-export_schema_to_data_repo(target_dir, schema)
+export_schema_to_data_repo(conn, schema, target_dir)
 }
 \arguments{
-\item{target_dir}{Local repo where the schema data will be exported to. If it does not already exist on the local drive, it should be cloned beforehand.}
+\item{conn}{Postgres connection for `schema` argument}
 
-\item{schema}{Schema}
+\item{schema}{Schema to export}
+
+\item{target_dir}{Path to the local repo where the schema data will be exported to. If it does not already exist locally, it should be cloned beforehand.}
 }
 \description{
-There should be a Data Repo on the local machine that is linked to the schema.
+Export and Push a skyscraper Schema to its Data Package Repository
 }
+\section{Exporting Schemas}{
+
+Exporting schemas requires having a local clone of its Data Package Repository. The tables for the given schema are written to csvs in the "data-raw/", along with a refresh of DATASET.R where the usethis::use_raw_data() function is called. The R/data.R is also rewritten with updates on the dataframe dimensions. The updated local repo is then repackaged and pushed to the remote.
+}
+
 \seealso{
 \code{\link[cave]{create_dir_if_not_exist}}
  \code{\link[chariot]{connectAthena}},\code{\link[chariot]{dcAthena}}
@@ -25,4 +32,9 @@ There should be a Data Repo on the local machine that is linked to the schema.
  \code{\link[sinew]{makeOxygen}}
  \code{\link[stringr]{str_replace}}
  \code{\link[glitter]{docPushInstall}}
+
+Other local maintenance: 
+\code{\link{schema_status}()},
+\code{\link{update_schemas}()}
 }
+\concept{local maintenance}
