@@ -2,7 +2,7 @@
 % Please edit documentation in R/searchChemiDPlus.R
 \name{searchChemiDPlus}
 \alias{searchChemiDPlus}
-\title{Search ChemiDPlus and Store Results in Tables}
+\title{Search ChemiDPlus and Store Results}
 \usage{
 searchChemiDPlus(
   conn,
@@ -14,23 +14,8 @@ searchChemiDPlus(
   target_dir = "~/GitHub/Public-Packages/chemidplusSearchData/"
 )
 }
-\arguments{
-\item{conn}{PARAM_DESCRIPTION}
-
-\item{search_term}{PARAM_DESCRIPTION}
-
-\item{type}{PARAM_DESCRIPTION, Default: 'contains'}
-
-\item{sleep_time}{PARAM_DESCRIPTION, Default: 3}
-
-\item{schema}{PARAM_DESCRIPTION, Default: 'chemidplus_search'}
-
-\item{export_repo}{PARAM_DESCRIPTION, Default: TRUE}
-
-\item{target_dir}{PARAM_DESCRIPTION, Default: '~/GitHub/Public-Packages/chemidplusSearchData/'}
-}
 \description{
-Search ChemiDPlus and Store Results in Tables
+Search ChemiDPlus and Store Results
 }
 \seealso{
 \code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}}

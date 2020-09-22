@@ -1,12 +1,5 @@
 #' @title
-#' Search ChemiDPlus and Store Results in Tables
-#' @param conn PARAM_DESCRIPTION
-#' @param search_term PARAM_DESCRIPTION
-#' @param type PARAM_DESCRIPTION, Default: 'contains'
-#' @param sleep_time PARAM_DESCRIPTION, Default: 3
-#' @param schema PARAM_DESCRIPTION, Default: 'chemidplus_search'
-#' @param export_repo PARAM_DESCRIPTION, Default: TRUE
-#' @param target_dir PARAM_DESCRIPTION, Default: '~/GitHub/Public-Packages/chemidplusSearchData/'
+#' Search ChemiDPlus and Store Results
 #' @seealso
 #'  \code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}}
 #'  \code{\link[dplyr]{select}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{filter}}
