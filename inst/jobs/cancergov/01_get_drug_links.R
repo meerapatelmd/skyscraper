@@ -5,20 +5,36 @@ library(chariot)
 conn <- chariot::connectAthena()
 Tables <- pg13::lsTables(conn = conn,
                          schema = "cancergov")
+
+nci_dd_count <- skyscraper::nci_count()
+
 if ("DRUG_DICTIONARY_LOG" %in% Tables) {
-        pg13::appendTable(conn = conn,
-                          schema = "cancergov",
-                          tableName = "DRUG_DICTIONARY_LOG",
-                          tibble::tibble(ddl_datetime = Sys.time(),
-                                         drug_count = skyscraper::nci_count()))
+
+        drug_dictionary_log_table <-
+                pg13::readTable(conn = conn,
+                                schema = "cancergov",
+                                tableName = "DRUG_DICTIONARY_LOG")
+
+
+        if (!(nci_dd_count %in% drug_dictionary_log_table$drug_count)) {
+
+                pg13::appendTable(conn = conn,
+                                  schema = "cancergov",
+                                  tableName = "DRUG_DICTIONARY_LOG",
+                                  tibble::tibble(ddl_datetime = Sys.time(),
+                                                 drug_count = nci_dd_count))
+
+        }
+
 } else {
+
         pg13::writeTable(conn = conn,
                          schema = "cancergov",
                          tableName = "DRUG_DICTIONARY_LOG",
                          tibble::tibble(ddl_datetime = Sys.time(),
-                                        drug_count = skyscraper::nci_count()))
-}
+                                        drug_count = nci_dd_count))
 
+}
 chariot::dcAthena(conn = conn)
 
 
