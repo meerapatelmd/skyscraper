@@ -4,7 +4,7 @@
 \name{skyscraper-package}
 \alias{skyscraper}
 \alias{skyscraper-package}
-\title{skyscraper: Scrape drug data from various resources.}
+\title{skyscraper: skyscraper R Package}
 \description{
 A package for scraping, storing, and querying drug data across disparate web and data sources
 

@@ -1,6 +1,6 @@
 Package: skyscraper
 Type: Package
-Title: Scrape drug data from various resources.
+Title: skyscraper R Package
 Version: 0.1.0
 Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
