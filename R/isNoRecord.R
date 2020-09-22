@@ -1,6 +1,10 @@
 #' @title
-#' Does the URL return no records found?
-#' @param response xml_document xml_node class object
+#' Does the RN URL indicate that no records were found?
+#'
+#' @inherit chemidplus_parsing_functions description
+#'
+#' @inheritParams chemidplus_parsing_functions
+#'
 #' @seealso
 #'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
 #' @rdname isNoRecord

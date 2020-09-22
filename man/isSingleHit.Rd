@@ -2,12 +2,15 @@
 % Please edit documentation in R/isSingleHit.R
 \name{isSingleHit}
 \alias{isSingleHit}
-\title{#' Get the RN Number an URL for a Phrase}
+\title{Parse the RN from a Substance Page}
 \usage{
 isSingleHit(response)
 }
+\arguments{
+\item{response}{"xml_document" "xml_node" class object returned by xml2::read_html}
+}
 \description{
-#' Get the RN Number an URL for a Phrase
+If a ChemiDPlus search results in a single match, the URL returned is the RN URL itself that is derived from the "h1" HTML node. For multiple matches, the "h1" HTML node returns blank.
 }
 \seealso{
 \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
@@ -16,4 +19,8 @@ isSingleHit(response)
  \code{\link[tidyr]{extract}},\code{\link[tidyr]{pivot_wider}}
  \code{\link[dplyr]{mutate}}
  \code{\link[stringr]{str_remove}}
+
+Other chemidplus parsing: 
+\code{\link{is404}()}
 }
+\concept{chemidplus parsing}

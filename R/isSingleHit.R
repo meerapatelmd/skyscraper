@@ -1,5 +1,13 @@
 #' @title
-#' #' Get the RN Number an URL for a Phrase
+#' Parse the RN from a Substance Page
+#'
+#' @description
+#' If a ChemiDPlus search results in a single match, the URL returned is the RN URL itself that is derived from the "h1" HTML node. For multiple matches, the "h1" HTML node returns blank.
+#'
+#' @inherit chemidplus_parsing_functions description
+#'
+#' @inheritParams chemidplus_parsing_functions
+#'
 #' @seealso
 #'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
 #'  \code{\link[centipede]{strsplit}}
@@ -7,8 +15,13 @@
 #'  \code{\link[tidyr]{extract}},\code{\link[tidyr]{pivot_wider}}
 #'  \code{\link[dplyr]{mutate}}
 #'  \code{\link[stringr]{str_remove}}
+#'
 #' @rdname isSingleHit
+#'
+#' @family chemidplus parsing
+#'
 #' @export
+#'
 #' @importFrom rvest html_node html_text
 #' @importFrom centipede strsplit
 #' @importFrom tibble as_tibble_col tribble
