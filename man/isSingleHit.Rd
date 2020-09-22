@@ -19,11 +19,11 @@ If a ChemiDPlus search results in a single match, the URL returned is the RN URL
 
 \seealso{
 \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
- \code{\link[centipede]{strsplit}}
- \code{\link[tibble]{as_tibble}},\code{\link[tibble]{tribble}}
- \code{\link[tidyr]{extract}},\code{\link[tidyr]{pivot_wider}}
- \code{\link[dplyr]{mutate}}
- \code{\link[stringr]{str_remove}}
+\code{\link[centipede]{strsplit}}
+\code{\link[tibble]{as_tibble}},\code{\link[tibble]{tribble}}
+\code{\link[tidyr]{extract}},\code{\link[tidyr]{pivot_wider}}
+\code{\link[dplyr]{mutate}}
+\code{\link[stringr]{str_remove}}
 
 Other chemidplus parsing: 
 \code{\link{is404}()},

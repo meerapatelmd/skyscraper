@@ -4,9 +4,9 @@
 \name{skyscraper-package}
 \alias{skyscraper}
 \alias{skyscraper-package}
-\title{skyscraper: skyscraper R Package}
+\title{skyscraper: Scrape Clinical Drug Data}
 \description{
-A package for scraping, storing, and querying drug data across disparate web and data sources
+Scrape, store, and maintain clinical drug data across various disparate web and data sources, including the ChemiDPlus, NCI Drug Dictionary, and the ClinicalTrials.gov AACT Database.
 }
 \section{Web Sources}{
 
@@ -23,4 +23,8 @@ UpToDate
 ClinicalTrials.gov
 }
 
+\author{
+\strong{Maintainer}: Meera Patel, MD \email{patelmeeray@gmail.com} (\href{https://orcid.org/0000-0002-3401-3948}{ORCID})
+
+}
 \keyword{internal}

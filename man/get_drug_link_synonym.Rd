@@ -21,16 +21,16 @@ The NCI Drug Dictionary has 2 data sources that run in parallel. The first sourc
 
 \section{Drug Detail Links}{
 
-The links to Drug Pages are scraped from the Data Dictionary URL over the maximum page number and are saved to a Drug Link Table in the `cancergov` schema. The URLs in the Drug Link Table are then scraped for any HTML Tables of synonyms and the results are written to a Drug Link Synonym Table.
+The links to Drug Pages are scraped from the Data Dictionary URL over the maximum page number and are saved to a Drug Link Table in the \code{cancergov} schema. The URLs in the Drug Link Table are then scraped for any HTML Tables of synonyms and the results are written to a Drug Link Synonym Table.
 }
 
 \seealso{
 \code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{readTable}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
- \code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{filter}},\code{\link[dplyr]{select}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{filter_all}}
- \code{\link[police]{try_catch_error_as_null}}
- \code{\link[xml2]{read_xml}},\code{\link[xml2]{xml_find_all}},\code{\link[xml2]{xml_replace}}
- \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_table}}
- \code{\link[tidyr]{separate_rows}}
+\code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{filter}},\code{\link[dplyr]{select}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{filter_all}}
+\code{\link[police]{try_catch_error_as_null}}
+\code{\link[xml2]{read_xml}},\code{\link[xml2]{xml_find_all}},\code{\link[xml2]{xml_replace}}
+\code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_table}}
+\code{\link[tidyr]{separate_rows}}
 
 Other cancergov: 
 \code{\link{get_drug_detail_links}()},

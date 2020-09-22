@@ -11,7 +11,6 @@ get_drug_detail_links(conn, max_page = 50)
 
 \item{max_page}{maximum page number to iterate the scrape over in the "https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=" path, Default: 50
 
-
 .}
 }
 \description{
@@ -24,15 +23,15 @@ The NCI Drug Dictionary has 2 data sources that run in parallel. The first sourc
 
 \section{Drug Detail Links}{
 
-The links to Drug Pages are scraped from the Data Dictionary URL over the maximum page number and are saved to a Drug Link Table in the `cancergov` schema. The URLs in the Drug Link Table are then scraped for any HTML Tables of synonyms and the results are written to a Drug Link Synonym Table.
+The links to Drug Pages are scraped from the Data Dictionary URL over the maximum page number and are saved to a Drug Link Table in the \code{cancergov} schema. The URLs in the Drug Link Table are then scraped for any HTML Tables of synonyms and the results are written to a Drug Link Synonym Table.
 }
 
 \seealso{
 \code{\link[xml2]{read_xml}}
- \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
- \code{\link[tibble]{tibble}}
- \code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{filter}}
- \code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
+\code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
+\code{\link[tibble]{tibble}}
+\code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{filter}}
+\code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
 
 Other cancergov: 
 \code{\link{get_drug_dictionary}()},

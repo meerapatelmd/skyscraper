@@ -7,7 +7,7 @@
 export_schema_to_data_repo(conn, schema, target_dir)
 }
 \arguments{
-\item{conn}{Postgres connection for `schema` argument}
+\item{conn}{Postgres connection for \code{schema} argument}
 
 \item{schema}{Schema to export}
 
@@ -23,15 +23,15 @@ Exporting schemas requires having a local clone of its Data Package Repository. 
 
 \seealso{
 \code{\link[cave]{create_dir_if_not_exist}}
- \code{\link[chariot]{connectAthena}},\code{\link[chariot]{dcAthena}}
- \code{\link[pg13]{lsTables}},\code{\link[pg13]{readTable}}
- \code{\link[rubix]{map_names_set}}
- \code{\link[purrr]{map2}},\code{\link[purrr]{map}}
- \code{\link[broca]{simply_write_csv}}
- \code{\link[readr]{read_lines}}
- \code{\link[sinew]{makeOxygen}}
- \code{\link[stringr]{str_replace}}
- \code{\link[glitter]{docPushInstall}}
+\code{\link[chariot]{connectAthena}},\code{\link[chariot]{dcAthena}}
+\code{\link[pg13]{lsTables}},\code{\link[pg13]{readTable}}
+\code{\link[rubix]{map_names_set}}
+\code{\link[purrr]{map2}},\code{\link[purrr]{map}}
+\code{\link[broca]{simply_write_csv}}
+\code{\link[readr]{read_lines}}
+\code{\link[sinew]{makeOxygen}}
+\code{\link[stringr]{str_replace}}
+\code{\link[glitter]{docPushInstall}}
 
 Other local maintenance: 
 \code{\link{map_schema}()},

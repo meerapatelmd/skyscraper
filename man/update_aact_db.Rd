@@ -2,15 +2,15 @@
 % Please edit documentation in R/update_aact_db.R
 \name{update_aact_db}
 \alias{update_aact_db}
-\title{Update ClinicalTrial.gov `aact` Postgres Database}
+\title{Update ClinicalTrial.gov \code{aact} Postgres Database}
 \usage{
 update_aact_db(conn)
 }
 \value{
-A `aact` Postgres Database if one did not previously exist with a populated `ctgov` schema and a log of the source file and timestamp in the `public.update_log` Table.
+A \code{aact} Postgres Database if one did not previously exist with a populated \code{ctgov} schema and a log of the source file and timestamp in the \code{public.update_log} Table.
 }
 \description{
-The ClinicalTrials.gov functions are related to the `aact` Postgres database instance available for download at \href{https://aact.ctti-clinicaltrials.org/}{https://aact.ctti-clinicaltrials.org/}.
+The ClinicalTrials.gov functions are related to the \code{aact} Postgres database instance available for download at \href{https://aact.ctti-clinicaltrials.org/}{https://aact.ctti-clinicaltrials.org/}.
 }
 \section{AACT Database}{
 
@@ -19,8 +19,8 @@ Technical documentation on the AACT Database instantiation can be found at \href
 
 \seealso{
 \code{\link[police]{try_catch_error_as_null}}
- \code{\link[httr]{with_config}},\code{\link[httr]{c("add_headers", "authenticate", "config", "config", "set_cookies", "timeout", "use_proxy", "user_agent", "verbose")}},\code{\link[httr]{GET}},\code{\link[httr]{content}}
- \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
- \code{\link[curl]{handle}},\code{\link[curl]{curl_download}}
- \code{\link[pg13]{query}},\code{\link[pg13]{createDB}},\code{\link[pg13]{localConnect}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}},\code{\link[pg13]{dc}}
+\code{\link[httr]{with_config}},\code{\link[httr]{c("add_headers", "authenticate", "config", "config", "set_cookies", "timeout", "use_proxy", "user_agent", "verbose")}},\code{\link[httr]{GET}},\code{\link[httr]{content}}
+\code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
+\code{\link[curl]{handle}},\code{\link[curl]{curl_download}}
+\code{\link[pg13]{query}},\code{\link[pg13]{createDB}},\code{\link[pg13]{localConnect}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}},\code{\link[pg13]{dc}}
 }

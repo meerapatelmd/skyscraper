@@ -14,5 +14,5 @@ Get the total number of drugs in the NCI Drug Dictionary
 }
 \seealso{
 \code{\link[xml2]{read_xml}}
- \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
+\code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
 }

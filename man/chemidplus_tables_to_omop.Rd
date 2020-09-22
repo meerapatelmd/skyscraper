@@ -16,11 +16,11 @@ ETL the ChemiDPlus Tables to OMOP Vocabulary Architecture
 }
 \seealso{
 \code{\link[pg13]{lsTables}},\code{\link[pg13]{readTable}},\code{\link[pg13]{query}},\code{\link[pg13]{appendTable}}
- \code{\link[rubix]{map_names_set}},\code{\link[rubix]{mutate_all_as_char}},\code{\link[rubix]{normalize_all_to_na}},\code{\link[rubix]{make_identifier}}
- \code{\link[purrr]{map}},\code{\link[purrr]{map2}}
- \code{\link[tibble]{as_tibble}}
- \code{\link[dplyr]{filter}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{select}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{filter_all}},\code{\link[dplyr]{group_by}}
- \code{\link[tidyr]{extract}}
- \code{\link[chariot]{queryAthena}},\code{\link[chariot]{filterValid}}
- \code{\link[stringr]{str_remove}}
+\code{\link[rubix]{map_names_set}},\code{\link[rubix]{mutate_all_as_char}},\code{\link[rubix]{normalize_all_to_na}},\code{\link[rubix]{make_identifier}}
+\code{\link[purrr]{map}},\code{\link[purrr]{map2}}
+\code{\link[tibble]{as_tibble}}
+\code{\link[dplyr]{filter}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{select}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{filter_all}},\code{\link[dplyr]{group_by}}
+\code{\link[tidyr]{extract}}
+\code{\link[chariot]{queryAthena}},\code{\link[chariot]{filterValid}}
+\code{\link[stringr]{str_remove}}
 }

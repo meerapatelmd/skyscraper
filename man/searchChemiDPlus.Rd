@@ -19,8 +19,8 @@ Search ChemiDPlus and Store Results
 }
 \seealso{
 \code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}}
- \code{\link[dplyr]{select}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{filter}}
- \code{\link[centipede]{no_na}}
- \code{\link[tibble]{tribble}},\code{\link[tibble]{c("tibble", "tibble")}}
- \code{\link[police]{try_catch_error_as_null}}
+\code{\link[dplyr]{select}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{filter}}
+\code{\link[centipede]{no_na}}
+\code{\link[tibble]{tribble}},\code{\link[tibble]{c("tibble", "tibble")}}
+\code{\link[police]{try_catch_error_as_null}}
 }

@@ -11,7 +11,7 @@ get_registry_numbers(conn, rn_url, response, schema = schema, sleep_time = 3)
 
 \item{rn_url}{Registry number URL to read that also serves as an Identifier}
 
-\item{response}{(optional) "xml_document" "xml_node" class object returned by xml2::read_html for the `rn_url` argument. Providing a response from a single HTML read reduces the chance of encountering a HTTP 503 error when parsing multiple sections from a single URL. If a response argument is missing, a response is read. Followed by the `sleep_time` in seconds.}
+\item{response}{(optional) "xml_document" "xml_node" class object returned by xml2::read_html for the \code{rn_url} argument. Providing a response from a single HTML read reduces the chance of encountering a HTTP 503 error when parsing multiple sections from a single URL. If a response argument is missing, a response is read. Followed by the \code{sleep_time} in seconds.}
 
 \item{schema}{Schema that the returned data is written to, Default: 'chemidplus'}
 
@@ -21,7 +21,7 @@ get_registry_numbers(conn, rn_url, response, schema = schema, sleep_time = 3)
 Each section is parsed by a respective skyscraper function that stores the scraped results in a table of the same name in a schema. If a connection argument is not provided, the results are returned as a dataframe in the R console.
 }
 \description{
-All ChemiDPlus Scraping Functions operate on a Registry Number URL (`rn_url`). The initial search is logged to a "REGISTRY_NUMBER_LOG" Table. If the RN URL is then tested for 404 Status and logged to the "RN_URL_VALIDITY" Table. The major sections found at the ChemiDPlus site are: "Names and Synonyms", "Classification", "Registry Numbers", "Links to Resources" with these sections are written to their respective tables "NAMES_AND_SYNONYMS", "CLASSIFICATION", "REGISTRY_NUMBERS", and "LINKS_TO_RESOURCES".
+All ChemiDPlus Scraping Functions operate on a Registry Number URL (\code{rn_url}). The initial search is logged to a "REGISTRY_NUMBER_LOG" Table. If the RN URL is then tested for 404 Status and logged to the "RN_URL_VALIDITY" Table. The major sections found at the ChemiDPlus site are: "Names and Synonyms", "Classification", "Registry Numbers", "Links to Resources" with these sections are written to their respective tables "NAMES_AND_SYNONYMS", "CLASSIFICATION", "REGISTRY_NUMBERS", and "LINKS_TO_RESOURCES".
 }
 \section{Registry Numbers}{
 
@@ -30,13 +30,13 @@ The "Registry Numbers" Section contains other identifiers for the given drug at 
 
 \seealso{
 \code{\link[xml2]{read_xml}}
- \code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
- \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
- \code{\link[stringr]{str_remove}}
- \code{\link[centipede]{strsplit}}
- \code{\link[dplyr]{mutate}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate_all}},\code{\link[dplyr]{distinct}}
- \code{\link[purrr]{map2}},\code{\link[purrr]{set_names}},\code{\link[purrr]{map}}
- \code{\link[tibble]{as_tibble}}
+\code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
+\code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
+\code{\link[stringr]{str_remove}}
+\code{\link[centipede]{strsplit}}
+\code{\link[dplyr]{mutate}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate_all}},\code{\link[dplyr]{distinct}}
+\code{\link[purrr]{map2}},\code{\link[purrr]{set_names}},\code{\link[purrr]{map}}
+\code{\link[tibble]{as_tibble}}
 
 Other chemidplus scraping: 
 \code{\link{get_classification}()},

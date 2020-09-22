@@ -4,7 +4,7 @@
 \alias{clinicaltrialsgov_functions}
 \title{ClinicalTrials.gov Functions}
 \description{
-The ClinicalTrials.gov functions are related to the `aact` Postgres database instance available for download at \href{https://aact.ctti-clinicaltrials.org/}{https://aact.ctti-clinicaltrials.org/}.
+The ClinicalTrials.gov functions are related to the \code{aact} Postgres database instance available for download at \href{https://aact.ctti-clinicaltrials.org/}{https://aact.ctti-clinicaltrials.org/}.
 }
 \section{AACT Database}{
 

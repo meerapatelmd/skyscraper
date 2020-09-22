@@ -28,5 +28,5 @@ All the Names and Synonyms for a given Raw Concept are joined in lowercase to th
 }
 \seealso{
 \code{\link[pg13]{query}}
- \code{\link[SqlRender]{render}}
+\code{\link[SqlRender]{render}}
 }

@@ -11,11 +11,10 @@ get_drug_dictionary(conn, max_page = 50)
 
 \item{max_page}{maximum page number to iterate the scrape over in the "https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=" path, Default: 50
 
-
 .}
 }
 \value{
-A Drug Dictionary Table in a `cancergov` schema if a Drug Dictionary Table didn't already exist. Otherwise, the new drugs are appended to the existing table.
+A Drug Dictionary Table in a \code{cancergov} schema if a Drug Dictionary Table didn't already exist. Otherwise, the new drugs are appended to the existing table.
 }
 \description{
 These functions scrape and parse the NCI Drug Dictionary found at CancerGov.org.
@@ -27,17 +26,17 @@ The NCI Drug Dictionary has 2 data sources that run in parallel. The first sourc
 
 \section{Drug Dictionary}{
 
-The listed drug names and their definitions are scraped from the Drug Dictionary HTML and updated to a Drug Dictionary Table in a `cancergov` schema.
+The listed drug names and their definitions are scraped from the Drug Dictionary HTML and updated to a Drug Dictionary Table in a \code{cancergov} schema.
 }
 
 \seealso{
 \code{\link[tibble]{tibble}}
- \code{\link[secretary]{typewrite}}
- \code{\link[xml2]{read_xml}}
- \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
- \code{\link[purrr]{map}},\code{\link[purrr]{keep}},\code{\link[purrr]{transpose}}
- \code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate_all}}
- \code{\link[stringr]{str_replace}}
+\code{\link[secretary]{typewrite}}
+\code{\link[xml2]{read_xml}}
+\code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
+\code{\link[purrr]{map}},\code{\link[purrr]{keep}},\code{\link[purrr]{transpose}}
+\code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate_all}}
+\code{\link[stringr]{str_replace}}
 
 Other cancergov: 
 \code{\link{get_drug_detail_links}()},

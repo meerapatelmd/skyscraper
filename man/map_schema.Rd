@@ -14,7 +14,7 @@ Each Postgres schema governed by this package has a corresponding Data Package, 
 }
 \seealso{
 \code{\link[tibble]{tribble}}
- \code{\link[dplyr]{mutate}}
+\code{\link[dplyr]{mutate}}
 
 Other local maintenance: 
 \code{\link{export_schema_to_data_repo}()},

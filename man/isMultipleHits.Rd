@@ -19,11 +19,11 @@ If a ChemiDPlus search has multiple possible matches, the landing page where the
 
 \seealso{
 \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
- \code{\link[tibble]{as_tibble}}
- \code{\link[rubix]{filter_at_grepl}}
- \code{\link[tidyr]{extract}}
- \code{\link[dplyr]{mutate}},\code{\link[dplyr]{mutate_all}}
- \code{\link[stringr]{str_remove}}
+\code{\link[tibble]{as_tibble}}
+\code{\link[rubix]{filter_at_grepl}}
+\code{\link[tidyr]{extract}}
+\code{\link[dplyr]{mutate}},\code{\link[dplyr]{mutate_all}}
+\code{\link[stringr]{str_remove}}
 
 Other chemidplus parsing: 
 \code{\link{is404}()},
