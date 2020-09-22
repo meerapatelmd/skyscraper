@@ -43,9 +43,9 @@ The Table logs the Raw Concept, the processed version of the Concept (ie removed
  \code{\link[tibble]{tibble}}
  \code{\link[xml2]{read_xml}}
 
-Other chemidplus: 
+Other chemidplus scraping: 
 \code{\link{get_classification}()},
 \code{\link{get_links_to_resources}()},
 \code{\link{get_names_and_synonyms}()}
 }
-\concept{chemidplus}
+\concept{chemidplus scraping}

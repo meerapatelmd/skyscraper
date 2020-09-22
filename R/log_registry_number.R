@@ -19,7 +19,8 @@
 #'  \code{\link[xml2]{read_xml}}
 #'
 #' @rdname log_registry_number
-#' @family chemidplus
+#'
+#' @family chemidplus scraping
 #'
 #' @export
 #'

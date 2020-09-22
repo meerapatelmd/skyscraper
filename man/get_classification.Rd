@@ -41,9 +41,9 @@ The "Classification" Section results contain a Timestamp, RN URL, and the drug c
  \code{\link[tibble]{as_tibble}}
  \code{\link[dplyr]{mutate}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{filter_all}}
 
-Other chemidplus: 
+Other chemidplus scraping: 
 \code{\link{get_links_to_resources}()},
 \code{\link{get_names_and_synonyms}()},
 \code{\link{log_registry_number}()}
 }
-\concept{chemidplus}
+\concept{chemidplus scraping}

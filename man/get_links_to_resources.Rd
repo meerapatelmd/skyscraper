@@ -42,9 +42,9 @@ The "Links to Resources" Section derives all the HTML links to other data and we
  \code{\link[tibble]{as_tibble}}
  \code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{filter_all}}
 
-Other chemidplus: 
+Other chemidplus scraping: 
 \code{\link{get_classification}()},
 \code{\link{get_names_and_synonyms}()},
 \code{\link{log_registry_number}()}
 }
-\concept{chemidplus}
+\concept{chemidplus scraping}

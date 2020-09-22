@@ -19,7 +19,7 @@
 #'
 #' @rdname get_names_and_synonyms
 #'
-#' @family chemidplus
+#' @family chemidplus scraping
 #'
 #' @export
 #'

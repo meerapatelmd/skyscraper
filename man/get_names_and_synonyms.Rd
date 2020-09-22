@@ -44,9 +44,9 @@ The "Names and Synonyms" Section scraped results contain a Timestamp, RN URL. If
  \code{\link[purrr]{map2}},\code{\link[purrr]{set_names}},\code{\link[purrr]{map}}
  \code{\link[tibble]{as_tibble}}
 
-Other chemidplus: 
+Other chemidplus scraping: 
 \code{\link{get_classification}()},
 \code{\link{get_links_to_resources}()},
 \code{\link{log_registry_number}()}
 }
-\concept{chemidplus}
+\concept{chemidplus scraping}
