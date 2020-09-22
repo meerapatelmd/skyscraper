@@ -1,12 +1,11 @@
 #' @title
 #' Scrape the "Names and Synonyms" Section at a Registry Number URL
 #'
+#' @inherit chemidplus_scraping_functions description return
 #' @inheritSection chemidplus_scraping_functions Names and Synonyms
 #'
-#' @return
-#' A dataframe
-#' @details DETAILS
 #' @inheritParams chemidplus_scraping_functions
+#'
 #' @seealso
 #'  \code{\link[xml2]{read_xml}}
 #'  \code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
@@ -16,8 +15,11 @@
 #'  \code{\link[dplyr]{mutate}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate_all}},\code{\link[dplyr]{distinct}}
 #'  \code{\link[purrr]{map2}},\code{\link[purrr]{set_names}},\code{\link[purrr]{map}}
 #'  \code{\link[tibble]{as_tibble}}
+#'
 #' @rdname get_names_and_synonyms
+#'
 #' @export
+#'
 #' @importFrom xml2 read_html
 #' @importFrom pg13 lsSchema createSchema lsTables query buildQuery appendTable writeTable
 #' @importFrom rvest html_nodes html_text

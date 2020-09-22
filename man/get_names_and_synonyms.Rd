@@ -24,17 +24,14 @@ get_names_and_synonyms(
 \item{sleep_time}{If the response argument is missing, the number seconds to pause after reading the URL, Default: 3}
 }
 \value{
-A dataframe
+Each section is parsed by a respective skyscraper function that stores the scraped results in a table of the same name in a schema. If a connection argument is not provided, the results are returned as a dataframe in the R console.
 }
 \description{
-Scrape the "Names and Synonyms" Section at a Registry Number URL
-}
-\details{
-DETAILS
+All ChemiDPlus Scraping Functions operate on a Registry Number URL (`rn_url`). The major sections found at the ChemiDPlus site are: "Names and Synonyms", "Classification", "Registry Numbers", "Links to Resources".
 }
 \section{Names and Synonyms}{
 
-The "Names and Synonyms" Section scraped results are written to the NAMES_AND_SYNONYMS Table with a Timestamp, RN URL (Identifier). If the section has subheadings, the subheading is scraped as the Synonym Type along with the Synonym itself, otherwise the Synonym Type is NULL.
+The "Names and Synonyms" Section scraped results contain a Timestamp, RN URL (Identifier). If the section has subheadings, the subheading is scraped as the Synonym Type along with the Synonym itself.
 }
 
 \seealso{

@@ -2,13 +2,14 @@
 #' ChemiDPlus Scraping Functions
 #'
 #' @description
-#' All ChemiDPlus Scraping Functions operate on a Registry Number URL (`rn_url`). The major sections found at the ChemiDPlus site are: "Names and Synonyms", "Classification", "Registry Numbers", "Links to Resources". Each section is parsed by a respective skyscraper function that stores the scraped results in a table of the same name in a schema. If a connection argument is not provided, the results are returned as a dataframe in the R console.
+#' All ChemiDPlus Scraping Functions operate on a Registry Number URL (`rn_url`). The major sections found at the ChemiDPlus site are: "Names and Synonyms", "Classification", "Registry Numbers", "Links to Resources".
+#'
+#' @return
+#' Each section is parsed by a respective skyscraper function that stores the scraped results in a table of the same name in a schema. If a connection argument is not provided, the results are returned as a dataframe in the R console.
 #'
 #' @section
 #' Names and Synonyms:
-#' The "Names and Synonyms" Section scraped results are written to the NAMES_AND_SYNONYMS Table with a Timestamp, RN URL (Identifier). If the section has subheadings, the subheading is scraped as the Synonym Type along with the Synonym itself, otherwise the Synonym Type is NULL.
-#'
-#'
+#' The "Names and Synonyms" Section scraped results contain a Timestamp, RN URL (Identifier). If the section has subheadings, the subheading is scraped as the Synonym Type along with the Synonym itself.
 #'
 #' @param conn          Postgres connection object
 #' @param rn_url        Registry number URL to read
