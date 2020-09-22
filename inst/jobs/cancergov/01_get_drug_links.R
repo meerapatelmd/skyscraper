@@ -2,6 +2,26 @@ library(tidyverse)
 library(skyscraper)
 library(chariot)
 
+conn <- chariot::connectAthena()
+Tables <- pg13::lsTables(conn = conn,
+                         schema = "cancergov")
+if ("DRUG_DICTIONARY_LOG" %in% Tables) {
+        pg13::appendTable(conn = conn,
+                          schema = "cancergov",
+                          tableName = "DRUG_DICTIONARY_LOG",
+                          tibble::tibble(ddl_datetime = Sys.time(),
+                                         drug_count = skyscraper::nci_count()))
+} else {
+        pg13::writeTable(conn = conn,
+                         schema = "cancergov",
+                         tableName = "DRUG_DICTIONARY_LOG",
+                         tibble::tibble(ddl_datetime = Sys.time(),
+                                        drug_count = skyscraper::nci_count()))
+}
+
+chariot::dcAthena(conn = conn)
+
+
 
 starting_count <-
         chariot::queryAthena("SELECT COUNT(*)
