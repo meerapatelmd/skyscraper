@@ -15,4 +15,39 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Imports: 
-    magrittr
+        magrittr,
+        SqlRender,
+        broca,
+        cave,
+        centipede,
+        chariot,
+        curl,
+        devtools,
+        dplyr,
+        glitter,
+        httr,
+        lubridate,
+        pg13,
+        police,
+        purrr,
+        readr,
+        rubix,
+        rvest,
+        secretary,
+        sinew,
+        stringr,
+        tibble,
+        tidyr,
+        xml2
+Remotes:
+        meerapatelmd/pg13,
+        meerapatelmd/police,
+        meerapatelmd/secretary,
+        meerapatelmd/broca,
+        meerapatelmd/cave,
+        meerapatelmd/centipede,
+        meerapatelmd/chariot,
+        meerapatelmd/glitter,
+        meerapatelmd/rubix
+
+    
