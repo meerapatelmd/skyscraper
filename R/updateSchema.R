@@ -20,7 +20,7 @@
 #' @importFrom lubridate ymd_hms
 #' @importFrom magrittr %>%
 
-updateSchema <-
+update_schema <-
         function(conn,
                  schema,
                  force_update = FALSE) {
