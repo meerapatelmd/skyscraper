@@ -4,7 +4,7 @@
 \alias{updateSchema}
 \title{Update a Schema with New Data}
 \usage{
-updateSchema(conn, schema, dataPackage)
+updateSchema(conn, schema, force_update = FALSE)
 }
 \description{
 If the current installation of the associated Data Package is not up-to-date, it is installed and the current schema is dropped and a new schema is written with the fresh data.

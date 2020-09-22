@@ -4,7 +4,7 @@
 \alias{setupSchema}
 \title{Setup a Schema}
 \usage{
-setupSchema(conn, schema = "chemidplus", dataPackage = "chemidplusData")
+setupSchema(conn, schema = "chemidplus")
 }
 \arguments{
 \item{conn}{Postgres connection}

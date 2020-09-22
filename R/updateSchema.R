@@ -23,14 +23,55 @@
 updateSchema <-
         function(conn,
                  schema,
-                 dataPackage) {
+                 force_update = FALSE) {
 
-                install_msg <- utils::capture.output(devtools::install_github(paste0("meerapatelmd/", dataPackage)), type = "message")
+                schema_map <- schemaMap()
+                dataPackage <- schema_map %>%
+                                        rubix::filter_for(filter_col = "schema",
+                                                          inclusion_vector = schema) %>%
+                                        dplyr::select(dataPackage) %>%
+                                        unname() %>%
+                                        unlist()
 
-                if (!any(grepl(pattern = "the SHA1.*has not changed since last install",
-                          x = install_msg))) {
+                install_msg <- utils::capture.output(devtools::install_github(paste0("meerapatelmd/", dataPackage)), type = "message", force = force_update)
 
 
+                if (!force_update) {
+
+                                if (!any(grepl(pattern = "the SHA1.*has not changed since last install",
+                                          x = install_msg))) {
+
+
+                                        pg13::dropSchema(conn = conn,
+                                                         schema = schema,
+                                                         cascade = TRUE)
+
+                                        pg13::createSchema(conn = conn,
+                                                           schema = schema)
+
+                                        require(dataPackage,
+                                                character.only = TRUE)
+
+                                        DATASETS <- data(package = dataPackage)
+                                        DATASETS <- DATASETS$results[, "Item"]
+
+
+                                        DATA <-
+                                                DATASETS %>%
+                                                rubix::map_names_set(get) %>%
+                                                purrr::map(function(x) x %>%
+                                                           dplyr::mutate_at(vars(ends_with("datetime")),
+                                                                            lubridate::ymd_hms))
+
+                                        DATA %>%
+                                                purrr::map2(names(DATA),
+                                                            function(x,y) pg13::writeTable(conn = conn,
+                                                                                           schema = schema,
+                                                                                           tableName = y,
+                                                                                           x))
+
+                                }
+                } else {
                         pg13::dropSchema(conn = conn,
                                          schema = schema,
                                          cascade = TRUE)
@@ -49,8 +90,8 @@ updateSchema <-
                                 DATASETS %>%
                                 rubix::map_names_set(get) %>%
                                 purrr::map(function(x) x %>%
-                                           dplyr::mutate_at(vars(ends_with("datetime")),
-                                                            lubridate::ymd_hms))
+                                                   dplyr::mutate_at(vars(ends_with("datetime")),
+                                                                    lubridate::ymd_hms))
 
                         DATA %>%
                                 purrr::map2(names(DATA),
@@ -58,7 +99,6 @@ updateSchema <-
                                                                            schema = schema,
                                                                            tableName = y,
                                                                            x))
-
                 }
         }
 

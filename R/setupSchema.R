@@ -15,7 +15,7 @@
 #' @export
 #' @importFrom pg13 lsSchema createSchema writeTable
 #' @importFrom devtools install_github
-#' @importFrom rubix map_names_set
+#' @importFrom rubix map_names_set filter_for
 #' @importFrom purrr map map2
 #' @importFrom dplyr mutate_at
 #' @importFrom lubridate ymd_hms
@@ -23,18 +23,28 @@
 
 setupSchema <-
         function(conn,
-                 schema = "chemidplus",
-                 dataPackage = "chemidplusData") {
+                 schema = "chemidplus") {
 
                 #conn <- chariot::connectAthena()
+                #
 
-                devtools::install_github(paste0("meerapatelmd/", dataPackage),
-                                         force = TRUE,
-                                         quiet = TRUE)
+                schema_map <- schemaMap()
 
 
                 pg_schemas <- pg13::lsSchema(conn = conn)
+
                 if (!(schema %in% pg_schemas)) {
+
+                        dataPackage <- schema_map %>%
+                                                rubix::filter_for(filter_col = "schema",
+                                                                  inclusion_vector = schema) %>%
+                                                dplyr::select(dataPackage) %>%
+                                                unname() %>%
+                                                unlist()
+
+                        devtools::install_github(paste0("meerapatelmd/", dataPackage),
+                                                 force = TRUE,
+                                                 quiet = TRUE)
 
 
                         pg13::createSchema(conn = conn,
