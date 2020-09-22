@@ -43,6 +43,11 @@ if ("CONCEPT" %in% Tables) {
                                      override_cache = TRUE)
 }
 
+if (!interactive()) {
+        report_file <- paste0("cancergov_04_cancergov_to_omop_", Sys.Date(), ".txt")
+        cat(paste0("[", Sys.time(), "]\tNew Concept Count: ", nrow(new_concepts)), sep = "\n", file = report_file, append = TRUE)
+}
+
 concept_table <-
         new_concepts %>%
         dplyr::transmute(concept_id = NA,
@@ -111,6 +116,11 @@ if (nrow(concept_table)) {
         chariot::dcAthena(conn = conn,
                           remove = TRUE)
 
+        if (!interactive()) {
+                cat(paste0("[", Sys.time(), "]\tRows added to Concept Table: ", nrow(concept_table)), sep = "\n", file = report_file, append = TRUE)
+                cat(paste0("[", Sys.time(), "]\tRows added to Concept Synonym Table: ", nrow(concept_synonym_table)), sep = "\n", file = report_file, append = TRUE)
+        }
+
         conn <- chariot::connectAthena()
         concept_definition_table <-
         pg13::query(conn = conn,
@@ -140,9 +150,18 @@ if (nrow(concept_table)) {
         chariot::dcAthena(conn = conn,
                           remove = TRUE)
 
+        if (!interactive()) {
+                cat(paste0("[", Sys.time(), "]\tRows added to Concept Definition Table: ", nrow(concept_definition_table)), sep = "\n", file = report_file, append = TRUE)
+        }
 
         skyscraper::export_schema_to_data_repo("~/GitHub/cancergovData/",
                                                schema = "cancergov")
+
+
+        if (!interactive()) {
+                cat(paste0("[", Sys.time(), "]\t### Schema exported to cancergovData Repo", nrow(concept_definition_table)), sep = "\n", file = report_file, append = TRUE)
+        }
+
 
 }
 
