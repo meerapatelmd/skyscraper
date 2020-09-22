@@ -11,6 +11,6 @@
 #' ClinicalTrials.gov      ..
 #'
 #' @docType package
-#' @name skyscraper
+#'
 #' @keywords internal
 "_PACKAGE"
