@@ -1,10 +1,10 @@
 #' @title
-#' Parse the RN from a Substance Page
+#' Parse the RN from a single Substance Page
 #'
-#' @description
-#' If a ChemiDPlus search results in a single match, the URL returned is the RN URL itself that is derived from the "h1" HTML node. For multiple matches, the "h1" HTML node returns blank.
 #'
 #' @inherit chemidplus_parsing_functions description
+#'
+#' @inheritSection chemidplus_parsing_functions Single Hit
 #'
 #' @inheritParams chemidplus_parsing_functions
 #'

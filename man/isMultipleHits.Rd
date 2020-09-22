@@ -2,13 +2,21 @@
 % Please edit documentation in R/isMultipleHits.R
 \name{isMultipleHits}
 \alias{isMultipleHits}
-\title{Get the RN Number an URL for a Phrase}
+\title{Get the RNs from a page listing the first 5 matches}
 \usage{
 isMultipleHits(response)
 }
-\description{
-Get the RN Number an URL for a Phrase
+\arguments{
+\item{response}{"xml_document" "xml_node" class object returned by calling xml2::read_html on the rn_url}
 }
+\description{
+There are 2 HTML responses involved in ChemiDPlus scraping. The first HTML response is associated with the concept search while the second is for the 1 to 5 Registry Numbers and their URLs if records were found. The ChemiDPlus parsing functions delineate the response into 3 groups: searches the resulted in no records, a single record, or multiple records (currently limited to parsing a maximum of 5 records).
+}
+\section{Multiple Hits}{
+
+If a ChemiDPlus search has multiple possible matches, the landing page where the first 5 matches are listed is scraped for each of their RNs.
+}
+
 \seealso{
 \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
  \code{\link[tibble]{as_tibble}}
@@ -16,4 +24,10 @@ Get the RN Number an URL for a Phrase
  \code{\link[tidyr]{extract}}
  \code{\link[dplyr]{mutate}},\code{\link[dplyr]{mutate_all}}
  \code{\link[stringr]{str_remove}}
+
+Other chemidplus parsing: 
+\code{\link{is404}()},
+\code{\link{isNoRecord}()},
+\code{\link{isSingleHit}()}
 }
+\concept{chemidplus parsing}

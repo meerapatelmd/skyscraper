@@ -19,6 +19,8 @@ This function gets a response from an RN URL and checks for a 404 message in the
 \code{\link[xml2]{read_xml}}
 
 Other chemidplus parsing: 
+\code{\link{isMultipleHits}()},
+\code{\link{isNoRecord}()},
 \code{\link{isSingleHit}()}
 }
 \concept{chemidplus parsing}
