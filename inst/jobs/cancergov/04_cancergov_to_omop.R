@@ -44,7 +44,7 @@ if ("CONCEPT" %in% Tables) {
 }
 
 if (!interactive()) {
-        report_file <- paste0("cancergov_04_cancergov_to_omop_", Sys.Date(), ".txt")
+        report_file <- paste0("~/Desktop/cancergov_04_cancergov_to_omop_", Sys.Date(), ".txt")
         cat(paste0("[", Sys.time(), "]\tNew Concept Count: ", nrow(new_concepts)), sep = "\n", file = report_file, append = TRUE)
 }
 
