@@ -3,13 +3,45 @@ library(skyscraper)
 library(chariot)
 library(rubix)
 
-new_concepts <-
-chariot::queryAthena("SELECT DISTINCT drug, drug_link
-                     FROM cancergov.drug_link dl
-                     LEFT JOIN cancergov.concept cgc
-                     ON cgc.concept_name = dl.drug
-                     WHERE cgc.concept_id IS NULL",
-                     override_cache = TRUE)
+
+conn <- chariot::connectAthena()
+Tables <- pg13::lsTables(conn = conn,
+                         schema = "cancergov")
+chariot::dcAthena(conn = conn,
+                  remove = TRUE)
+
+
+if ("CONCEPT" %in% Tables) {
+        new_concepts <-
+        chariot::queryAthena("SELECT DISTINCT drug, drug_link
+                             FROM cancergov.drug_link dl
+                             LEFT JOIN cancergov.concept cgc
+                             ON cgc.concept_name = dl.drug
+                             WHERE cgc.concept_id IS NULL",
+                             override_cache = TRUE)
+} else {
+
+        conn <- chariot::connectAthena()
+        pg13::send(conn = conn,
+                   sql_statement = "CREATE TABLE cancergov.concept (
+                                    concept_id character varying(255),
+                                    concept_name character varying(255),
+                                    domain_id character varying(255),
+                                    vocabulary_id character varying(255),
+                                    concept_class_id character varying(255),
+                                    standard_concept character varying(255),
+                                    concept_code character varying(255),
+                                    valid_start_date character varying(255),
+                                    valid_end_date character varying(255),
+                                    invalid_reason character varying(255)
+                                );")
+        chariot::dcAthena(conn = conn)
+
+        new_concepts <-
+                chariot::queryAthena("SELECT DISTINCT drug, drug_link
+                             FROM cancergov.drug_link dl",
+                                     override_cache = TRUE)
+}
 
 concept_table <-
         new_concepts %>%
@@ -34,6 +66,7 @@ if (nrow(concept_table)) {
 
 
         conn <- chariot::connectAthena()
+
         drug_link_synonym_table <-
                 pg13::readTable(conn = conn,
                                 schema = "cancergov",

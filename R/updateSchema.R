@@ -25,6 +25,9 @@ updateSchema <-
                  schema,
                  force_update = FALSE) {
 
+                rm(list = ls()[!(ls() %in% c("conn", "schema", "schema_map", "dataPackage", "force_update", "install_msg"))],
+                   envir = global_env())
+
                 schema_map <- schemaMap()
                 dataPackage <- schema_map %>%
                                         rubix::filter_for(filter_col = "schema",
@@ -33,7 +36,23 @@ updateSchema <-
                                         unname() %>%
                                         unlist()
 
-                install_msg <- utils::capture.output(devtools::install_github(paste0("meerapatelmd/", dataPackage)), type = "message", force = force_update)
+                # Unload Namespaces
+                unloadPackages <- schema_map %>%
+                                        rubix::filter_for(filter_col = "schema",
+                                                          inclusion_vector = schema,
+                                                          invert = TRUE) %>%
+                                        dplyr::select(dataPackage) %>%
+                                        unname() %>%
+                                        unlist()
+
+                unloadPackages %>%
+                        purrr::map(~unloadNamespace(.))
+
+                install_msg <-
+                        utils::capture.output(
+                                devtools::install_github(paste0( "meerapatelmd/", dataPackage)),
+                                type = "message",
+                                force = force_update)
 
 
                 if (!force_update) {
@@ -72,14 +91,17 @@ updateSchema <-
 
                                 }
                 } else {
+
                         pg13::dropSchema(conn = conn,
                                          schema = schema,
                                          cascade = TRUE)
 
+
                         pg13::createSchema(conn = conn,
                                            schema = schema)
 
-                        require(dataPackage,
+
+                        library(dataPackage,
                                 character.only = TRUE)
 
                         DATASETS <- data(package = dataPackage)
