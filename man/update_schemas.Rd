@@ -42,6 +42,7 @@ Checking Schema Status is not a required prerequisite to update skyscraper schem
 
 Other local maintenance: 
 \code{\link{export_schema_to_data_repo}()},
+\code{\link{map_schema}()},
 \code{\link{schema_status}()}
 }
 \concept{local maintenance}

@@ -22,6 +22,7 @@ All the Data Packages in the Schema Map returned by \code{\link{map_schema}} are
 
 Other local maintenance: 
 \code{\link{export_schema_to_data_repo}()},
+\code{\link{map_schema}()},
 \code{\link{update_schemas}()}
 }
 \concept{local maintenance}

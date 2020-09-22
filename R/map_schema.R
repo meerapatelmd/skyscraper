@@ -1,5 +1,6 @@
 #' @title
 #' Map a skyscraper Schema to a Data Package Repository
+#'
 #' @description
 #' Each Postgres schema governed by this package has a corresponding Data Package, where updates to the Postgres schema are exported as csvs, packaged, and pushed to a GitHub repo.
 #'
@@ -8,6 +9,7 @@
 #'  \code{\link[tibble]{tribble}}
 #'  \code{\link[dplyr]{mutate}}
 #' @rdname map_schema
+#' @family local maintenance
 #' @export
 #' @importFrom tibble tribble
 #' @importFrom dplyr mutate

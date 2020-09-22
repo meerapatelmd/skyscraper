@@ -15,4 +15,10 @@ Each Postgres schema governed by this package has a corresponding Data Package, 
 \seealso{
 \code{\link[tibble]{tribble}}
  \code{\link[dplyr]{mutate}}
+
+Other local maintenance: 
+\code{\link{export_schema_to_data_repo}()},
+\code{\link{schema_status}()},
+\code{\link{update_schemas}()}
 }
+\concept{local maintenance}
