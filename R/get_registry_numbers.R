@@ -19,6 +19,8 @@
 #'
 #' @rdname get_registry_numbers
 #'
+#' @family chemidplus scraping
+#'
 #' @export
 #'
 #' @importFrom xml2 read_html

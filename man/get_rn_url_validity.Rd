@@ -37,4 +37,12 @@ The RN_URL_VALIDITY Table logs whether a HTTP 404 Error was recorded for a RN UR
 \seealso{
 \code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
  \code{\link[tibble]{tibble}}
+
+Other chemidplus scraping: 
+\code{\link{get_classification}()},
+\code{\link{get_links_to_resources}()},
+\code{\link{get_names_and_synonyms}()},
+\code{\link{get_registry_numbers}()},
+\code{\link{log_registry_number}()}
 }
+\concept{chemidplus scraping}

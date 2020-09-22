@@ -47,6 +47,8 @@ The "Names and Synonyms" Section scraped results contain a Timestamp, RN URL. If
 Other chemidplus scraping: 
 \code{\link{get_classification}()},
 \code{\link{get_links_to_resources}()},
+\code{\link{get_registry_numbers}()},
+\code{\link{get_rn_url_validity}()},
 \code{\link{log_registry_number}()}
 }
 \concept{chemidplus scraping}

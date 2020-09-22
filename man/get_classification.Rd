@@ -44,6 +44,8 @@ The "Classification" Section results contain a Timestamp, RN URL, and the drug c
 Other chemidplus scraping: 
 \code{\link{get_links_to_resources}()},
 \code{\link{get_names_and_synonyms}()},
+\code{\link{get_registry_numbers}()},
+\code{\link{get_rn_url_validity}()},
 \code{\link{log_registry_number}()}
 }
 \concept{chemidplus scraping}

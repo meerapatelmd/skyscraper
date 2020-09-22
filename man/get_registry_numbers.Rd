@@ -37,4 +37,12 @@ The "Registry Numbers" Section contains other identifiers for the given drug at 
  \code{\link[dplyr]{mutate}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate_all}},\code{\link[dplyr]{distinct}}
  \code{\link[purrr]{map2}},\code{\link[purrr]{set_names}},\code{\link[purrr]{map}}
  \code{\link[tibble]{as_tibble}}
+
+Other chemidplus scraping: 
+\code{\link{get_classification}()},
+\code{\link{get_links_to_resources}()},
+\code{\link{get_names_and_synonyms}()},
+\code{\link{get_rn_url_validity}()},
+\code{\link{log_registry_number}()}
 }
+\concept{chemidplus scraping}

@@ -45,6 +45,8 @@ The "Links to Resources" Section derives all the HTML links to other data and we
 Other chemidplus scraping: 
 \code{\link{get_classification}()},
 \code{\link{get_names_and_synonyms}()},
+\code{\link{get_registry_numbers}()},
+\code{\link{get_rn_url_validity}()},
 \code{\link{log_registry_number}()}
 }
 \concept{chemidplus scraping}

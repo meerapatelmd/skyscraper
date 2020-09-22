@@ -17,7 +17,7 @@ log_registry_number(
 
 \item{raw_concept}{Character string of length 1 to be searched in ChemiDPlus}
 
-\item{type}{Type of search available at \href{https://chem.nlm.nih.gov/chemidplus/}{ChemiDPlus}, DEFAULT: "contains"}
+\item{type}{Type of search available at \href{https://chem.nlm.nih.gov/chemidplus/}{ChemiDPlus}, Default: "contains"}
 
 \item{sleep_time}{If the response argument is missing, the number seconds to pause after reading the URL, Default: 3}
 
@@ -46,6 +46,8 @@ The Table logs the Raw Concept, the processed version of the Concept (ie removed
 Other chemidplus scraping: 
 \code{\link{get_classification}()},
 \code{\link{get_links_to_resources}()},
-\code{\link{get_names_and_synonyms}()}
+\code{\link{get_names_and_synonyms}()},
+\code{\link{get_registry_numbers}()},
+\code{\link{get_rn_url_validity}()}
 }
 \concept{chemidplus scraping}

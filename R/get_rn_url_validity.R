@@ -13,6 +13,8 @@
 #'
 #' @rdname get_rn_url_validity
 #'
+#' @family chemidplus scraping
+#'
 #' @export
 #'
 #' @importFrom pg13 lsSchema createSchema lsTables query buildQuery appendTable writeTable
