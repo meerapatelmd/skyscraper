@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_names_and_synonyms.R
 \name{get_names_and_synonyms}
 \alias{get_names_and_synonyms}
-\title{FUNCTION_TITLE}
+\title{Scrape the "Names and Synonyms" Section at a Registry Number URL}
 \usage{
 get_names_and_synonyms(
   conn,
@@ -24,14 +24,19 @@ get_names_and_synonyms(
 \item{sleep_time}{If the response argument is missing, the number seconds to pause after reading the URL, Default: 3}
 }
 \value{
-OUTPUT_DESCRIPTION
+A dataframe
 }
 \description{
-FUNCTION_DESCRIPTION
+Scrape the "Names and Synonyms" Section at a Registry Number URL
 }
 \details{
 DETAILS
 }
+\section{Names and Synonyms}{
+
+The "Names and Synonyms" Section scraped results are written to the NAMES_AND_SYNONYMS Table with a Timestamp, RN URL (Identifier). If the section has subheadings, the subheading is scraped as the Synonym Type along with the Synonym itself, otherwise the Synonym Type is NULL.
+}
+
 \seealso{
 \code{\link[xml2]{read_xml}}
  \code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}

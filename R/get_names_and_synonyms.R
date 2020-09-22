@@ -1,6 +1,10 @@
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
+#' @title
+#' Scrape the "Names and Synonyms" Section at a Registry Number URL
+#'
+#' @inheritSection chemidplus_scraping_functions Names and Synonyms
+#'
+#' @return
+#' A dataframe
 #' @details DETAILS
 #' @inheritParams chemidplus_scraping_functions
 #' @seealso
@@ -22,6 +26,7 @@
 #' @importFrom dplyr mutate bind_rows transmute mutate_at distinct
 #' @importFrom purrr map2 set_names map
 #' @importFrom tibble as_tibble_col
+#' @importFrom magrittr %>%
 
 get_names_and_synonyms <-
         function(conn,
