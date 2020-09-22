@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_links_to_resources.R
 \name{get_links_to_resources}
 \alias{get_links_to_resources}
-\title{Scrape the Links to Resources Section of the RN URL}
+\title{Scrape the "Links to Resources" Section at a Registry Number URL}
 \usage{
 get_links_to_resources(
   conn,
@@ -13,35 +13,32 @@ get_links_to_resources(
 )
 }
 \arguments{
-\item{conn}{PARAM_DESCRIPTION}
+\item{conn}{Postgres connection object}
 
-\item{rn_url}{PARAM_DESCRIPTION}
+\item{rn_url}{Registry number URL to read that also serves as an Identifier}
 
-\item{sleep_time}{PARAM_DESCRIPTION, Default: 3}
+\item{response}{(optional) "xml_document" "xml_node" class object returned by xml2::read_html for the `rn_url` argument. Providing a response from a single HTML read reduces the chance of encountering a HTTP 503 error when parsing multiple sections from a single URL. If a response argument is missing, a response is read. Followed by the `sleep_time` in seconds.}
+
+\item{schema}{Schema that the returned data is written to, Default: 'chemidplus'}
+
+\item{sleep_time}{If the response argument is missing, the number seconds to pause after reading the URL, Default: 3}
 }
 \value{
-OUTPUT_DESCRIPTION
+Each section is parsed by a respective skyscraper function that stores the scraped results in a table of the same name in a schema. If a connection argument is not provided, the results are returned as a dataframe in the R console.
 }
 \description{
-FUNCTION_DESCRIPTION
+All ChemiDPlus Scraping Functions operate on a Registry Number URL (`rn_url`). The major sections found at the ChemiDPlus site are: "Names and Synonyms", "Classification", "Registry Numbers", "Links to Resources".
 }
-\details{
-DETAILS
+\section{Links to Resources}{
+
+The "Links to Resources" Section derives all the HTML links to other data and web sources for the drug. The results include a Timestamp, RN URL, and the Resource Agency and its HTML link.
 }
-\examples{
-\dontrun{
-if(interactive()){
- #EXAMPLE1
- }
-}
-}
+
 \seealso{
 \code{\link[xml2]{read_xml}}
  \code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
+ \code{\link[purrr]{map}}
  \code{\link[tibble]{as_tibble}}
- \code{\link[dplyr]{mutate}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate_all}}
- \code{\link[stringr]{str_remove}}
- \code{\link[centipede]{strsplit}}
- \code{\link[purrr]{map2}},\code{\link[purrr]{set_names}},\code{\link[purrr]{map}}
+ \code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{filter_all}}
 }

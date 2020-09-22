@@ -1,17 +1,22 @@
 #' @title
-#' Check if the RN URL derived from the Registry Number is valid
+#' Check that the Registry Number URL is Valid
+#'
+#' @inherit chemidplus_scraping_functions description return
+#'
+#' @inheritSection chemidplus_scraping_functions RN URL Validity Table
+#'
+#' @inheritParams chemidplus_scraping_functions
+#'
 #' @seealso
+#'  \code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
 #'  \code{\link[tibble]{tibble}}
-#'  \code{\link[dplyr]{mutate}}
-#'  \code{\link[stringr]{str_remove}}
-#'  \code{\link[xml2]{read_xml}}
-#'  \code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
+#'
+#' @rdname get_rn_url_validity
+#'
 #' @export
+#'
+#' @importFrom pg13 lsSchema createSchema lsTables query buildQuery appendTable writeTable
 #' @importFrom tibble tibble
-#' @importFrom dplyr mutate
-#' @importFrom stringr str_remove_all
-#' @importFrom xml2 read_html
-#' @importFrom pg13 lsSchema createSchema lsTables appendTable writeTable
 #' @importFrom magrittr %>%
 
 get_rn_url_validity <-

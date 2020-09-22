@@ -1,18 +1,25 @@
 #' @title
-#' Get the Registry Number for a Given String
+#' Log Registry Number Matches for a Search
+#'
+#' @inherit chemidplus_scraping_functions description return
+#'
+#' @inheritSection chemidplus_scraping_functions Registry Number Log Table
+#'
+#' @inheritParams chemidplus_scraping_functions
 #'
 #' @seealso
-#'  \code{\link[tibble]{tibble}}
-#'  \code{\link[dplyr]{mutate}}
+#'  \code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
+#'  \code{\link[dplyr]{filter}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{distinct}}
 #'  \code{\link[stringr]{str_remove}}
+#'  \code{\link[tibble]{tibble}}
 #'  \code{\link[xml2]{read_xml}}
-#'  \code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
+#' @rdname log_registry_number
 #' @export
-#' @importFrom tibble tibble
-#' @importFrom dplyr mutate
+#' @importFrom pg13 lsSchema createSchema lsTables query buildQuery appendTable writeTable
+#' @importFrom dplyr filter mutate bind_rows left_join distinct
 #' @importFrom stringr str_remove_all
+#' @importFrom tibble tibble
 #' @importFrom xml2 read_html
-#' @importFrom pg13 lsSchema createSchema lsTables appendTable writeTable
 #' @importFrom magrittr %>%
 
 log_registry_number <-

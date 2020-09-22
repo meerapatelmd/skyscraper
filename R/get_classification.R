@@ -1,35 +1,28 @@
 #' @title
-#' Scrape the Classification Section of RN URL
-#' @description FUNCTION_DESCRIPTION
-#' @param conn PARAM_DESCRIPTION
-#' @param rn_url PARAM_DESCRIPTION
-#' @param sleep_time PARAM_DESCRIPTION, Default: 3
-#' @return OUTPUT_DESCRIPTION
-#' @details DETAILS
-#' @examples
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
-#' }
+#' Scrape the "Classification" Section at a Registry Number URL
+#'
+#' @inherit chemidplus_scraping_functions description return
+#'
+#' @inheritSection chemidplus_scraping_functions Classification
+#'
+#' @inheritParams chemidplus_scraping_functions
+#'
 #' @seealso
 #'  \code{\link[xml2]{read_xml}}
 #'  \code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
 #'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
 #'  \code{\link[tibble]{as_tibble}}
-#'  \code{\link[dplyr]{mutate}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate_all}}
-#'  \code{\link[stringr]{str_remove}}
-#'  \code{\link[centipede]{strsplit}}
-#'  \code{\link[purrr]{map2}},\code{\link[purrr]{set_names}},\code{\link[purrr]{map}}
+#'  \code{\link[dplyr]{mutate}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{filter_all}}
+#'
+#' @rdname get_classification
+#'
 #' @export
+#'
 #' @importFrom xml2 read_html
 #' @importFrom pg13 lsSchema createSchema lsTables query buildQuery appendTable writeTable
 #' @importFrom rvest html_nodes html_text
 #' @importFrom tibble as_tibble_col
-#' @importFrom dplyr transmute distinct mutate bind_rows mutate_at
-#' @importFrom stringr str_remove_all
-#' @importFrom centipede strsplit
-#' @importFrom purrr map2 set_names map
+#' @importFrom dplyr transmute distinct filter_at
 #' @importFrom magrittr %>%
 
 get_classification <-

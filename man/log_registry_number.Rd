@@ -2,7 +2,7 @@
 % Please edit documentation in R/log_registry_number.R
 \name{log_registry_number}
 \alias{log_registry_number}
-\title{Get the Registry Number for a Given String}
+\title{Log Registry Number Matches for a Search}
 \usage{
 log_registry_number(
   conn,
@@ -12,13 +12,30 @@ log_registry_number(
   schema = "chemidplus"
 )
 }
-\description{
-Get the Registry Number for a Given String
+\arguments{
+\item{conn}{Postgres connection object}
+
+\item{sleep_time}{If the response argument is missing, the number seconds to pause after reading the URL, Default: 3}
+
+\item{schema}{Schema that the returned data is written to, Default: 'chemidplus'}
 }
+\value{
+Each section is parsed by a respective skyscraper function that stores the scraped results in a table of the same name in a schema. If a connection argument is not provided, the results are returned as a dataframe in the R console.
+}
+\description{
+All ChemiDPlus Scraping Functions operate on a Registry Number URL (`rn_url`). The major sections found at the ChemiDPlus site are: "Names and Synonyms", "Classification", "Registry Numbers", "Links to Resources".
+}
+\section{Registry Number Log Table}{
+
+The REGISTRY_NUMBER_LOG Table is the landing table for any ChemiDPlus searches using skyscrape. It is the place where a source concept is searched based on a given set of parameters and all the possible Registry Numbers (RN) that source concept can be associated with in ChemiDPlus. The Registry Number then serves as a jump-off point from where a second RN URL is read and split based on the sections, and read into their corresponding ChemiDPlus Tables.
+
+The Table logs the Raw Concept, the processed version of the Concept (ie removed spaces and error-throwing characters to generate a valid search URL for the Concept), the type of search (ie equals or contains), and the final search URL used to read a search result. A series of booleans are performed to determine whether the search was performed (ie a response was received), and if the results were for any records, and if these records were saved. If an RN was found, it is included along with the full URL associated with the URL.
+}
+
 \seealso{
-\code{\link[tibble]{tibble}}
- \code{\link[dplyr]{mutate}}
+\code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
+ \code{\link[dplyr]{filter}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{distinct}}
  \code{\link[stringr]{str_remove}}
+ \code{\link[tibble]{tibble}}
  \code{\link[xml2]{read_xml}}
- \code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
 }

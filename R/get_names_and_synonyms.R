@@ -2,6 +2,7 @@
 #' Scrape the "Names and Synonyms" Section at a Registry Number URL
 #'
 #' @inherit chemidplus_scraping_functions description return
+#'
 #' @inheritSection chemidplus_scraping_functions Names and Synonyms
 #'
 #' @inheritParams chemidplus_scraping_functions

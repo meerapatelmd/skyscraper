@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_rn_url_validity.R
 \name{get_rn_url_validity}
 \alias{get_rn_url_validity}
-\title{Check if the RN URL derived from the Registry Number is valid}
+\title{Check that the Registry Number URL is Valid}
 \usage{
 get_rn_url_validity(
   conn,
@@ -12,13 +12,29 @@ get_rn_url_validity(
   sleep_time = 3
 )
 }
-\description{
-Check if the RN URL derived from the Registry Number is valid
+\arguments{
+\item{conn}{Postgres connection object}
+
+\item{rn_url}{Registry number URL to read that also serves as an Identifier}
+
+\item{response}{(optional) "xml_document" "xml_node" class object returned by xml2::read_html for the `rn_url` argument. Providing a response from a single HTML read reduces the chance of encountering a HTTP 503 error when parsing multiple sections from a single URL. If a response argument is missing, a response is read. Followed by the `sleep_time` in seconds.}
+
+\item{schema}{Schema that the returned data is written to, Default: 'chemidplus'}
+
+\item{sleep_time}{If the response argument is missing, the number seconds to pause after reading the URL, Default: 3}
 }
+\value{
+Each section is parsed by a respective skyscraper function that stores the scraped results in a table of the same name in a schema. If a connection argument is not provided, the results are returned as a dataframe in the R console.
+}
+\description{
+All ChemiDPlus Scraping Functions operate on a Registry Number URL (`rn_url`). The major sections found at the ChemiDPlus site are: "Names and Synonyms", "Classification", "Registry Numbers", "Links to Resources".
+}
+\section{RN URL Validity Table}{
+
+The RN_URL_VALIDITY Table logs whether a HTTP 404 Error was recorded for a RN URL found in the REGISTRY_NUMBER_LOG Table for QA purposes.
+}
+
 \seealso{
-\code{\link[tibble]{tibble}}
- \code{\link[dplyr]{mutate}}
- \code{\link[stringr]{str_remove}}
- \code{\link[xml2]{read_xml}}
- \code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
+\code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
+ \code{\link[tibble]{tibble}}
 }
