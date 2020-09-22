@@ -15,6 +15,7 @@
 #' @seealso
 #'  \code{\link[pg13]{query}}
 #'  \code{\link[SqlRender]{render}}
+#'
 #' @rdname join_chemidplus_omop_synonyms
 #' @export
 #' @importFrom pg13 query
