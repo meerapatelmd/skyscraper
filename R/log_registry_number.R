@@ -5,7 +5,11 @@
 #'
 #' @inheritSection chemidplus_scraping_functions Registry Number Log Table
 #'
-#' @inheritParams chemidplus_scraping_functions
+#' @param conn          Postgres connection object
+#' @param schema        Schema that the returned data is written to, Default: 'chemidplus'
+#' @param sleep_time    If the response argument is missing, the number seconds to pause after reading the URL, Default: 3
+#' @param raw_concept       Character string of length 1 to be searched in ChemiDPlus
+#' @param type              Type of search available at \href{https://chem.nlm.nih.gov/chemidplus/}{ChemiDPlus}, DEFAULT: "contains"
 #'
 #' @seealso
 #'  \code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
@@ -13,8 +17,12 @@
 #'  \code{\link[stringr]{str_remove}}
 #'  \code{\link[tibble]{tibble}}
 #'  \code{\link[xml2]{read_xml}}
+#'
 #' @rdname log_registry_number
+#' @family chemidplus
+#'
 #' @export
+#'
 #' @importFrom pg13 lsSchema createSchema lsTables query buildQuery appendTable writeTable
 #' @importFrom dplyr filter mutate bind_rows left_join distinct
 #' @importFrom stringr str_remove_all

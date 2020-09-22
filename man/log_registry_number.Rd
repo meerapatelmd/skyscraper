@@ -15,6 +15,10 @@ log_registry_number(
 \arguments{
 \item{conn}{Postgres connection object}
 
+\item{raw_concept}{Character string of length 1 to be searched in ChemiDPlus}
+
+\item{type}{Type of search available at \href{https://chem.nlm.nih.gov/chemidplus/}{ChemiDPlus}, DEFAULT: "contains"}
+
 \item{sleep_time}{If the response argument is missing, the number seconds to pause after reading the URL, Default: 3}
 
 \item{schema}{Schema that the returned data is written to, Default: 'chemidplus'}
@@ -23,7 +27,7 @@ log_registry_number(
 Each section is parsed by a respective skyscraper function that stores the scraped results in a table of the same name in a schema. If a connection argument is not provided, the results are returned as a dataframe in the R console.
 }
 \description{
-All ChemiDPlus Scraping Functions operate on a Registry Number URL (`rn_url`). The major sections found at the ChemiDPlus site are: "Names and Synonyms", "Classification", "Registry Numbers", "Links to Resources".
+All ChemiDPlus Scraping Functions operate on a Registry Number URL (`rn_url`). The initial search is logged to a "REGISTRY_NUMBER_LOG" Table. If the RN URL is then tested for 404 Status and logged to the "RN_URL_VALIDITY" Table. The major sections found at the ChemiDPlus site are: "Names and Synonyms", "Classification", "Registry Numbers", "Links to Resources" with these sections are written to their respective tables "NAMES_AND_SYNONYMS", "CLASSIFICATION", "REGISTRY_NUMBERS", and "LINKS_TO_RESOURCES".
 }
 \section{Registry Number Log Table}{
 
@@ -38,4 +42,10 @@ The Table logs the Raw Concept, the processed version of the Concept (ie removed
  \code{\link[stringr]{str_remove}}
  \code{\link[tibble]{tibble}}
  \code{\link[xml2]{read_xml}}
+
+Other chemidplus: 
+\code{\link{get_classification}()},
+\code{\link{get_links_to_resources}()},
+\code{\link{get_names_and_synonyms}()}
 }
+\concept{chemidplus}

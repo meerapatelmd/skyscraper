@@ -15,6 +15,7 @@
 #'  \code{\link[dplyr]{mutate}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{filter_all}}
 #'
 #' @rdname get_classification
+#' @family chemidplus
 #'
 #' @export
 #'

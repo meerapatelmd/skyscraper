@@ -16,6 +16,7 @@
 #'  \code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{filter_all}}
 #'
 #' @rdname get_links_to_resources
+#' @family chemidplus
 #'
 #' @export
 #'

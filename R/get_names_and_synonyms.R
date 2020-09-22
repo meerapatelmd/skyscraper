@@ -19,6 +19,8 @@
 #'
 #' @rdname get_names_and_synonyms
 #'
+#' @family chemidplus
+#'
 #' @export
 #'
 #' @importFrom xml2 read_html

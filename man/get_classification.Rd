@@ -27,7 +27,7 @@ get_classification(
 Each section is parsed by a respective skyscraper function that stores the scraped results in a table of the same name in a schema. If a connection argument is not provided, the results are returned as a dataframe in the R console.
 }
 \description{
-All ChemiDPlus Scraping Functions operate on a Registry Number URL (`rn_url`). The major sections found at the ChemiDPlus site are: "Names and Synonyms", "Classification", "Registry Numbers", "Links to Resources".
+All ChemiDPlus Scraping Functions operate on a Registry Number URL (`rn_url`). The initial search is logged to a "REGISTRY_NUMBER_LOG" Table. If the RN URL is then tested for 404 Status and logged to the "RN_URL_VALIDITY" Table. The major sections found at the ChemiDPlus site are: "Names and Synonyms", "Classification", "Registry Numbers", "Links to Resources" with these sections are written to their respective tables "NAMES_AND_SYNONYMS", "CLASSIFICATION", "REGISTRY_NUMBERS", and "LINKS_TO_RESOURCES".
 }
 \section{Classification}{
 
@@ -40,4 +40,10 @@ The "Classification" Section results contain a Timestamp, RN URL, and the drug c
  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
  \code{\link[tibble]{as_tibble}}
  \code{\link[dplyr]{mutate}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{filter_all}}
+
+Other chemidplus: 
+\code{\link{get_links_to_resources}()},
+\code{\link{get_names_and_synonyms}()},
+\code{\link{log_registry_number}()}
 }
+\concept{chemidplus}
