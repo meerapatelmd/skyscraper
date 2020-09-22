@@ -40,9 +40,9 @@ rxnorm <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name
         unlist() %>%
         unname()
 
-
 concepts <- c(hemonc,
-              rxnorm) %>%
+              rxnorm,
+              standard_concepts) %>%
                 unique()
 
 

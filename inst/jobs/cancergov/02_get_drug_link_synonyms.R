@@ -5,7 +5,8 @@ library(chariot)
 
 starting_count <-
         chariot::queryAthena("SELECT COUNT(*)
-                             FROM cancergov.drug_link_synonym;") %>%
+                             FROM cancergov.drug_link_synonym;",
+                             override_cache = TRUE) %>%
         unlist()
 
 conn <- chariot::connectAthena()
@@ -15,7 +16,8 @@ chariot::dcAthena(conn = conn,
 
 new_count <-
         chariot::queryAthena("SELECT COUNT(*)
-                             FROM cancergov.drug_link_synonym;") %>%
+                             FROM cancergov.drug_link_synonym;",
+                             override_cache = TRUE) %>%
         unlist()
 
 
