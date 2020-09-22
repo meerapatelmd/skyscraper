@@ -25,7 +25,12 @@ updateSchema <-
                  schema,
                  force_update = FALSE) {
 
-                rm(list = ls()[!(ls() %in% c("conn", "schema", "schema_map", "dataPackage", "force_update", "install_msg"))],
+                rm(list = ls()[!(ls() %in% c("conn",
+                                             "schema",
+                                             "schema_map",
+                                             "dataPackage",
+                                             "force_update",
+                                             "install_msg"))],
                    envir = global_env())
 
                 schema_map <- schemaMap()

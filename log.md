@@ -132,3 +132,4 @@ Timestamp	Activity Type	Function	File	Details
 2020-09-19 18:13:57	read	simply_read_csv	/Users/meerapatel/GitHub/chemidplusData/data-raw/REGISTRY_NUMBER_LOG.csv	
 2020-09-19 18:13:57	read	simply_read_csv	/Users/meerapatel/GitHub/chemidplusData/data-raw/REGISTRY_NUMBERS.csv	
 2020-09-19 18:13:57	read	simply_read_csv	/Users/meerapatel/GitHub/chemidplusData/data-raw/RN_URL_VALIDITY.csv	
+2020-09-22 09:17:10	write	write_temp_csv	/var/folders/pg/_nr70_kj7y31yvv84yyy7524sx_q0w/T//Rtmpujy7Mt/filed1117bb9fbb0.csv	
