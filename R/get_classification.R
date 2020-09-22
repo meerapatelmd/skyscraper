@@ -21,7 +21,6 @@
 #'  \code{\link[stringr]{str_remove}}
 #'  \code{\link[centipede]{strsplit}}
 #'  \code{\link[purrr]{map2}},\code{\link[purrr]{set_names}},\code{\link[purrr]{map}}
-#' @rdname scrapeRN
 #' @export
 #' @importFrom xml2 read_html
 #' @importFrom pg13 lsSchema createSchema lsTables query buildQuery appendTable writeTable

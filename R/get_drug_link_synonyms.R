@@ -3,18 +3,6 @@
 #'
 #' @description
 #' Scrape the Tables in the Drug Page of the NCI Drug Dictionary if one exists
-#'
-#' @param df                    Data Frame of any dimensions with a 'Drug' and 'Drug_Def_Link' fields that correspond to the drug and its hyperlink
-#' @param random                If TRUE, will sort the df parameter randomly before executing. This is helpful when running the scrape simulataneously to save time, with one job scraping random and the other scraping in the order that it was provided in df. Default: TRUE
-#' @param progress_bar          If TRUE, a progress bar is returned in the console if the function is being run interactively. Default: TRUE
-#'
-#' @return
-#' The scrape results are cached using the cacheScrape function by Drug HTML. Other than the progress messages in the console, nothing is returned. Regardless of whether or not the entire length of the drug links have been cached, any cached results can be loaded usng the loadCachedDrugPage function.
-#'
-#' @details
-#' The link to the drug page is scraped as a dataframe that by default are named "X1" and "X2". "X1" is the type of synonym on the drug page while "X2" is the value.
-#' If an error is encountered at time of scraping, the values of both X1 and X2 default to NA. If no values were returned on scrape, the scrape returns a NULL. All scrape results are cached using the R.cache package with the directory set to "skyscraper"
-#'
 #' @seealso
 #'  \code{\link[dplyr]{select_all}}
 #'  \code{\link[tibble]{rownames}},\code{\link[tibble]{c("tibble", "tibble")}}
@@ -186,31 +174,6 @@ get_drug_link_synonym <-
 
 
             }
-
-
-            # results2 <-
-            #         output %>%
-            #         dplyr::bind_rows(.id = "drug_link") %>%
-            #         dplyr::mutate(dls_datetime = Sys.time()) %>%
-            #         dplyr::select(dls_datetime,
-            #                       drug_link,
-            #                       dplyr::everything())
-            #
-            #
-            # if ("DRUG_LINK_SYNONYM" %in% cgTables) {
-            #
-            #         pg13::appendTable(conn = conn,
-            #                           schema = "cancergov",
-            #                           tableName = "drug_link_synonym",
-            #                           results2)
-            #
-            #
-            # } else {
-            #         pg13::writeTable(conn = conn,
-            #                           schema = "cancergov",
-            #                           tableName = "drug_link_synonym",
-            #                           results2)
-            # }
 
     }
 

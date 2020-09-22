@@ -6,7 +6,6 @@
 #'  \code{\link[stringr]{str_remove}}
 #'  \code{\link[xml2]{read_xml}}
 #'  \code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
-#' @rdname cacheChemiResponse
 #' @export
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate
