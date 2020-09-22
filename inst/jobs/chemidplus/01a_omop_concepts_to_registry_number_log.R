@@ -49,7 +49,7 @@ concepts <- c(hemonc,
 concepts <- sample(concepts)
 
 if (!interactive()) {
-        report_filename <- paste0("~/Desktop/omop_concepts_to_registry_number_log_", as.character(Sys.Date()), ".txt")
+        report_filename <- paste0("~/Desktop/chemidplus_01a_omop_concepts_to_registry_number_log_", as.character(Sys.Date()), ".txt")
         cat(file = report_filename)
 }
 

@@ -34,7 +34,7 @@ concepts <-
 concepts <- sample(concepts)
 
 if (!interactive()) {
-        report_filename <- paste0("~/Desktop/equals_search_type_to_registry_number_log_", as.character(Sys.Date()), ".txt")
+        report_filename <- paste0("~/Desktop/chemidplus_01b_equals_search_type_to_registry_number_log_", as.character(Sys.Date()), ".txt")
         cat(file = report_filename)
 }
 
