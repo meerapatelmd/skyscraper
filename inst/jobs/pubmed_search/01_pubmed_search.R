@@ -41,9 +41,8 @@ while (length(concepts)) {
 
         output <-
                 tryCatch(
-                        skyscraper::log_registry_number(conn = conn,
-                                                        raw_concept = concept,
-                                                        sleep_time = 5),
+                        skyscraper::scrape_pubmed(conn = conn,
+                                                  search_term = concept),
                         error = function(e) paste("Error")
                 )
 
@@ -60,6 +59,10 @@ while (length(concepts)) {
                                   concept)
 
                 }
+
+        } else {
+
+                Sys.sleep(3)
         }
 
         rm(output)
@@ -102,8 +105,11 @@ while (length(concepts)) {
         }
 
         if ((completed_ct %% 50) == 0) {
-                skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
-                                                       schema = "chemidplus")
+                conn <- chariot::connectAthena()
+                skyscraper::export_schema_to_data_repo(conn = conn,
+                                                       target_dir = "~/GitHub/Public-Packages/pubmedSearchData/",
+                                                       schema = "pubmed_search")
+                chariot::dcAthena(conn = conn)
         }
 
 

@@ -57,7 +57,15 @@ scrape_pubmed <-
 
                 if (!missing(conn)) {
 
-                        proceed <- nrow(current_results_log) == 0
+                        if ("RESULTS_LOG" %in% Tables) {
+
+                                proceed <- nrow(current_results_log) == 0
+
+                        } else {
+
+                                proceed <- TRUE
+
+                        }
 
                 } else {
 
