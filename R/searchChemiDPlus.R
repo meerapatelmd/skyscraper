@@ -24,12 +24,17 @@ searchChemiDPlus <-
                  export_repo = TRUE,
                  target_dir = "~/GitHub/Public-Packages/chemidplusSearchData/") {
 
-                        log_registry_number(conn = conn,
-                                            raw_concept = search_term,
-                                            type = type,
-                                            schema = schema,
-                                            sleep_time = sleep_time)
+                #search_term <- "Protocol #14-068: AG-120 Tablets"
 
+                log_registry_number(conn = conn,
+                                    raw_concept = search_term,
+                                    type = type,
+                                    schema = schema,
+                                    sleep_time = sleep_time)
+#
+#                 log_registry_number(raw_concept = search_term,
+#                                     type = type,
+#                                     schema = schema)
 
                         registry_number_log <-
                         pg13::query(conn = conn,
@@ -82,7 +87,7 @@ searchChemiDPlus <-
                                                                  tibble::tibble(rn_url = rn_url,
                                                                                 rn_url_response_status = "Success"))
 
-                                        get_rn_url_validity(conn = conn,
+                                        get_rn_url_validity(#conn = conn,
                                                             rn_url = rn_url,
                                                             response = response,
                                                             schema = schema)
@@ -122,7 +127,8 @@ searchChemiDPlus <-
                                                 dplyr::filter(rn_url_response_status == "Success")
 
                                 if (nrow(diff)) {
-                                        export_schema_to_data_repo(target_dir = target_dir,
+                                        export_schema_to_data_repo(conn = conn,
+                                                                   target_dir = target_dir,
                                                                    schema = schema)
                                 }
                         }
