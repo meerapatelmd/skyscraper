@@ -7,6 +7,7 @@
 #'
 #' UpToDate
 #'
+#' PubMed Search Results
 #'
 #' @section
 #' Data Sources:

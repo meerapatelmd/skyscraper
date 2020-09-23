@@ -16,6 +16,8 @@ ChemiDPlus: \href{https://chem.nlm.nih.gov/chemidplus/}{https://chem.nlm.nih.gov
 NCI Drug Dictionary: \href{https://www.cancer.gov/publications/dictionaries/}{https://www.cancer.gov/publications/dictionaries/}
 
 UpToDate
+
+PubMed Search Results
 }
 
 \section{Data Sources}{

@@ -10,12 +10,12 @@ library(sinew)
 
 conn <- chariot::connectAthena()
 skyscraper::export_schema_to_data_repo(conn = conn,
-                                       target_dir = "~/GitHub/chemidplusData/",
-                                       schema = "chemidplus")
+                                       target_dir = "~/GitHub/Public-Packages/pubmedSearchData/",
+                                       schema = "pubmed_search")
 chariot::dcAthena(conn = conn)
 
 
 if (!interactive()) {
-        report_file <- paste0("~/Desktop/chemidplus_00_export_chemidplus_schema_", Sys.Date(), ".txt")
+        report_file <- paste0("~/Desktop/pubmed_search_00_export_pubmed_search_schema_", Sys.Date(), ".txt")
         cat(paste0("[", Sys.time(), "]\n"), file = report_file, append = TRUE)
 }
