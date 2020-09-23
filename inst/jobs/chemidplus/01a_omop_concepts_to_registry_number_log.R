@@ -1,8 +1,8 @@
-library(tidyverse)
-library(secretary)
-library(chariot)
-library(pg13)
-library(skyscraper)
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(secretary))
+suppressPackageStartupMessages(library(chariot))
+suppressPackageStartupMessages(library(pg13))
+suppressPackageStartupMessages(library(skyscraper))
 
 
 hemonc <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name, rnl.*
@@ -41,8 +41,7 @@ rxnorm <- chariot::queryAthena("SELECT DISTINCT cs.concept_synonym_name
         unname()
 
 concepts <- c(hemonc,
-              rxnorm,
-              standard_concepts) %>%
+              rxnorm) %>%
                 unique()
 
 
