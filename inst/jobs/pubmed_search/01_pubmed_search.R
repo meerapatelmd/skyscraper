@@ -118,4 +118,5 @@ while (length(concepts)) {
            completed_ct,
            percent_completed,
            error_ct)
+        }
 }
