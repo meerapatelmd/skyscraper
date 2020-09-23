@@ -1,8 +1,8 @@
-library(tidyverse)
-library(secretary)
-library(chariot)
-library(pg13)
-library(skyscraper)
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(secretary))
+suppressPackageStartupMessages(library(chariot))
+suppressPackageStartupMessages(library(pg13))
+suppressPackageStartupMessages(library(skyscraper)
 
 
 contains_concepts <- chariot::queryAthena(
@@ -66,6 +66,9 @@ while (length(concepts)) {
                           remove = TRUE)
 
 
+        Sys.sleep(5)
+
+
         if (length(output)) {
 
                 if (output == "Error") {
@@ -118,11 +121,13 @@ while (length(concepts)) {
 
 
         if ((completed_ct %% 50) == 0) {
+
                 conn <- chariot::connectAthena()
                 skyscraper::export_schema_to_data_repo(conn = conn,
                                                        target_dir = "~/GitHub/chemidplusData/",
                                                        schema = "chemidplus")
                 chariot::dcAthena(conn = conn)
+
         }
 
 
@@ -167,6 +172,8 @@ while (length(concepts)) {
         chariot::dcAthena(conn = conn,
                           remove = TRUE)
 
+
+        Sys.sleep(10)
 
         if (length(output)) {
 
@@ -266,6 +273,7 @@ while (length(concepts)) {
         chariot::dcAthena(conn = conn,
                           remove = TRUE)
 
+        Sys.sleep(20)
 
         if (length(output)) {
 
@@ -365,6 +373,8 @@ while (length(concepts)) {
         chariot::dcAthena(conn = conn,
                           remove = TRUE)
 
+
+        Sys.sleep(30)
 
         if (length(output)) {
 
