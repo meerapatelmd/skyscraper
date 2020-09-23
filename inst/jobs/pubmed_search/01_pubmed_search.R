@@ -41,7 +41,7 @@ while (length(concepts)) {
 
         output <-
                 tryCatch(
-                        skyscraper::scrape_pubmed(conn = conn,
+                        scrape_pubmed(conn = conn,
                                                   search_term = concept),
                         error = function(e) paste("Error")
                 )

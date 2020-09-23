@@ -23,6 +23,12 @@ scrape_pubmed <-
                  max_return_size = 20) {
 
 
+                # search_term <- "PONATINIB"
+
+                # if (pg13::isClosed(conn)) {
+                #         conn <- chariot::connectAthena()
+                # }
+
                 processed_search_term <- stringr::str_remove_all(search_term, pattern = " ")
                 URL <- paste0("https://pubmed.ncbi.nlm.nih.gov/?term=", processed_search_term, "&sort=date&size=", max_return_size)
 
@@ -51,6 +57,7 @@ scrape_pubmed <-
                                                                                      whereInVector = URL,
                                                                                      distinct = TRUE))
 
+                        }
                 }
 
 
@@ -178,19 +185,28 @@ scrape_pubmed <-
 
                                                 r_datetime timestamp without time zone,
                                                 url character varying(255),
-                                                title character TEXT,
-                                                citation character TEXT,
-                                                snippet character TEXT
+                                                title TEXT,
+                                                citation TEXT,
+                                                snippet TEXT
 
                                                 );
                                                 ")
 
-                        }
 
-                        pg13::appendTable(conn = conn,
-                                          schema ="pubmed_search",
-                                          tableName = "results",
-                                          results)
+                                pg13::appendTable(conn = conn,
+                                                  schema ="pubmed_search",
+                                                  tableName = "results",
+                                                  results)
+
+                        } else {
+
+                                pg13::appendTable(conn = conn,
+                                                  schema ="pubmed_search",
+                                                  tableName = "results",
+                                                  results)
+
+
+                        }
 
                 }
 
@@ -206,6 +222,5 @@ scrape_pubmed <-
 
         }
 
-}
 
 
