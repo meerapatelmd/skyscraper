@@ -169,18 +169,28 @@ scrape_pubmed <-
                                                  schema = "pubmed_search")
 
 
-                        if ("RESULTS" %in% Tables) {
+                        if (!("RESULTS" %in% Tables)) {
 
-                                pg13::appendTable(conn = conn,
-                                                  schema ="pubmed_search",
-                                                  tableName = "results",
-                                                  results)
-                        } else {
-                                pg13::writeTable(conn = conn,
-                                                 schema ="pubmed_search",
-                                                 tableName = "results",
-                                                 results)
+                                pg13::send(conn = conn,
+                                           sql_statement =
+
+                                           "CREATE TABLE pubmed_search.results (
+
+                                                r_datetime timestamp without time zone,
+                                                url character varying(255),
+                                                title character TEXT,
+                                                citation character TEXT,
+                                                snippet character TEXT
+
+                                                );
+                                                ")
+
                         }
+
+                        pg13::appendTable(conn = conn,
+                                          schema ="pubmed_search",
+                                          tableName = "results",
+                                          results)
 
                 }
 
