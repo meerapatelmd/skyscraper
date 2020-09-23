@@ -167,7 +167,7 @@ update_schemas <-
                                         DATA %>%
                                                 purrr::map2(names(DATA),
                                                             function(x,y) pg13::writeTable(conn = conn,
-                                                                                           schema = schema,
+                                                                                           schema = dataPackageSchema,
                                                                                            tableName = y,
                                                                                            x))
 
