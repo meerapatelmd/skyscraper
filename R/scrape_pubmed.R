@@ -20,7 +20,7 @@
 scrape_pubmed <-
         function(conn,
                  search_term,
-                 max_return_size = 20) {
+                 max_return_size = 5) {
 
 
                 # search_term <- "PONATINIB"

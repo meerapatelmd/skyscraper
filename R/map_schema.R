@@ -23,7 +23,8 @@ map_schema <-
                 tibble::tribble(~schema, ~dataPackage,
                                 "cancergov", "cancergovData",
                                 "chemidplus_search", "chemidplusSearchData",
-                                "chemidplus", "chemidplusData") %>%
+                                "chemidplus", "chemidplusData",
+                                "pubmed_search", "pubmedSearchData") %>%
                         dplyr::mutate(repo = paste0(repo_username, "/", dataPackage))
 
         }

@@ -4,7 +4,7 @@
 \alias{scrape_pubmed}
 \title{Scrape a PubMed search}
 \usage{
-scrape_pubmed(conn, search_term, max_return_size = 20)
+scrape_pubmed(conn, search_term, max_return_size = 5)
 }
 \description{
 The search is constrained to return results in the order of descending publication date.

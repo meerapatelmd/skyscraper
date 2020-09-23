@@ -41,7 +41,7 @@ while (length(concepts)) {
 
         output <-
                 tryCatch(
-                        scrape_pubmed(conn = conn,
+                        skyscraper::scrape_pubmed(conn = conn,
                                                   search_term = concept),
                         error = function(e) paste("Error")
                 )
@@ -60,10 +60,9 @@ while (length(concepts)) {
 
                 }
 
-        } else {
 
-                Sys.sleep(3)
-        }
+        Sys.sleep(5)
+
 
         rm(output)
 
@@ -105,11 +104,13 @@ while (length(concepts)) {
         }
 
         if ((completed_ct %% 50) == 0) {
+
                 conn <- chariot::connectAthena()
                 skyscraper::export_schema_to_data_repo(conn = conn,
                                                        target_dir = "~/GitHub/Public-Packages/pubmedSearchData/",
                                                        schema = "pubmed_search")
                 chariot::dcAthena(conn = conn)
+
         }
 
 
