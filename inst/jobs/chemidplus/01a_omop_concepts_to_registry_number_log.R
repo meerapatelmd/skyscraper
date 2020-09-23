@@ -131,8 +131,11 @@ while (length(concepts)) {
         }
 
         if ((completed_ct %% 50) == 0) {
-                skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+                conn <- chariot::connectAthena()
+                skyscraper::export_schema_to_data_repo(conn = conn,
+                                                       target_dir = "~/GitHub/chemidplusData/",
                                                        schema = "chemidplus")
+                chariot::dcAthena(conn = conn)
         }
 
 
@@ -147,8 +150,12 @@ while (length(concepts)) {
 if (!interactive()) {
         cat("########### Second Iteration\n", file = report_filename, append = TRUE)
 }
-skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+
+conn <- chariot::connectAthena()
+skyscraper::export_schema_to_data_repo(conn = conn,
+                                       target_dir = "~/GitHub/chemidplusData/",
                                        schema = "chemidplus")
+chariot::dcAthena(conn = conn)
 
 
 concepts <- error_concepts
@@ -222,8 +229,11 @@ while (length(concepts)) {
         }
 
         if ((completed_ct %% 25) == 0) {
-                skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+                conn <- chariot::connectAthena()
+                skyscraper::export_schema_to_data_repo(conn = conn,
+                                                       target_dir = "~/GitHub/chemidplusData/",
                                                        schema = "chemidplus")
+                chariot::dcAthena(conn = conn)
         }
 
         rm(current_ct,
@@ -237,8 +247,12 @@ if (!interactive()) {
         cat("########### Third Iteration\n", file = report_filename, append = TRUE)
 }
 
-skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+
+conn <- chariot::connectAthena()
+skyscraper::export_schema_to_data_repo(conn = conn,
+                                       target_dir = "~/GitHub/chemidplusData/",
                                        schema = "chemidplus")
+chariot::dcAthena(conn = conn)
 
 
 concepts <- error_concepts
@@ -311,11 +325,11 @@ while (length(concepts)) {
 
         }
 
-        if ((completed_ct %% 10) == 0) {
-                skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
-                                                       schema = "chemidplus")
-        }
-
+        conn <- chariot::connectAthena()
+        skyscraper::export_schema_to_data_repo(conn = conn,
+                                               target_dir = "~/GitHub/chemidplusData/",
+                                               schema = "chemidplus")
+        chariot::dcAthena(conn = conn)
 
 
         rm(current_ct,
@@ -327,8 +341,13 @@ while (length(concepts)) {
 if (!interactive()) {
         cat("########### Fourth Iteration\n", file = report_filename, append = TRUE)
 }
-skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+
+
+conn <- chariot::connectAthena()
+skyscraper::export_schema_to_data_repo(conn = conn,
+                                       target_dir = "~/GitHub/chemidplusData/",
                                        schema = "chemidplus")
+chariot::dcAthena(conn = conn)
 
 concepts <- error_concepts
 error_concepts <- vector()
@@ -401,8 +420,14 @@ while (length(concepts)) {
         }
 
         if ((completed_ct %% 5) == 0) {
-                skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+
+
+                conn <- chariot::connectAthena()
+                skyscraper::export_schema_to_data_repo(conn = conn,
+                                                       target_dir = "~/GitHub/chemidplusData/",
                                                        schema = "chemidplus")
+                chariot::dcAthena(conn = conn)
+
         }
 
         rm(current_ct,
@@ -411,8 +436,11 @@ while (length(concepts)) {
            error_ct)
 }
 
-skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/chemidplusData/",
+conn <- chariot::connectAthena()
+skyscraper::export_schema_to_data_repo(conn = conn,
+                                       target_dir = "~/GitHub/chemidplusData/",
                                        schema = "chemidplus")
+chariot::dcAthena(conn = conn)
 
 if (!interactive()) {
         cat("########### COMPLETE\n", file = report_filename, append = TRUE)
