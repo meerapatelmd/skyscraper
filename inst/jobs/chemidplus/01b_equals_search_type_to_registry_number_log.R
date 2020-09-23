@@ -2,12 +2,11 @@ suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(secretary))
 suppressPackageStartupMessages(library(chariot))
 suppressPackageStartupMessages(library(pg13))
-suppressPackageStartupMessages(library(skyscraper)
+suppressPackageStartupMessages(library(skyscraper))
 
 
 contains_concepts <- chariot::queryAthena(
-                                "
-                                 SELECT DISTINCT rnl.raw_concept
+                                "SELECT DISTINCT rnl.raw_concept
                                  FROM chemidplus.registry_number_log rnl
                                  WHERE
                                         rnl.rnl_datetime IS NOT NULL
