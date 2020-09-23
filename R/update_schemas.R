@@ -38,7 +38,7 @@
 #' @importFrom utils capture.output
 #' @importFrom devtools install_github
 #' @importFrom pg13 dropSchema createSchema writeTable
-#' @importFrom dplyr mutate_at
+#' @importFrom dplyr mutate_at vars
 #' @importFrom lubridate ymd_hms
 #' @importFrom magrittr %>%
 
@@ -126,7 +126,7 @@ update_schemas <-
                                                         DATASETS %>%
                                                         rubix::map_names_set(get) %>%
                                                         purrr::map(function(x) x %>%
-                                                                   dplyr::mutate_at(vars(ends_with("datetime")),
+                                                                   dplyr::mutate_at(dplyr::vars(ends_with("datetime")),
                                                                                     lubridate::ymd_hms))
 
                                                 DATA %>%
@@ -161,7 +161,7 @@ update_schemas <-
                                                 DATASETS %>%
                                                 rubix::map_names_set(get) %>%
                                                 purrr::map(function(x) x %>%
-                                                                   dplyr::mutate_at(vars(ends_with("datetime")),
+                                                                   dplyr::mutate_at(dplyr::vars(ends_with("datetime")),
                                                                                     lubridate::ymd_hms))
 
                                         DATA %>%
