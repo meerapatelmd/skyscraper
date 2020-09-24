@@ -35,7 +35,8 @@
 
 get_drug_dictionary <-
     function(conn,
-             max_page = 50) {
+             max_page = 50,
+             sleep_time = 3) {
 
             output <- list()
 
@@ -43,6 +44,9 @@ get_drug_dictionary <-
 
 
                 page_scrape <- xml2::read_html(paste0("https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=", i))
+
+                Sys.sleep(sleep_time)
+
 
                 no_data_message <-
                         page_scrape %>%

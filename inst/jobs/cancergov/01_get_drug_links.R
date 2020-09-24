@@ -3,38 +3,39 @@ library(skyscraper)
 library(chariot)
 
 conn <- chariot::connectAthena()
-Tables <- pg13::lsTables(conn = conn,
-                         schema = "cancergov")
-
-nci_dd_count <- skyscraper::nci_count()
-
-if ("DRUG_DICTIONARY_LOG" %in% Tables) {
-
-        drug_dictionary_log_table <-
-                pg13::readTable(conn = conn,
-                                schema = "cancergov",
-                                tableName = "DRUG_DICTIONARY_LOG")
-
-
-        if (!(nci_dd_count %in% drug_dictionary_log_table$drug_count)) {
-
-                pg13::appendTable(conn = conn,
-                                  schema = "cancergov",
-                                  tableName = "DRUG_DICTIONARY_LOG",
-                                  tibble::tibble(ddl_datetime = Sys.time(),
-                                                 drug_count = nci_dd_count))
-
-        }
-
-} else {
-
-        pg13::writeTable(conn = conn,
-                         schema = "cancergov",
-                         tableName = "DRUG_DICTIONARY_LOG",
-                         tibble::tibble(ddl_datetime = Sys.time(),
-                                        drug_count = nci_dd_count))
-
-}
+skyscraper::log_drug_count(conn = conn)
+# Tables <- pg13::lsTables(conn = conn,
+#                          schema = "cancergov")
+#
+# nci_dd_count <- skyscraper::nci_count()
+#
+# if ("DRUG_DICTIONARY_LOG" %in% Tables) {
+#
+#         drug_dictionary_log_table <-
+#                 pg13::readTable(conn = conn,
+#                                 schema = "cancergov",
+#                                 tableName = "DRUG_DICTIONARY_LOG")
+#
+#
+#         if (!(nci_dd_count %in% drug_dictionary_log_table$drug_count)) {
+#
+#                 pg13::appendTable(conn = conn,
+#                                   schema = "cancergov",
+#                                   tableName = "DRUG_DICTIONARY_LOG",
+#                                   tibble::tibble(ddl_datetime = Sys.time(),
+#                                                  drug_count = nci_dd_count))
+#
+#         }
+#
+# } else {
+#
+#         pg13::writeTable(conn = conn,
+#                          schema = "cancergov",
+#                          tableName = "DRUG_DICTIONARY_LOG",
+#                          tibble::tibble(ddl_datetime = Sys.time(),
+#                                         drug_count = nci_dd_count))
+#
+# }
 chariot::dcAthena(conn = conn)
 
 
@@ -58,12 +59,15 @@ new_count <-
         unlist()
 
 if (new_count != starting_count) {
-        skyscraper::export_schema_to_data_repo("~/GitHub/cancergovData/",
+        conn <- chariot::connectAthena()
+        skyscraper::export_schema_to_data_repo(conn = conn,
+                                               target_dir = "~/GitHub/cancergovData/",
                                                schema = "cancergov")
+        chariot::dcAthena()
 }
 
 if (!interactive()) {
         report_file <- paste0("~/Desktop/cancergov_01_get_drug_links_", Sys.Date(), ".txt")
-        cat(paste0("[", Sys.time(), "]\tStarting Count: ", starting_count), sep = "\n", file = report_file, append = TRUE)
-        cat(paste0("[", Sys.time(), "]\tNew Count: ", new_count), sep = "\n", file = report_file, append = TRUE)
+        cat(paste0("[", Sys.time(), "]\tDrug Link Table Row Count: ", starting_count), sep = "\n", file = report_file, append = TRUE)
+        cat(paste0("[", Sys.time(), "]\t Drug Link Table New Row Count: ", new_count), sep = "\n", file = report_file, append = TRUE)
 }

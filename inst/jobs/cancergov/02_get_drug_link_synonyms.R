@@ -22,13 +22,16 @@ new_count <-
 
 
 if (new_count != starting_count) {
-        skyscraper::export_schema_to_data_repo("~/GitHub/cancergovData/",
+        conn <- chariot::connectAthena()
+        skyscraper::export_schema_to_data_repo(conn = conn,
+                                               target_dir = "~/GitHub/cancergovData/",
                                                schema = "cancergov")
+        chariot::dcAthena()
 }
 
 if (!interactive()) {
         report_file <- paste0("~/Desktop/cancergov_02_get_drug_link_synonyms_", Sys.Date(), ".txt")
-        cat(paste0("[", Sys.time(), "]\tStarting Count: ", starting_count), sep = "\n", file = report_file, append = TRUE)
-        cat(paste0("[", Sys.time(), "]\tNew Count: ", new_count), sep = "\n", file = report_file, append = TRUE)
+        cat(paste0("[", Sys.time(), "]\tDrug Link Synonym Row Count: ", starting_count), sep = "\n", file = report_file, append = TRUE)
+        cat(paste0("[", Sys.time(), "]\tDrug Link Synonym New Row Count: ", new_count), sep = "\n", file = report_file, append = TRUE)
 }
 

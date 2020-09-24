@@ -28,7 +28,8 @@
 
 get_drug_detail_links  <-
     function(conn,
-             max_page = 50) {
+             max_page = 50,
+             sleep_time = 3) {
 
 
 
@@ -38,6 +39,8 @@ get_drug_detail_links  <-
             for (i in 1:max_page) {
 
                             drug_def_scrape <- xml2::read_html(paste0("https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=", i))
+
+                            Sys.sleep(sleep_time)
 
                             # Stop if there is no more information
                             no_data_message <-
