@@ -41,8 +41,11 @@ The listed drug names and their definitions are scraped from the Drug Dictionary
 Other cancergov: 
 \code{\link{get_dictionary_and_links}()},
 \code{\link{get_drug_detail_links}()},
-\code{\link{get_drug_link_ncit}()},
 \code{\link{get_drug_link_synonym}()},
-\code{\link{log_drug_count}()}
+\code{\link{get_drug_link_url}()},
+\code{\link{log_drug_count}()},
+\code{\link{process_drug_link_ncit}()},
+\code{\link{process_drug_link_synonym}()},
+\code{\link{process_drug_link_url}()}
 }
 \concept{cancergov}

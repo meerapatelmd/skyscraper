@@ -1,5 +1,5 @@
 #' @title
-#' Scrape and Parse Synonyms in Drug Details Link
+#' Process the Links found in the Drug Link Table for NCIt and other URLs
 #'
 #' @inherit cancergov_functions description
 #' @inheritSection cancergov_functions Web Source Types
@@ -14,7 +14,6 @@
 #'  \code{\link[xml2]{read_xml}},\code{\link[xml2]{xml_find_all}},\code{\link[xml2]{xml_replace}}
 #'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_table}}
 #'  \code{\link[tidyr]{separate_rows}}
-#' @rdname get_drug_link_synonym
 #' @family cancergov
 #' @export
 #' @importFrom pg13 lsTables query buildQuery readTable appendTable writeTable
@@ -25,35 +24,30 @@
 #' @importFrom tidyr separate_rows
 #' @importFrom magrittr %>%
 
-get_drug_link_synonym <-
+process_drug_link_url <-
     function(conn,
              sleep_time = 5) {
 
+                #conn <- chariot::connectAthena()
 
 
             cgTables <- pg13::lsTables(conn = conn,
                                        schema = "cancergov")
 
 
-            if ("DRUG_LINK_SYNONYM" %in% cgTables) {
-                    current_drug_link_synonym_table <-
-                            pg13::query(conn = conn,
-                                        pg13::buildQuery(distinct = TRUE,
-                                                         schema = "cancergov",
-                                                         tableName = "drug_link_synonym"))
-
-                    drug_link_table0 <-
-                            pg13::readTable(conn = conn,
-                                            schema = "cancergov",
-                                            tableName = "drug_link")
-
+            if ("DRUG_LINK_URL" %in% cgTables) {
 
                     drug_link_table <-
-                            dplyr::left_join(drug_link_table0,
-                                             current_drug_link_synonym_table,
-                                             by = "drug_link") %>%
-                            dplyr::filter(is.na(dls_datetime)) %>%
-                            dplyr::select(all_of(colnames(drug_link_table0)))
+                            pg13::query(conn = conn,
+                                        sql_statement =
+                                                "
+                                        SELECT DISTINCT
+                                                dl.drug, dl.drug_link
+                                        FROM cancergov.drug_link dl
+                                        LEFT JOIN cancergov.drug_link_url dlu
+                                        ON dlu.drug_link  = dl.drug_link
+                                        WHERE dlu_datetime IS NULL
+                                        ")
 
 
             } else {
@@ -71,7 +65,8 @@ get_drug_link_synonym <-
             while (length(drug_links)) {
 
 
-                    #drug_link <- "https://www.cancer.gov/publications/dictionaries/cancer-drug/def/792667"
+                    # drug_link <- "https://www.cancer.gov/publications/dictionaries/cancer-drug/def/792667"
+                    # drug_link <- "https://www.cancer.gov/publications/dictionaries/cancer-drug/def/61cu-atsm"
 
                     drug_link <- drug_links[1]
 
@@ -99,76 +94,65 @@ get_drug_link_synonym <-
 
                     if (!is.null(response)) {
 
-
-                            xml2::xml_find_all(response, ".//br") %>% xml2::xml_add_sibling("p", "\n")
-
-                            xml2::xml_find_all(response, ".//br") %>% xml2::xml_remove()
-
-
                             results <-
                                     police::try_catch_error_as_null(
                                     response %>%
-                                            rvest::html_nodes("table") %>%
-                                            rvest::html_table()
+                                            rvest::html_nodes(".navigation-dark-red") %>%
+                                            rvest::html_attr("href")
                                     )
+
 
 
                             if (length(results)) {
 
                                     output  <-
-                                            dplyr::bind_rows(results) %>%
-                                            tidyr::separate_rows(X2,
-                                                                 sep = "\n") %>%
-                                            dplyr::transmute(dls_datetime = Sys.time(),
-                                                             drug_link = drug_link,
-                                                             X1,
-                                                             X2) %>%
-                                            dplyr::filter_at(vars(X1,X2),
-                                                             ~nchar(.) < 255)
+                                            tibble::tibble(dlu_datetime = Sys.time(),
+                                                           drug_link = drug_link,
+                                                           drug_link_url = results)
 
 
 
                                     cgTables <- pg13::lsTables(conn = conn,
                                                               schema = "cancergov")
 
-                                    if ("DRUG_LINK_SYNONYM" %in% cgTables) {
+                                    if ("DRUG_LINK_URL" %in% cgTables) {
 
                                             pg13::appendTable(conn = conn,
                                                               schema = "cancergov",
-                                                              tableName = "drug_link_synonym",
+                                                              tableName = "DRUG_LINK_URL",
                                                               output)
 
 
                                     } else {
                                             pg13::writeTable(conn = conn,
                                                              schema = "cancergov",
-                                                             tableName = "drug_link_synonym",
+                                                             tableName = "DRUG_LINK_URL",
                                                              output)
                                     }
 
 
                             } else {
-                                    output <-
-                                            data.frame(dls_datetime = Sys.time(),
-                                                       drug_link = drug_link,
-                                                       X1 = NA,
-                                                       X2 = NA)
+
+                                    output  <-
+                                            tibble::tibble(dlu_datetime = Sys.time(),
+                                                           drug_link = drug_link,
+                                                           drug_link_url = NA)
 
                                     cgTables <- pg13::lsTables(conn = conn,
                                                                schema = "cancergov")
 
-                                    if ("DRUG_LINK_SYNONYM" %in% cgTables) {
+                                    if ("DRUG_LINK_URL" %in% cgTables) {
 
                                             pg13::appendTable(conn = conn,
                                                               schema = "cancergov",
-                                                              tableName = "drug_link_synonym",
+                                                              tableName = "DRUG_LINK_URL",
                                                               output)
 
 
                                     } else {
                                             pg13::writeTable(conn = conn,
                                                              schema = "cancergov",
-                                                             tableName = "drug_link_synonym",
+                                                             tableName = "DRUG_LINK_URL",
                                                              output)
                                     }
                             }
@@ -180,6 +164,8 @@ get_drug_link_synonym <-
 
 
             }
+
+            process_drug_link_ncit(conn = conn)
 
     }
 

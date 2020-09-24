@@ -34,7 +34,10 @@ Other cancergov:
 \code{\link{get_dictionary_and_links}()},
 \code{\link{get_drug_detail_links}()},
 \code{\link{get_drug_dictionary}()},
-\code{\link{get_drug_link_ncit}()},
-\code{\link{get_drug_link_synonym}()}
+\code{\link{get_drug_link_synonym}()},
+\code{\link{get_drug_link_url}()},
+\code{\link{process_drug_link_ncit}()},
+\code{\link{process_drug_link_synonym}()},
+\code{\link{process_drug_link_url}()}
 }
 \concept{cancergov}

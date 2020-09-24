@@ -1,5 +1,5 @@
 #' @title
-#' Derive the NCIt CUI from the Drug Link URL Table
+#' Process the NCIt CUI from the Drug Link URL Table
 #'
 #' @inherit cancergov_functions description
 #' @inheritSection cancergov_functions Web Source Types
@@ -7,7 +7,7 @@
 #' @details
 #' This function parses the NCI Thesaurus CUI from the scraped URL.
 #' @inheritParams cancergov_functions
-#' @rdname get_drug_link_ncit
+#' @rdname process_drug_link_ncit
 #' @family cancergov
 #' @seealso
 #'  \code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{readTable}},\code{\link[pg13]{dropTable}},\code{\link[pg13]{writeTable}},\code{\link[pg13]{appendTable}}
@@ -21,7 +21,7 @@
 #' @importFrom tidyr extract
 
 
-get_drug_link_ncit <-
+process_drug_link_ncit <-
     function(conn) {
 
                 #conn <- chariot::connectAthena()

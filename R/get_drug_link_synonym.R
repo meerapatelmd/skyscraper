@@ -1,11 +1,11 @@
 #' @title
-#' Get the URLs found in a Drug Link
+#' Get the Synonyms found at a given Drug Link
 #'
 #' @inherit cancergov_functions description
 #' @inheritSection cancergov_functions Web Source Types
 #' @inheritSection cancergov_functions Drug Detail Links
 #' @inheritParams cancergov_functions
-#' @param sleep_time Seconds in between xml2::read_html calls on a URL, Default: 3
+#' @param sleep_time Seconds in between xml2::read_html calls on a URL, Default: 5
 #' @param drug_link Drug Link
 #' @param response (optional) The response associated with the `drug_link`. If not provided, a new response is read.
 #'
@@ -26,21 +26,19 @@
 #' @importFrom tidyr separate_rows
 #' @importFrom magrittr %>%
 
-get_drug_link_url <-
+get_drug_link_synonym <-
     function(conn,
              drug_link,
              response,
              sleep_time = 5) {
 
-                #conn <- chariot::connectAthena()
 
-             # drug_link <- "https://www.cancer.gov/publications/dictionaries/cancer-drug/def/cd105-yb-1-sox2-cdh3-mdm2-polypeptide-plasmid-dna-vaccine"
 
             cgTables <- pg13::lsTables(conn = conn,
                                        schema = "cancergov")
 
 
-            if ("DRUG_LINK_URL" %in% cgTables) {
+            if ("DRUG_LINK_SYNONYM" %in% cgTables) {
 
                     current_entry <-
                             pg13::query(conn = conn,
@@ -48,8 +46,8 @@ get_drug_link_url <-
                                                 SqlRender::render(
                                                         "
                                                         SELECT *
-                                                        FROM cancergov.drug_link_url dlu
-                                                        WHERE dlu.drug_link = '@drug_link'
+                                                        FROM cancergov.drug_link_synonym dls
+                                                        WHERE dls.drug_link = '@drug_link'
                                                         ;
                                                         ",
                                                         drug_link = drug_link))
@@ -61,24 +59,12 @@ get_drug_link_url <-
             } else {
 
                     proceed <- TRUE
-
             }
-
 
             if (proceed) {
 
 
-            if (missing(response)) {
-
-                    response <-
-                            police::try_catch_error_as_null(
-                                    xml2::read_html(drug_link)
-                            )
-
-
-                    if (is.null(response)) {
-
-                            Sys.sleep(sleep_time)
+                    if (missing(response)) {
 
                             response <-
                                     police::try_catch_error_as_null(
@@ -86,78 +72,98 @@ get_drug_link_url <-
                                     )
 
 
-                            Sys.sleep(sleep_time)
+                            if (is.null(response)) {
 
-                    } else {
+                                    Sys.sleep(sleep_time)
 
-                            Sys.sleep(sleep_time)
+                                    response <-
+                                            police::try_catch_error_as_null(
+                                                    xml2::read_html(drug_link)
+                                            )
+
+
+                                    Sys.sleep(sleep_time)
+
+                            } else {
+
+                                    Sys.sleep(sleep_time)
+                            }
                     }
-            }
+
+
 
                     if (!is.null(response)) {
 
+
+                            xml2::xml_find_all(response, ".//br") %>% xml2::xml_add_sibling("p", "\n")
+
+                            xml2::xml_find_all(response, ".//br") %>% xml2::xml_remove()
+
+
                             results <-
                                     police::try_catch_error_as_null(
-                                    response %>%
-                                            rvest::html_nodes(".navigation-dark-red") %>%
-                                            rvest::html_attr("href")
+                                            response %>%
+                                                    rvest::html_nodes("table") %>%
+                                                    rvest::html_table()
                                     )
-
 
 
                             if (length(results)) {
 
                                     output  <-
-                                            tibble::tibble(dlu_datetime = Sys.time(),
-                                                           drug_link = drug_link,
-                                                           drug_link_url = results)
+                                            dplyr::bind_rows(results) %>%
+                                            tidyr::separate_rows(X2,
+                                                                 sep = "\n") %>%
+                                            dplyr::transmute(dls_datetime = Sys.time(),
+                                                             drug_link = drug_link,
+                                                             drug_synonym_type = X1,
+                                                             drug_synonym = X2) %>%
+                                            dplyr::filter_at(vars(drug_synonym_type,drug_synonym),
+                                                             ~nchar(.) < 255)
 
 
-
-                                    cgTables <- pg13::lsTables(conn = conn,
-                                                              schema = "cancergov")
-
-                                    if ("DRUG_LINK_URL" %in% cgTables) {
-
-                                            pg13::appendTable(conn = conn,
-                                                              schema = "cancergov",
-                                                              tableName = "DRUG_LINK_URL",
-                                                              output)
-
-
-                                    } else {
-                                            pg13::writeTable(conn = conn,
-                                                             schema = "cancergov",
-                                                             tableName = "DRUG_LINK_URL",
-                                                             output)
-                                    }
-
-
-                                    process_drug_link_ncit(conn = conn)
-
-
-                            } else {
-
-                                    output  <-
-                                            tibble::tibble(dlu_datetime = Sys.time(),
-                                                           drug_link = drug_link,
-                                                           drug_link_url = NA)
 
                                     cgTables <- pg13::lsTables(conn = conn,
                                                                schema = "cancergov")
 
-                                    if ("DRUG_LINK_URL" %in% cgTables) {
+                                    if ("DRUG_LINK_SYNONYM" %in% cgTables) {
 
                                             pg13::appendTable(conn = conn,
                                                               schema = "cancergov",
-                                                              tableName = "DRUG_LINK_URL",
+                                                              tableName = "drug_link_synonym",
                                                               output)
 
 
                                     } else {
                                             pg13::writeTable(conn = conn,
                                                              schema = "cancergov",
-                                                             tableName = "DRUG_LINK_URL",
+                                                             tableName = "drug_link_synonym",
+                                                             output)
+                                    }
+
+
+                            } else {
+                                    output <-
+                                            data.frame(dls_datetime = Sys.time(),
+                                                       drug_link = drug_link,
+                                                       drug_synonym_type = NA,
+                                                       drug_synonym = NA)
+
+                                    cgTables <- pg13::lsTables(conn = conn,
+                                                               schema = "cancergov")
+
+                                    if ("DRUG_LINK_SYNONYM" %in% cgTables) {
+
+                                            pg13::appendTable(conn = conn,
+                                                              schema = "cancergov",
+                                                              tableName = "drug_link_synonym",
+                                                              output)
+
+
+                                    } else {
+                                            pg13::writeTable(conn = conn,
+                                                             schema = "cancergov",
+                                                             tableName = "drug_link_synonym",
                                                              output)
                                     }
                             }
