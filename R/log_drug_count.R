@@ -17,7 +17,6 @@
 #' @family cancergov
 #' @export
 #' @importFrom pg13 lsTables readTable appendTable writeTable
-#' @importFrom skyscraper nci_count
 #' @importFrom tibble tibble
 
 
@@ -28,7 +27,7 @@ log_drug_count <-
                 Tables <- pg13::lsTables(conn = conn,
                                          schema = "cancergov")
 
-                nci_dd_count <- skyscraper::nci_count()
+                nci_dd_count <- nci_count()
 
                 if ("DRUG_DICTIONARY_LOG" %in% Tables) {
 
