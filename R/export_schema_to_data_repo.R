@@ -48,6 +48,8 @@ export_schema_to_data_repo <-
 
 
                         # target_dir <- "/Users/meerapatel/GitHub/chemidplusData/"
+
+                        # conn <- chariot::connectAthena()
                         # schema <- "cancergov"
 
                         # Load Schema Map
@@ -143,10 +145,10 @@ export_schema_to_data_repo <-
                         #### Merge Local with Imported Data
                         ##############
                         mergedData <-
-                                list(IMPORTED = importedData,
-                                        LOCAL = localData) %>%
-                                        purrr::transpose() %>%
-                                        purrr::map(dplyr::bind_rows)
+                                list(localData,
+                                     importedData) %>%
+                                purrr::transpose() %>%
+                                purrr::map(dplyr::bind_rows)
 
                         # Dedupe Merged Data
                         # All dataframes with a datetime are deduped and then grouped on all other columns and filtered or the earliest entry
@@ -258,7 +260,7 @@ export_schema_to_data_repo <-
                         current_wd <- getwd()
 
                         setwd(target_dir)
-                        source(paste0(data_raw_path, "/DATASET.R"),
+                        source(path_to_DATASET,
                                local = TRUE)
                         glitter::docPushInstall(commit_message = commit_message,
                                                 has_vignettes = FALSE)
