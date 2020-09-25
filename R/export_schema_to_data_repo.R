@@ -48,7 +48,7 @@ export_schema_to_data_repo <-
 
 
                         # target_dir <- "/Users/meerapatel/GitHub/chemidplusData/"
-                        # schema <- "chemidplus"
+                        # schema <- "cancergov"
 
                         # Load Schema Map
                         schema_map <- map_schema()
@@ -205,7 +205,7 @@ export_schema_to_data_repo <-
                               declareObjsLines,
                               usethisLines),
                             sep = "\n",
-                            path = path_to_DATASET)
+                            file = path_to_DATASET)
 
 
 

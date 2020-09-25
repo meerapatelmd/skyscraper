@@ -100,3 +100,11 @@ Timestamp	Activity Type	Function	File	Details
 2020-09-25 01:51:38	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/chemidplusData/data-raw/REGISTRY_NUMBERS.csv	
 2020-09-25 01:51:39	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/chemidplusData/data-raw/REGISTRY_NUMBER_LOG.csv	
 2020-09-25 01:51:39	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/chemidplusData/data-raw/RN_URL_VALIDITY.csv	
+2020-09-25 02:02:31	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/CONCEPT.csv	
+2020-09-25 02:02:31	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/CONCEPT_DEFINITION.csv	
+2020-09-25 02:02:31	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/CONCEPT_RELATIONSHIP.csv	
+2020-09-25 02:02:31	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/CONCEPT_SYNONYM.csv	
+2020-09-25 02:02:32	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/DRUG_DICTIONARY.csv	
+2020-09-25 02:02:32	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/DRUG_DICTIONARY_LOG.csv	
+2020-09-25 02:02:32	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/DRUG_LINK.csv	
+2020-09-25 02:02:32	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/DRUG_LINK_SYNONYM.csv	
