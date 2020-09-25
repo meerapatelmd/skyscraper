@@ -42,125 +42,230 @@
 export_schema_to_data_repo <-
         function(conn,
                  schema,
-                target_dir) {
+                 commit_message = "automated export",
+                 target_dir,
+                 reset = TRUE) {
+
+
                         # target_dir <- "/Users/meerapatel/GitHub/chemidplusData/"
                         # schema <- "chemidplus"
 
+                        # Load Schema Map
                         schema_map <- map_schema()
 
-                        # Unload Namespaces
-                        unloadPackages <- schema_map$dataPackage
+                        # Create the dataPackage and
+                        rubix::release(schema_map[schema_map$schema == schema, "dataPackage"])
 
-                        unloadPackages %>%
-                                purrr::map(~unloadNamespace(.))
+
+                        # If the target_dir is missing, it is found in the ~/GitHub directory. If it is not found in the ~/GitHub directory, it is cloned.
+
+                        if (missing(target_dir)) {
+
+                                target_dir <-
+                                        system(paste0("find ~/GitHub -name ", dataPackage),
+                                               intern = TRUE)
+
+                                if (length(target_dir) != 1)  {
+
+                                        clone_url <-
+                                        glitter::get_remote_repos("meerapatelmd") %>%
+                                                purrr::pluck("REPOS") %>%
+                                                dplyr::filter(name == dataPackage) %>%
+                                                dplyr::select(clone_url) %>%
+                                                unlist()
+
+
+                                        glitter::clone(remote_url = clone_url,
+                                                       destination_path = "~/GitHub")
+
+                                        target_dir <-
+                                                system(paste0("find ~/GitHub -name ", dataPackage),
+                                                       intern = TRUE)
+
+                                }
+
+
+                        }
 
 
                         target_dir <- path.expand(target_dir)
 
-
-                        current_wd <- getwd()
-                        setwd(target_dir)
-
-                        data_raw_path <- paste0(target_dir, "/data-raw/")
-                        data_path <- paste0(target_dir, "/data/")
-                        r_path <-  paste0(target_dir, "/R/")
+                        data_raw_path <- file.path(target_dir, "data-raw")
+                        data_path <- file.path(target_dir, "data")
+                        r_path <-  file.path(target_dir, "R")
+                        path_to_DATASET <- file.path(data_raw_path, "DATASET.R")
+                        path_to_dataR <- file.path(r_path, "data.R")
 
                         cave::create_dir_if_not_exist(data_raw_path)
                         cave::create_dir_if_not_exist(data_path)
                         cave::create_dir_if_not_exist(r_path)
 
 
+                        #current_wd <- getwd()
+                        #setwd(target_dir)
+
+
+                        # Unload Namespaces prior to installing the package
+                        schema_map$dataPackage %>%
+                                purrr::map(~unloadNamespace(.))
+
+
+                        # Install Data Package to UNION with current schema data
+                        library(dataPackage,
+                                character.only = TRUE)
+
+                        # Getting package datasets name
+                        DATASETS <- data(package = dataPackage)
+                        DATASETS <- DATASETS$results[, "Item"]
+
+                        # Load package datasets to merge with the local datasets
+                        importedData <-
+                                DATASETS %>%
+                                rubix::map_names_set(get) %>%
+                                purrr::map(function(x) x %>%
+                                                   dplyr::mutate_at(dplyr::vars(ends_with("datetime")),
+                                                                    lubridate::ymd_hms))
+
+                        ############
+                        ## Local Datasets
+                        ############
+
                         Tables <-
                                 pg13::lsTables(conn = conn,
                                                schema = schema)
-                        Data <<-
+                        localData <-
                                 Tables %>%
                                 rubix::map_names_set(~pg13::readTable(conn = conn,
                                                                       schema = schema,
                                                                       tableName = .))
 
+                        ##############
+                        #### Merge Local with Imported Data
+                        ##############
+                        mergedData <-
+                                list(IMPORTED = importedData,
+                                        LOCAL = localData) %>%
+                                        purrr::transpose() %>%
+                                        purrr::map(dplyr::bind_rows)
 
-                        data_raw_paths <- paste0(data_raw_path, "/", names(Data), ".csv")
+                        # Dedupe Merged Data
+                        # All dataframes with a datetime are deduped and then grouped on all other columns and filtered or the earliest entry
+                        # If a datetime column is not present, the dataframe is deduped only
+                        mergedData2 <<-
+                        mergedData %>%
+                                rubix::map_names_set(function(x) if (any(grepl("datetime", colnames(x)))) {
 
-                        Data %>%
+                                                                                x %>%
+                                                                                        dplyr::distinct() %>%
+                                                                                        dplyr::group_by_at(vars(!contains("datetime"))) %>%
+                                                                                        dplyr::arrange_at(vars(contains("datetime")), .by_group = TRUE) %>%
+                                                                                        rubix::filter_first_row() %>%
+                                                                                        dplyr::ungroup()
+
+                                                                } else {
+
+                                                                        x %>%
+                                                                        dplyr::distinct()
+
+                                                                }
+                                )
+
+
+                        ######
+                        ### Pull Repo
+                        ######
+                        glitter::pull(path_to_local_repo = target_dir,
+                                      verbose = FALSE)
+
+
+                        ######
+                        ### Write to output file paths to data-raw folder
+                        ######
+                        data_raw_paths <- file.path(data_raw_path, paste0(names(mergedData2), ".csv"))
+
+                        mergedData2 %>%
                                 purrr::map2(data_raw_paths,
                                             function(x,y) broca::simply_write_csv(x = x,
                                                                                   file = y))
+                        ######
+                        ### Write DATASETS.R File
+                        ######
 
-
-                        loadLines <-
-                                Tables %>%
-                                purrr::map2(basename(data_raw_paths),
-                                            function(x, y) paste0(x, " <- broca::simply_read_csv('", data_raw_path, "/", y, "')")) %>%
+                        declareObjsLines <-
+                                names(mergedData2) %>%
+                                purrr::map2(data_raw_paths,
+                                            function(x, y) paste0(x, " <- broca::simply_read_csv('",y, "')")) %>%
                                 unlist()
 
-                        # setWdLines <-
-                        #         paste0("\nsetwd('",dirname(data_raw_path), "')")
-
                         usethisLines <-
-                                paste0("\nusethis::use_data(", paste(Tables, collapse = ","), ", overwrite = TRUE)")
-
-                        readr::write_lines(c("library(broca)\n",
-                                             loadLines,
-                                             #setWdLines,
-                                             usethisLines),
-                                           path = paste0(data_raw_path, "/DATASET.R"))
+                                paste0("\nusethis::use_data(\n", paste(paste0("\t",Tables), collapse = ",\n"), "\n, overwrite = TRUE)")
 
 
-                        source(paste0(data_raw_path, "/DATASET.R"),
-                               local = TRUE)
-
-                        if (interactive()) {
-
-                                current_wd_data_path <- paste0(current_wd, "/data/")
-
-
-                                data_files <- list.files(current_wd_data_path,
-                                                         full.names = TRUE,
-                                                         pattern = "[.]{1}rda$") %>%
-                                                grep(pattern = paste(Tables, collapse = "|"), value = TRUE)
-
-                                new_location_data_files <-
-                                       paste0(data_path, "/", basename(data_files))
+                        cat(c("library(broca)",
+                              declareObjsLines,
+                              usethisLines),
+                            sep = "\n",
+                            path = path_to_DATASET)
 
 
-                                for (i in 1:length(data_files)) {
-                                        file.copy(from = data_files[i],
-                                                  to = new_location_data_files[i],
-                                                  overwrite = TRUE)
 
-                                        file.remove(data_files[i])
-                                }
-
-                                if (!length(list.files(current_wd_data_path))) {
-                                        unlink(current_wd_data_path, recursive = TRUE)
-                                }
-
-                        }
-
-
-                        paste0("Data$", names(Data)) %>%
+                        # if (interactive()) {
+                        #
+                        #         current_wd_data_path <- paste0(current_wd, "/data/")
+                        #
+                        #
+                        #         data_files <- list.files(current_wd_data_path,
+                        #                                  full.names = TRUE,
+                        #                                  pattern = "[.]{1}rda$") %>%
+                        #                         grep(pattern = paste(Tables, collapse = "|"), value = TRUE)
+                        #
+                        #         new_location_data_files <-
+                        #                paste0(data_path, "/", basename(data_files))
+                        #
+                        #
+                        #         for (i in 1:length(data_files)) {
+                        #                 file.copy(from = data_files[i],
+                        #                           to = new_location_data_files[i],
+                        #                           overwrite = TRUE)
+                        #
+                        #                 file.remove(data_files[i])
+                        #         }
+                        #
+                        #         if (!length(list.files(current_wd_data_path))) {
+                        #                 unlink(current_wd_data_path, recursive = TRUE)
+                        #         }
+                        #
+                        # }
+                        #
+                        #
+                        paste0("mergedData2$", names(mergedData2)) %>%
                                 purrr::map(sinew::makeOxygen, print = FALSE) %>%
-                                purrr::map2(names(Data), function(x,y)
+                                purrr::map2(names(mergedData2), function(x,y)
                                         stringr::str_replace(string = x,
                                                              pattern = "(.*\")(.*)(\")",
                                                              replacement = paste0("\\1", y, "\\3"))) %>%
-                                purrr::map2(names(Data), function(x,y)
+                                purrr::map2(names(mergedData2), function(x,y)
                                         stringr::str_replace(string = x,
                                                              pattern = "DATASET_TITLE",
                                                              replacement = y)) %>%
                                 unlist() %>%
                                 paste(collapse = "\n\n") %>%
-                                cat(file = paste0(r_path, "/data.R"))
+                                cat(file = path_to_dataR)
 
 
-                        glitter::docPushInstall(commit_message = "automated data refresh", has_vignettes = FALSE)
 
-                        rm(list = "Data",
+
+                        setwd(target_dir)
+                        source(paste0(data_raw_path, "/DATASET.R"),
+                               local = TRUE)
+                        glitter::docPushInstall(commit_message = commit_message,
+                                                has_vignettes = FALSE)
+
+                        rm(list = "mergedData2",
                            envir = global_env())
 
-                        if (interactive()) {
-                                setwd(current_wd)
+                        if (reset) {
+                                cave::reset()
                         }
 
         }

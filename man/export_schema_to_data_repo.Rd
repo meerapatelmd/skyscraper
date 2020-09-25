@@ -4,7 +4,13 @@
 \alias{export_schema_to_data_repo}
 \title{Export and Push a skyscraper Schema to its Data Package Repository}
 \usage{
-export_schema_to_data_repo(conn, schema, target_dir)
+export_schema_to_data_repo(
+  conn,
+  schema,
+  commit_message = "automated export",
+  target_dir,
+  reset = TRUE
+)
 }
 \arguments{
 \item{conn}{Postgres connection for \code{schema} argument}
