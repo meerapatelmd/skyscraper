@@ -125,6 +125,7 @@ log_registry_number <-
 
 
                 #url <- "https://chem.nlm.nih.gov/chemidplus/name/contains/technetiumTc99m-labeledtilmanocept"
+
                 url <- paste0("https://chem.nlm.nih.gov/chemidplus/name/", search_type, "/",  processed_concept)
 
 
@@ -136,10 +137,10 @@ log_registry_number <-
                     dplyr::mutate(url = url)
 
 
+                Sys.sleep(sleep_time)
 
                 resp <- xml2::read_html(url)
 
-                Sys.sleep(sleep_time)
 
                 if (!is.null(resp)) {
 
