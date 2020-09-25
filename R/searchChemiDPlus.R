@@ -59,6 +59,9 @@ searchChemiDPlus <-
 
                         for (rn_url in rn_urls) {
 
+
+                                Sys.sleep(sleep_time)
+
                                 response <- police::try_catch_error_as_null(
                                                         get_response(
                                                                 rn_url = rn_url,
@@ -87,7 +90,7 @@ searchChemiDPlus <-
                                                                  tibble::tibble(rn_url = rn_url,
                                                                                 rn_url_response_status = "Success"))
 
-                                        get_rn_url_validity(#conn = conn,
+                                        get_rn_url_validity(conn = conn,
                                                             rn_url = rn_url,
                                                             response = response,
                                                             schema = schema)
