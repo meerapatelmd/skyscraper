@@ -144,11 +144,19 @@ export_schema_to_data_repo <-
                         ##############
                         #### Merge Local with Imported Data
                         ##############
-                        mergedData <-
-                                list(localData,
-                                     importedData) %>%
-                                purrr::transpose() %>%
-                                purrr::map(dplyr::bind_rows)
+                        if (length(localData) > length(importedData)) {
+                                mergedData <-
+                                        list(localData,
+                                             importedData) %>%
+                                        purrr::transpose() %>%
+                                        purrr::map(dplyr::bind_rows)
+                        } else {
+                                mergedData <-
+                                        list(importedData,
+                                             localData) %>%
+                                        purrr::transpose() %>%
+                                        purrr::map(dplyr::bind_rows)
+                        }
 
                         # Dedupe Merged Data
                         # All dataframes with a datetime are deduped and then grouped on all other columns and filtered or the earliest entry
@@ -196,14 +204,14 @@ export_schema_to_data_repo <-
                         declareObjsLines <-
                                 names(mergedData2) %>%
                                 purrr::map2(data_raw_paths,
-                                            function(x, y) paste0(x, " <- broca::simply_read_csv('",y, "')")) %>%
+                                            function(x, y) paste0(x, " <- readr::read_csv('",y, "')")) %>%
                                 unlist()
 
                         usethisLines <-
                                 paste0("\nusethis::use_data(\n", paste(paste0("\t",Tables), collapse = ",\n"), "\n, overwrite = TRUE)")
 
 
-                        cat(c("library(broca)",
+                        cat(c("library(readr)",
                               declareObjsLines,
                               usethisLines),
                             sep = "\n",

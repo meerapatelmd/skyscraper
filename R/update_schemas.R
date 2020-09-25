@@ -48,6 +48,8 @@ update_schemas <-
                  all = FALSE,
                  force_update = FALSE) {
 
+                .Deprecated("import_schemas")
+
                 # rm(list = ls()[!(ls() %in% c("conn",
                 #                              "schema",
                 #                              "schema_map",

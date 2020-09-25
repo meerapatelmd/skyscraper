@@ -1,0 +1,116 @@
+rl_datetime,search_term,processed_search_term,url,max_return_size,results_count
+2020-09-23T05:53:43Z,HSP-70,HSP-70,https://pubmed.ncbi.nlm.nih.gov/?term=HSP-70&sort=date&size=20,20,22883
+2020-09-23T05:53:47Z,PACRITINIB,PACRITINIB,https://pubmed.ncbi.nlm.nih.gov/?term=PACRITINIB&sort=date&size=20,20,83
+2020-09-23T05:53:50Z,MIDOSTAURIN,MIDOSTAURIN,https://pubmed.ncbi.nlm.nih.gov/?term=MIDOSTAURIN&sort=date&size=20,20,576
+2020-09-23T05:53:54Z,AAFC,AAFC,https://pubmed.ncbi.nlm.nih.gov/?term=AAFC&sort=date&size=20,20,144
+2020-09-23T05:53:58Z,P28,P28,https://pubmed.ncbi.nlm.nih.gov/?term=P28&sort=date&size=20,20,1474
+2020-09-23T05:54:02Z,LEUCOVORIN,LEUCOVORIN,https://pubmed.ncbi.nlm.nih.gov/?term=LEUCOVORIN&sort=date&size=20,20,12350
+2020-09-23T05:54:06Z,AXICABTAGENE CILOLEUCEL,AXICABTAGENECILOLEUCEL,https://pubmed.ncbi.nlm.nih.gov/?term=AXICABTAGENECILOLEUCEL&sort=date&size=20,20,152
+2020-09-23T05:54:10Z,INIPARIB (BSI-201),INIPARIB(BSI-201),https://pubmed.ncbi.nlm.nih.gov/?term=INIPARIB(BSI-201)&sort=date&size=20,20,90
+2020-09-23T05:54:13Z,CLOSTRIDIUM NOVYI-NT,CLOSTRIDIUMNOVYI-NT,https://pubmed.ncbi.nlm.nih.gov/?term=CLOSTRIDIUMNOVYI-NT&sort=date&size=20,20,25
+2020-09-23T05:54:17Z,KTN3379,KTN3379,https://pubmed.ncbi.nlm.nih.gov/?term=KTN3379&sort=date&size=20,20,6
+2020-09-23T05:54:21Z,ERTUMAXOMAB,ERTUMAXOMAB,https://pubmed.ncbi.nlm.nih.gov/?term=ERTUMAXOMAB&sort=date&size=20,20,15
+2020-09-23T05:54:25Z,RO31-7453,RO31-7453,https://pubmed.ncbi.nlm.nih.gov/?term=RO31-7453&sort=date&size=20,20,NA
+2020-09-23T05:54:28Z,MT-3724,MT-3724,https://pubmed.ncbi.nlm.nih.gov/?term=MT-3724&sort=date&size=20,20,NA
+2020-09-23T05:54:29Z,RETASPIMYCIN (IPI-504),RETASPIMYCIN(IPI-504),https://pubmed.ncbi.nlm.nih.gov/?term=RETASPIMYCIN(IPI-504)&sort=date&size=20,20,13
+2020-09-23T05:54:33Z,LENVATINIB,LENVATINIB,https://pubmed.ncbi.nlm.nih.gov/?term=LENVATINIB&sort=date&size=20,20,749
+2020-09-23T05:54:37Z,AMG 397,AMG397,https://pubmed.ncbi.nlm.nih.gov/?term=AMG397&sort=date&size=20,20,NA
+2020-09-23T05:54:40Z,LEWIS Y-MMCCH/KLH,LEWISY-MMCCH/KLH,https://pubmed.ncbi.nlm.nih.gov/?term=LEWISY-MMCCH/KLH&sort=date&size=20,20,3179
+2020-09-23T05:54:44Z,AMG 420,AMG420,https://pubmed.ncbi.nlm.nih.gov/?term=AMG420&sort=date&size=20,20,NA
+2020-09-23T05:54:45Z,AZD1775,AZD1775,https://pubmed.ncbi.nlm.nih.gov/?term=AZD1775&sort=date&size=20,20,180
+2020-09-23T05:54:49Z,LURBINECTEDIN (PM01183),LURBINECTEDIN(PM01183),https://pubmed.ncbi.nlm.nih.gov/?term=LURBINECTEDIN(PM01183)&sort=date&size=20,20,34
+2020-09-23T05:54:52Z,DUVELISIB,DUVELISIB,https://pubmed.ncbi.nlm.nih.gov/?term=DUVELISIB&sort=date&size=20,20,98
+2020-09-23T05:54:56Z,BAY 1895344,BAY1895344,https://pubmed.ncbi.nlm.nih.gov/?term=BAY1895344&sort=date&size=20,20,3
+2020-09-23T05:55:00Z,SILTUXIMAB,SILTUXIMAB,https://pubmed.ncbi.nlm.nih.gov/?term=SILTUXIMAB&sort=date&size=20,20,162
+2020-09-23T05:55:03Z,DN24-02,DN24-02,https://pubmed.ncbi.nlm.nih.gov/?term=DN24-02&sort=date&size=20,20,NA
+2020-09-23T05:55:07Z,CABAZITAXEL,CABAZITAXEL,https://pubmed.ncbi.nlm.nih.gov/?term=CABAZITAXEL&sort=date&size=20,20,955
+2020-09-23T05:55:11Z,GD2L-KLH/QS-21,GD2L-KLH/QS-21,https://pubmed.ncbi.nlm.nih.gov/?term=GD2L-KLH/QS-21&sort=date&size=20,20,2
+2020-09-23T05:55:15Z,TYRP2 DNA,TYRP2DNA,https://pubmed.ncbi.nlm.nih.gov/?term=TYRP2DNA&sort=date&size=20,20,NA
+2020-09-23T05:55:19Z,RGX-104,RGX-104,https://pubmed.ncbi.nlm.nih.gov/?term=RGX-104&sort=date&size=20,20,2
+2020-09-23T05:55:23Z,AZD7762,AZD7762,https://pubmed.ncbi.nlm.nih.gov/?term=AZD7762&sort=date&size=20,20,103
+2020-09-23T05:55:26Z,ULOCUPLUMAB (BMS-936564),ULOCUPLUMAB(BMS-936564),https://pubmed.ncbi.nlm.nih.gov/?term=ULOCUPLUMAB(BMS-936564)&sort=date&size=20,20,7
+2020-09-23T05:55:30Z,SGN-LIV1A,SGN-LIV1A,https://pubmed.ncbi.nlm.nih.gov/?term=SGN-LIV1A&sort=date&size=20,20,2
+2020-09-23T05:55:34Z,BI 754091,BI754091,https://pubmed.ncbi.nlm.nih.gov/?term=BI754091&sort=date&size=20,20,NA
+2020-09-23T05:55:38Z,APALUTAMIDE,APALUTAMIDE,https://pubmed.ncbi.nlm.nih.gov/?term=APALUTAMIDE&sort=date&size=20,20,200
+2020-09-23T05:55:42Z,ETIRINOTECAN PEGOL (NKTR-102),ETIRINOTECANPEGOL(NKTR-102),https://pubmed.ncbi.nlm.nih.gov/?term=ETIRINOTECANPEGOL(NKTR-102)&sort=date&size=20,20,29
+2020-09-23T05:55:45Z,VINCRISTINE,VINCRISTINE,https://pubmed.ncbi.nlm.nih.gov/?term=VINCRISTINE&sort=date&size=20,20,31750
+2020-09-23T05:55:49Z,BTCT4465A,BTCT4465A,https://pubmed.ncbi.nlm.nih.gov/?term=BTCT4465A&sort=date&size=20,20,NA
+2020-09-23T05:55:50Z,MK-4721,MK-4721,https://pubmed.ncbi.nlm.nih.gov/?term=MK-4721&sort=date&size=20,20,NA
+2020-09-23T05:55:51Z,MEDI1191,MEDI1191,https://pubmed.ncbi.nlm.nih.gov/?term=MEDI1191&sort=date&size=20,20,NA
+2020-09-23T05:55:51Z,UFT,UFT,https://pubmed.ncbi.nlm.nih.gov/?term=UFT&sort=date&size=20,20,2427
+2020-09-23T05:55:55Z,DEFACTINIB (VS-6063),DEFACTINIB(VS-6063),https://pubmed.ncbi.nlm.nih.gov/?term=DEFACTINIB(VS-6063)&sort=date&size=20,20,26
+2020-09-23T05:55:59Z,INCAGN01876,INCAGN01876,https://pubmed.ncbi.nlm.nih.gov/?term=INCAGN01876&sort=date&size=20,20,NA
+2020-09-23T05:56:02Z,CDX-1401,CDX-1401,https://pubmed.ncbi.nlm.nih.gov/?term=CDX-1401&sort=date&size=20,20,5
+2020-09-23T05:56:07Z,ALDESLEUKIN,ALDESLEUKIN,https://pubmed.ncbi.nlm.nih.gov/?term=ALDESLEUKIN&sort=date&size=20,20,147
+2020-09-23T05:56:10Z,LOBAPLATIN,LOBAPLATIN,https://pubmed.ncbi.nlm.nih.gov/?term=LOBAPLATIN&sort=date&size=20,20,146
+2020-09-23T05:56:14Z,GI-4015,GI-4015,https://pubmed.ncbi.nlm.nih.gov/?term=GI-4015&sort=date&size=20,20,NA
+2020-09-23T05:56:18Z,MK-4280,MK-4280,https://pubmed.ncbi.nlm.nih.gov/?term=MK-4280&sort=date&size=20,20,NA
+2020-09-23T05:56:19Z,ARQ 501,ARQ501,https://pubmed.ncbi.nlm.nih.gov/?term=ARQ501&sort=date&size=20,20,2
+2020-09-23T05:56:22Z,TYROSINASE/GP100/HSP70,TYROSINASE/GP100/HSP70,https://pubmed.ncbi.nlm.nih.gov/?term=TYROSINASE/GP100/HSP70&sort=date&size=20,20,3
+2020-09-23T05:56:26Z,MRTX849,MRTX849,https://pubmed.ncbi.nlm.nih.gov/?term=MRTX849&sort=date&size=20,20,11
+2020-09-23T05:56:30Z,VX-710,VX-710,https://pubmed.ncbi.nlm.nih.gov/?term=VX-710&sort=date&size=20,20,30
+2020-09-23T06:01:50Z,PENTOSTATIN,PENTOSTATIN,https://pubmed.ncbi.nlm.nih.gov/?term=PENTOSTATIN&sort=date&size=20,20,1152
+2020-09-23T06:01:54Z,ORIC-101,ORIC-101,https://pubmed.ncbi.nlm.nih.gov/?term=ORIC-101&sort=date&size=20,20,NA
+2020-09-23T06:01:54Z,ARQ 092,ARQ092,https://pubmed.ncbi.nlm.nih.gov/?term=ARQ092&sort=date&size=20,20,5
+2020-09-23T06:01:58Z,XL844,XL844,https://pubmed.ncbi.nlm.nih.gov/?term=XL844&sort=date&size=20,20,4
+2020-09-23T06:02:02Z,QUIZARTINIB (AC220),QUIZARTINIB(AC220),https://pubmed.ncbi.nlm.nih.gov/?term=QUIZARTINIB(AC220)&sort=date&size=20,20,47
+2020-09-23T06:02:09Z,BMS-214662,BMS-214662,https://pubmed.ncbi.nlm.nih.gov/?term=BMS-214662&sort=date&size=20,20,58
+2020-09-23T06:02:12Z,CERGUTUZUMAB AMUNALEUKIN (RO6895882),CERGUTUZUMABAMUNALEUKIN(RO6895882),https://pubmed.ncbi.nlm.nih.gov/?term=CERGUTUZUMABAMUNALEUKIN(RO6895882)&sort=date&size=20,20,3
+2020-09-23T06:02:16Z,MOAB 17-1A (PANOREX),MOAB17-1A(PANOREX),https://pubmed.ncbi.nlm.nih.gov/?term=MOAB17-1A(PANOREX)&sort=date&size=20,20,205
+2020-09-23T06:02:20Z,HU-3S193,HU-3S193,https://pubmed.ncbi.nlm.nih.gov/?term=HU-3S193&sort=date&size=20,20,NA
+2020-09-23T06:02:24Z,INCB007839,INCB007839,https://pubmed.ncbi.nlm.nih.gov/?term=INCB007839&sort=date&size=20,20,NA
+2020-09-23T06:02:27Z,CA-4948,CA-4948,https://pubmed.ncbi.nlm.nih.gov/?term=CA-4948&sort=date&size=20,20,2
+2020-09-23T06:02:31Z,CLR457,CLR457,https://pubmed.ncbi.nlm.nih.gov/?term=CLR457&sort=date&size=20,20,NA
+2020-09-23T06:02:32Z,MDX-060,MDX-060,https://pubmed.ncbi.nlm.nih.gov/?term=MDX-060&sort=date&size=20,20,6
+2020-09-23T06:02:36Z,FOSBRETABULIN (CA4P),FOSBRETABULIN(CA4P),https://pubmed.ncbi.nlm.nih.gov/?term=FOSBRETABULIN(CA4P)&sort=date&size=20,20,151
+2020-09-23T06:02:39Z,PF-06863135,PF-06863135,https://pubmed.ncbi.nlm.nih.gov/?term=PF-06863135&sort=date&size=20,20,NA
+2020-09-23T06:02:43Z,NERATINIB,NERATINIB,https://pubmed.ncbi.nlm.nih.gov/?term=NERATINIB&sort=date&size=20,20,373
+2020-09-23T06:02:47Z,RITUXIMAB,RITUXIMAB,https://pubmed.ncbi.nlm.nih.gov/?term=RITUXIMAB&sort=date&size=20,20,24195
+2020-09-23T06:02:51Z,INTERLEUKIN-3,INTERLEUKIN-3,https://pubmed.ncbi.nlm.nih.gov/?term=INTERLEUKIN-3&sort=date&size=20,20,8812
+2020-09-23T06:02:55Z,NECITUMUMAB,NECITUMUMAB,https://pubmed.ncbi.nlm.nih.gov/?term=NECITUMUMAB&sort=date&size=20,20,89
+2020-09-23T06:03:02Z,TENIPOSIDE,TENIPOSIDE,https://pubmed.ncbi.nlm.nih.gov/?term=TENIPOSIDE&sort=date&size=20,20,1426
+2020-09-23T06:03:05Z,EFATUTAZONE (CS-7017),EFATUTAZONE(CS-7017),https://pubmed.ncbi.nlm.nih.gov/?term=EFATUTAZONE(CS-7017)&sort=date&size=20,20,26
+2020-09-23T06:03:09Z,ERIBULIN,ERIBULIN,https://pubmed.ncbi.nlm.nih.gov/?term=ERIBULIN&sort=date&size=20,20,693
+2020-09-23T06:03:13Z,RIDAFOROLIMUS (MK-8669),RIDAFOROLIMUS(MK-8669),https://pubmed.ncbi.nlm.nih.gov/?term=RIDAFOROLIMUS(MK-8669)&sort=date&size=20,20,134
+2020-09-23T06:03:17Z,CPG 7909,CPG7909,https://pubmed.ncbi.nlm.nih.gov/?term=CPG7909&sort=date&size=20,20,103
+2020-09-23T06:03:21Z,ASP1650,ASP1650,https://pubmed.ncbi.nlm.nih.gov/?term=ASP1650&sort=date&size=20,20,NA
+2020-09-23T06:03:27Z,UTOMILUMAB (PF-05082566),UTOMILUMAB(PF-05082566),https://pubmed.ncbi.nlm.nih.gov/?term=UTOMILUMAB(PF-05082566)&sort=date&size=20,20,12
+2020-09-23T06:03:31Z,CVA21 (COXSAKIEVIRUS A21),CVA21(COXSAKIEVIRUSA21),https://pubmed.ncbi.nlm.nih.gov/?term=CVA21(COXSAKIEVIRUSA21)&sort=date&size=20,20,31
+2020-09-23T06:03:35Z,L-778123,L-778123,https://pubmed.ncbi.nlm.nih.gov/?term=L-778123&sort=date&size=20,20,3
+2020-09-23T06:03:38Z,KAPANOL,KAPANOL,https://pubmed.ncbi.nlm.nih.gov/?term=KAPANOL&sort=date&size=20,20,11
+2020-09-23T06:03:43Z,CARBOXYAMIDOTRIAZOLE OROTATE (CTO),CARBOXYAMIDOTRIAZOLEOROTATE(CTO),https://pubmed.ncbi.nlm.nih.gov/?term=CARBOXYAMIDOTRIAZOLEOROTATE(CTO)&sort=date&size=20,20,NA
+2020-09-23T06:03:43Z,M3814 (MSC2490484A),M3814(MSC2490484A),https://pubmed.ncbi.nlm.nih.gov/?term=M3814(MSC2490484A)&sort=date&size=20,20,9
+2020-09-23T06:03:47Z,VOLOCIXIMAB,VOLOCIXIMAB,https://pubmed.ncbi.nlm.nih.gov/?term=VOLOCIXIMAB&sort=date&size=20,20,26
+2020-09-23T06:03:51Z,CHIP (IPROPLATIN),CHIP(IPROPLATIN),https://pubmed.ncbi.nlm.nih.gov/?term=CHIP(IPROPLATIN)&sort=date&size=20,20,86
+2020-09-23T06:03:55Z,TALAZOPARIB,TALAZOPARIB,https://pubmed.ncbi.nlm.nih.gov/?term=TALAZOPARIB&sort=date&size=20,20,196
+2020-09-23T06:03:58Z,MUC-2 KLH/QS-21,MUC-2KLH/QS-21,https://pubmed.ncbi.nlm.nih.gov/?term=MUC-2KLH/QS-21&sort=date&size=20,20,305
+2020-09-23T06:04:02Z,PALBOCICLIB,PALBOCICLIB,https://pubmed.ncbi.nlm.nih.gov/?term=PALBOCICLIB&sort=date&size=20,20,1003
+2020-09-23T06:04:06Z,ZW25,ZW25,https://pubmed.ncbi.nlm.nih.gov/?term=ZW25&sort=date&size=20,20,3
+2020-09-23T06:04:09Z,OBINUTUZUMAB,OBINUTUZUMAB,https://pubmed.ncbi.nlm.nih.gov/?term=OBINUTUZUMAB&sort=date&size=20,20,535
+2020-09-23T06:04:14Z,MORAB-004,MORAB-004,https://pubmed.ncbi.nlm.nih.gov/?term=MORAB-004&sort=date&size=20,20,12
+2020-09-23T06:04:18Z,DAUNORUBICIN,DAUNORUBICIN,https://pubmed.ncbi.nlm.nih.gov/?term=DAUNORUBICIN&sort=date&size=20,20,66651
+2020-09-23T06:04:22Z,LY3039478,LY3039478,https://pubmed.ncbi.nlm.nih.gov/?term=LY3039478&sort=date&size=20,20,16
+2020-09-23T06:04:25Z,GSK3174998,GSK3174998,https://pubmed.ncbi.nlm.nih.gov/?term=GSK3174998&sort=date&size=20,20,NA
+2020-09-23T06:04:26Z,BICALUTAMIDE,BICALUTAMIDE,https://pubmed.ncbi.nlm.nih.gov/?term=BICALUTAMIDE&sort=date&size=20,20,1775
+2020-09-23T06:04:31Z,BI-SHRNAFURIN AUTOLOGOUS VACCINE,BI-SHRNAFURINAUTOLOGOUSVACCINE,https://pubmed.ncbi.nlm.nih.gov/?term=BI-SHRNAFURINAUTOLOGOUSVACCINE&sort=date&size=20,20,NA
+2020-09-23T06:04:34Z,PROCARBAZINE,PROCARBAZINE,https://pubmed.ncbi.nlm.nih.gov/?term=PROCARBAZINE&sort=date&size=20,20,4144
+2020-09-23T06:04:38Z,GPI-0100,GPI-0100,https://pubmed.ncbi.nlm.nih.gov/?term=GPI-0100&sort=date&size=20,20,32
+2020-09-23T06:04:42Z,THALIDOMIDE,THALIDOMIDE,https://pubmed.ncbi.nlm.nih.gov/?term=THALIDOMIDE&sort=date&size=20,20,11587
+2020-09-23T06:09:44Z,AZD4877,AZD4877,https://pubmed.ncbi.nlm.nih.gov/?term=AZD4877&sort=date&size=20,20,7
+2020-09-23T06:09:48Z,AVAPRITINIB,AVAPRITINIB,https://pubmed.ncbi.nlm.nih.gov/?term=AVAPRITINIB&sort=date&size=20,20,37
+2020-09-23T06:09:52Z,MMPR,MMPR,https://pubmed.ncbi.nlm.nih.gov/?term=MMPR&sort=date&size=20,20,67
+2020-09-23T06:09:56Z,PBI-SHRNA EWS/FLI1 TYPE 1 LPX,PBI-SHRNAEWS/FLI1TYPE1LPX,https://pubmed.ncbi.nlm.nih.gov/?term=PBI-SHRNAEWS/FLI1TYPE1LPX&sort=date&size=20,20,NA
+2020-09-23T06:10:00Z,PT2385,PT2385,https://pubmed.ncbi.nlm.nih.gov/?term=PT2385&sort=date&size=20,20,25
+2020-09-23T06:10:11Z,VELIPARIB (ABT-888),VELIPARIB(ABT-888),https://pubmed.ncbi.nlm.nih.gov/?term=VELIPARIB(ABT-888)&sort=date&size=20,20,387
+2020-09-23T06:10:15Z,MIFAMURTIDE (L-MTP-PE),MIFAMURTIDE(L-MTP-PE),https://pubmed.ncbi.nlm.nih.gov/?term=MIFAMURTIDE(L-MTP-PE)&sort=date&size=20,20,44
+2020-09-23T06:10:21Z,GM2-KLH,GM2-KLH,https://pubmed.ncbi.nlm.nih.gov/?term=GM2-KLH&sort=date&size=20,20,16
+2020-09-23T06:10:25Z,GSK525762,GSK525762,https://pubmed.ncbi.nlm.nih.gov/?term=GSK525762&sort=date&size=20,20,63
+2020-09-23T06:10:35Z,BRYOSTATIN-1,BRYOSTATIN-1,https://pubmed.ncbi.nlm.nih.gov/?term=BRYOSTATIN-1&sort=date&size=20,20,748
+2020-09-23T06:10:38Z,AZIRIDINYLBENZOQUINONE (AZQ),AZIRIDINYLBENZOQUINONE(AZQ),https://pubmed.ncbi.nlm.nih.gov/?term=AZIRIDINYLBENZOQUINONE(AZQ)&sort=date&size=20,20,56
+2020-09-23T06:10:42Z,MENOGARIL,MENOGARIL,https://pubmed.ncbi.nlm.nih.gov/?term=MENOGARIL&sort=date&size=20,20,112
+2020-09-23T06:10:46Z,VINCRISTINE LIPOSOME,VINCRISTINELIPOSOME,https://pubmed.ncbi.nlm.nih.gov/?term=VINCRISTINELIPOSOME&sort=date&size=20,20,NA
+2020-09-23T06:10:59Z,ACALABRUTINIB,ACALABRUTINIB,https://pubmed.ncbi.nlm.nih.gov/?term=ACALABRUTINIB&sort=date&size=20,20,146
+2020-09-23T06:21:24Z,SNX-5422,SNX-5422,https://pubmed.ncbi.nlm.nih.gov/?term=SNX-5422&sort=date&size=5,5,NA
+2020-09-23T06:25:03Z,AT13387,AT13387,https://pubmed.ncbi.nlm.nih.gov/?term=AT13387&sort=date&size=5,5,NA
+2020-09-23T15:01:40Z,INTERLEUKIN-6,INTERLEUKIN-6,https://pubmed.ncbi.nlm.nih.gov/?term=INTERLEUKIN-6&sort=date&size=5,5,NA
+2020-09-23T17:06:41Z,GI-4015,GI-4015,https://pubmed.ncbi.nlm.nih.gov/?term=GI-4015&sort=date&size=5,5,NA

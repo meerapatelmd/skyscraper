@@ -108,3 +108,12 @@ Timestamp	Activity Type	Function	File	Details
 2020-09-25 02:02:32	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/DRUG_DICTIONARY_LOG.csv	
 2020-09-25 02:02:32	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/DRUG_LINK.csv	
 2020-09-25 02:02:32	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/DRUG_LINK_SYNONYM.csv	
+2020-09-25 03:06:06	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/chemidplusSearchData/data-raw/CLASSIFICATION.csv	
+2020-09-25 03:06:06	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/chemidplusSearchData/data-raw/CONCEPT.csv	
+2020-09-25 03:06:06	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/chemidplusSearchData/data-raw/CONCEPT_SYNONYM.csv	
+2020-09-25 03:06:06	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/chemidplusSearchData/data-raw/LINKS_TO_RESOURCES.csv	
+2020-09-25 03:06:06	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/chemidplusSearchData/data-raw/NAMES_AND_SYNONYMS.csv	
+2020-09-25 03:06:06	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/chemidplusSearchData/data-raw/REGISTRY_NUMBERS.csv	
+2020-09-25 03:06:06	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/chemidplusSearchData/data-raw/REGISTRY_NUMBER_LOG.csv	
+2020-09-25 03:06:06	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/chemidplusSearchData/data-raw/RN_URL_VALIDITY.csv	
+2020-09-25 10:43:44	write	simply_write_csv	test.csv	
