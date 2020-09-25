@@ -13,7 +13,7 @@
 #'  \code{\link[pg13]{send}},\code{\link[pg13]{dropTable}}
 #'  \code{\link[SqlRender]{render}}
 #' @rdname load_ncit
-#' @family nci
+#' @family nci evs schema
 #' @export
 #' @importFrom pg13 send dropTable
 #' @importFrom SqlRender render
@@ -25,21 +25,32 @@ load_ncit <-
                 schema <- "nci_evs"
                 tableName <- "thesaurus"
 
+                secretary::typewrite_italic(secretary::timepunch(),"\tDownloading Thesaurus.FLAT.zip....")
                 temp <- tempfile()
                 download.file("https://evs.nci.nih.gov/ftp1/NCI_Thesaurus/Thesaurus.FLAT.zip",
                               destfile = temp)
                 unzipped_file <- unzip(temp)
 
 
+                Sys.sleep(1)
+                secretary::typewrite_italic(secretary::timepunch(),"\tCreating", schema, "if it didn't exist...")
                 pg13::send(conn = conn,
                            sql_statement =
                                    SqlRender::render(
                                            "CREATE SCHEMA IF NOT EXISTS @schema;",
                                            schema = schema))
 
+
+
+                Sys.sleep(1)
+                secretary::typewrite_italic(secretary::timepunch(),"\tNCIt Table in", schema, "dropped if it existed...")
                 pg13::dropTable(conn = conn,
                                 schema = schema,
                                 tableName = tableName)
+
+
+                Sys.sleep(1)
+                secretary::typewrite_italic(secretary::timepunch(),"\tDDLing NCIt Table...")
 
                 pg13::send(conn = conn,
                            sql_statement =
@@ -58,6 +69,8 @@ load_ncit <-
                                                 )
                 )
 
+                Sys.sleep(1)
+                secretary::typewrite_italic(secretary::timepunch(),"\tCopying", unzipped_file, "to NCIt Table in", schema, "...")
 
                 pg13::send(conn = conn,
                                 SqlRender::render(
@@ -67,8 +80,35 @@ load_ncit <-
                                 vocabulary_file = file.path(getwd(), unzipped_file)))
 
 
+                Sys.sleep(1)
+                secretary::typewrite_italic(secretary::timepunch(),"\tCopying", unzipped_file, "to NCIt Table in", schema, "...")
+
+                load_log <-
+                        data.frame(ll_datetime = Sys.time(),
+                                   ll_table =  tableName)
+
+
+                Tables <- lsTables(conn = conn,
+                                schema = schema)
+
+                if ("LOAD_LOG" %in% Tables) {
+
+                        pg13::appendTable(conn = conn,
+                                          schema = schema,
+                                          tableName = "LOAD_LOG",
+                                          load_log)
+
+                } else {
+
+                        pg13::writeTable(conn = conn,
+                                          schema = schema,
+                                          tableName = "LOAD_LOG",
+                                          load_log)
+                }
+
                 file.remove(unzipped_file)
                 unlink(temp)
 
+                secretary::typewrite_italic(secretary::timepunch(),"\tNCIt Table successfully written to", schema, " and LOAD_LOG updated.")
         }
 

@@ -13,7 +13,7 @@
 #'  \code{\link[pg13]{send}},\code{\link[pg13]{dropTable}}
 #'  \code{\link[SqlRender]{render}}
 #' @rdname load_mrconso
-#' @family nci
+#' @family nci evs schema
 #' @export
 #' @importFrom pg13 send dropTable
 #' @importFrom SqlRender render
@@ -26,9 +26,14 @@ load_mrconso <-
                 # umls_conn <- metaorite::connectLocalMT()
                 # conn <- chariot::connectAthena()
 
+                secretary::typewrite_italic("Warning: this process requires approx 1 hour and will drop the existing MRCONSO Table")
+                secretary::press_enter()
+
                 schema <- "nci_evs"
                 tableName <- "mrconso"
 
+
+                secretary::typewrite_italic(secretary::timepunch(),"\tReading MRCONSO Table from UMLS MTH instance....")
 
                 mrconso <-
                         preQL::query(
@@ -40,22 +45,32 @@ load_mrconso <-
                         mrconso %>%
                         rubix::rm_multibyte_chars()
 
-                # temp <- tempfile(fileext = ".csv")
-                temp <- "~/Desktop/test_mrconso.csv"
+                Sys.sleep(1)
+
+                secretary::typewrite_italic(secretary::timepunch(),"\tWriting MRCONSO Table to", temp, "...")
+
+                temp <- tempfile(fileext = ".csv")
+                # temp <- path.expand("~/Desktop/test_mrconso.csv")
                 readr::write_csv(mrconso2,
                                  temp)
 
 
-
+                Sys.sleep(1)
+                secretary::typewrite_italic(secretary::timepunch(),"\tCreating", schema, "if it didn't exist...")
                 pg13::send(conn = conn,
                            sql_statement =
                                    SqlRender::render(
                                            "CREATE SCHEMA IF NOT EXISTS @schema;",
                                            schema = schema))
 
+                Sys.sleep(1)
+                secretary::typewrite_italic(secretary::timepunch(),"\tMRCONSO Table in", schema, "dropped if it existed...")
                 pg13::dropTable(conn = conn,
                                 schema = schema,
                                 tableName = tableName)
+
+                Sys.sleep(1)
+                secretary::typewrite_italic(secretary::timepunch(),"\tDDLing MRCONSO Table...")
 
                 pg13::send(conn = conn,
                            sql_statement =
@@ -86,7 +101,9 @@ load_mrconso <-
                                                 )
                            )
 
-                secretary::press_enter()
+
+                Sys.sleep(1)
+                secretary::typewrite_italic(secretary::timepunch(),"\tCopying", temp, "to MRCONSO Table in", schema, "...")
 
                 pg13::send(conn = conn,
                                 SqlRender::render(
@@ -94,6 +111,9 @@ load_mrconso <-
                                 tableName = tableName,
                                 schema = schema,
                                 vocabulary_file = temp))
+
+                Sys.sleep(1)
+                secretary::typewrite_italic(secretary::timepunch(),"\tWriting indexes...")
 
                 pg13::send(conn = conn,
                            sql_statement =
@@ -107,7 +127,33 @@ load_mrconso <-
                                         CREATE INDEX X_MRCONSO_SCUI ON @schema.MRCONSO(SCUI);
                                         CREATE INDEX X_MRCONSO_STR ON @schema.MRCONSO(STR);",
                                         schema = schema))
+
                 unlink(temp)
+
+                load_log <-
+                        data.frame(ll_datetime = Sys.time(),
+                                   ll_table =  tableName)
+
+
+                Tables <- lsTables(conn = conn,
+                                   schema = schema)
+
+                if ("LOAD_LOG" %in% Tables) {
+
+                        pg13::appendTable(conn = conn,
+                                          schema = schema,
+                                          tableName = "LOAD_LOG",
+                                          load_log)
+
+                } else {
+
+                        pg13::writeTable(conn = conn,
+                                         schema = schema,
+                                         tableName = "LOAD_LOG",
+                                         load_log)
+                }
+
+                secretary::typewrite_italic(secretary::timepunch(),"\tMRCONSO Table successfully written to", schema, " and LOAD_LOG updated.")
 
         }
 
