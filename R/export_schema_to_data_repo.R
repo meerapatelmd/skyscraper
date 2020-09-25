@@ -56,7 +56,8 @@ export_schema_to_data_repo <-
                         schema_map <- map_schema()
 
                         # Create the dataPackage and
-                        rubix::release(schema_map[schema_map$schema == schema, "dataPackage"])
+                        dataPackage <- unlist((schema_map[schema_map$schema == schema, "dataPackage"]))
+                        repo <- unlist((schema_map[schema_map$schema == schema, "repo"]))
 
 
                         # If the target_dir is missing, it is found in the ~/GitHub directory. If it is not found in the ~/GitHub directory, it is cloned.
@@ -113,6 +114,7 @@ export_schema_to_data_repo <-
 
 
                         # Install Data Package to UNION with current schema data
+                        devtools::install_github(repo, force = TRUE)
                         library(dataPackage,
                                 character.only = TRUE)
 
@@ -121,12 +123,18 @@ export_schema_to_data_repo <-
                         DATASETS <- DATASETS$results[, "Item"]
 
                         # Load package datasets to merge with the local datasets
-                        importedData <-
+                        importedData <<-
                                 DATASETS %>%
                                 rubix::map_names_set(get) %>%
                                 purrr::map(function(x) x %>%
-                                                   dplyr::mutate_at(dplyr::vars(ends_with("datetime")),
-                                                                    lubridate::ymd_hms))
+                                                   dplyr::mutate_at(dplyr::vars(tidyselect::ends_with("datetime")),
+                                                                    lubridate::ymd_hms) %>%
+                                                   dplyr::mutate_at(dplyr::vars(tidyselect::contains("concept_id")),
+                                                                    as.integer) %>%
+                                                   dplyr::mutate_at(dplyr::vars(tidyselect::matches("valid_start_date"),
+                                                                                tidyselect::matches("valid_end_date")),
+                                                                    as.Date)
+                                           )
 
                         ############
                         ## Local Datasets
@@ -135,11 +143,20 @@ export_schema_to_data_repo <-
                         Tables <-
                                 pg13::lsTables(conn = conn,
                                                schema = schema)
-                        localData <-
+                        localData <<-
                                 Tables %>%
                                 rubix::map_names_set(~pg13::readTable(conn = conn,
                                                                       schema = schema,
-                                                                      tableName = .))
+                                                                      tableName = .)) %>%
+                                purrr::map(function(x) x %>%
+                                                   dplyr::mutate_at(dplyr::vars(tidyselect::ends_with("datetime")),
+                                                                    lubridate::ymd_hms) %>%
+                                                   dplyr::mutate_at(dplyr::vars(tidyselect::contains("concept_id")),
+                                                                    as.integer) %>%
+                                                   dplyr::mutate_at(dplyr::vars(tidyselect::matches("valid_start_date"),
+                                                                                tidyselect::matches("valid_end_date")),
+                                                                    as.Date)
+                                )
 
                         ##############
                         #### Merge Local with Imported Data

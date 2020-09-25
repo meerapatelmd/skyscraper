@@ -18,7 +18,7 @@ Each Postgres schema governed by this package has a corresponding Data Package, 
 
 Other local maintenance: 
 \code{\link{export_schema_to_data_repo}()},
-\code{\link{schema_status}()},
-\code{\link{update_schemas}()}
+\code{\link{import_schemas}()},
+\code{\link{schema_status}()}
 }
 \concept{local maintenance}

@@ -40,8 +40,8 @@ Exporting schemas requires having a local clone of its Data Package Repository. 
 \code{\link[glitter]{docPushInstall}}
 
 Other local maintenance: 
+\code{\link{import_schemas}()},
 \code{\link{map_schema}()},
-\code{\link{schema_status}()},
-\code{\link{update_schemas}()}
+\code{\link{schema_status}()}
 }
 \concept{local maintenance}
