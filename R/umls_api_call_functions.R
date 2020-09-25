@@ -5,10 +5,11 @@
 
 
 
-auth_umls_api <-
+get_service_ticket <-
         function(store_creds_at = "~") {
 
                 tgt_file_path <- file.path(store_creds_at, ".umls_api_tgt.txt")
+                service_ticket_file_path <- file.path(store_creds_at, ".umls_api_service_ticket.txt")
 
                 if (file.exists(tgt_file_path)) {
                         if (Sys.time() - file.info(tgt_file_path)$mtime > 480) {
@@ -38,35 +39,103 @@ auth_umls_api <-
                             sep = "\n",
                             file = tgt_file_path)
 
+                        tgt_response <-
+                                httr::POST(
+                                        url = TGT,
+                                        body = list(service = "http://umlsks.nlm.nih.gov"),
+                                        encode = "form")
+
+                        service_ticket <-
+                        tgt_response %>%
+                                httr::content(type = "text/html", encoding = "UTF-8") %>%
+                                rvest::html_text()
+
+                        cat(service_ticket,
+                            sep = "\n",
+                            file = service_ticket_file_path)
+
                 } else {
+
                         TGT <- readLines(tgt_file_path)
+
+
+                        if (file.exists(service_ticket_file_path)) {
+                                if (Sys.time() - file.info(service_ticket_file_path)$mtime >= 4) {
+                                        proceed2 <- TRUE
+                                } else {
+                                        proceed2 <- FALSE
+                                }
+                        } else {
+                                proceed2 <- TRUE
+                        }
+
+                        if (proceed2) {
+
+                                tgt_response <-
+                                        httr::POST(
+                                                url = TGT,
+                                                body = list(service = "http://umlsks.nlm.nih.gov"),
+                                                encode = "form")
+
+                                service_ticket <-
+                                        tgt_response %>%
+                                        httr::content(type = "text/html", encoding = "UTF-8") %>%
+                                        rvest::html_text()
+
+                                cat(service_ticket,
+                                    sep = "\n",
+                                    file = service_ticket_file_path)
+                        } else {
+                                service_ticket <- readLines(service_ticket_file_path)
+                        }
+
                 }
 
+                file.remove(service_ticket_file_path)
+                service_ticket
+        }
 
-if (!file.exists("~/.umls_auth_service_ticket.txt")) {
-        SERVICE_TICKET <- system(paste0("curl -X POST https://utslogin.nlm.nih.gov/cas/v1/tickets/",
-                                        TGT, " -H 'content-type: application/x-www-form-urlencoded' -d service=http%3A%2F%2Fumlsks.nlm.nih.gov"),
-                                 intern = TRUE)
-        cat(paste(rubix::stamped(), "\t", SERVICE_TICKET), file = "~/.umls_auth_service_ticket.txt")
-        return(SERVICE_TICKET)
-}
-else {
-        most_recent_SERVICE_TICKET <- readr::read_tsv("~/.umls_auth_service_ticket.txt",
-                                                      col_names = c("TIMESTAMP", "SERVICE_TICKET"), col_types = c("Tc"))
-        if (lubridate::make_difftime((lubridate::ymd_hms(rubix::stamped()) -
-                                      most_recent_SERVICE_TICKET$TIMESTAMP), units = "minutes") >=
-            4) {
-                SERVICE_TICKET <- system(paste0("curl -X POST https://utslogin.nlm.nih.gov/cas/v1/tickets/",
-                                                TGT, " -H 'content-type: application/x-www-form-urlencoded' -d service=http%3A%2F%2Fumlsks.nlm.nih.gov"),
-                                         intern = TRUE)
-                cat(paste(rubix::stamped(), "\t", SERVICE_TICKET),
-                    file = "~/.umls_auth_service_ticket.txt")
-                return(SERVICE_TICKET)
+
+# https://documentation.uts.nlm.nih.gov/rest/home.html
+
+search_umls <-
+        function(string,
+                 searchType = c("exact", "words", "leftTruncation",
+                                "rightTruncation", "approximate", "normalizedString",
+                                "normalizedWords")) {
+
+                stopifnot(length(searchType)==1)
+
+                baseURL <- "https://uts-ws.nlm.nih.gov/rest/search/current"
+                string <- URLencode(string)
+
+                service_ticket <- get_service_ticket()
+
+                search_response <-
+                httr::GET(url = baseURL,
+                          query = list(string = string,
+                                        searchType = searchType,
+
+                                        ticket = service_ticket))
+
+                parsed_response <-
+                search_response %>%
+                        httr::content(as = "text") %>%
+                        jsonlite::fromJSON()
+
+                output <-
+                        tibble::tibble(
+                                search_datetime = Sys.time(),
+                                string = string,
+                                searchType = searchType,
+                                classType = parsed_response$result$classType,
+                                pageSize = parsed_response$pageSize,
+                                pageNumber = parsed_response$pageNumber
+                        ) %>%
+                        dplyr::bind_cols(
+                        parsed_response$result$results %>%
+                                as.data.frame())
+
+
         }
-        else {
-                SERVICE_TICKET <- most_recent_SERVICE_TICKET$SERVICE_TICKET
-                return(SERVICE_TICKET)
-        }
-}
-}
 
