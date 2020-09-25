@@ -255,6 +255,8 @@ export_schema_to_data_repo <-
 
 
 
+                        current_wd <- getwd()
+
                         setwd(target_dir)
                         source(paste0(data_raw_path, "/DATASET.R"),
                                local = TRUE)
@@ -263,6 +265,8 @@ export_schema_to_data_repo <-
 
                         rm(list = "mergedData2",
                            envir = global_env())
+
+                        setwd(current_wd)
 
                         if (reset) {
                                 cave::reset()
