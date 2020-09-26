@@ -132,3 +132,4 @@ Timestamp	Activity Type	Function	File	Details
 2020-09-25 14:07:23	write	simply_write_csv	/var/folders/pg/_nr70_kj7y31yvv84yyy7524sx_q0w/T//RtmpUvJi8s/fileaf677075ad3a.csv	
 2020-09-25 14:13:24	write	simply_write_csv	/var/folders/pg/_nr70_kj7y31yvv84yyy7524sx_q0w/T//RtmpUvJi8s/fileaf673dbff484.csv	
 2020-09-25 14:22:44	write	simply_write_csv	/var/folders/pg/_nr70_kj7y31yvv84yyy7524sx_q0w/T//RtmpUvJi8s/fileaf6754e25c8.csv	
+2020-09-25 20:03:59	write	write_temp_csv	/var/folders/pg/_nr70_kj7y31yvv84yyy7524sx_q0w/T//RtmpAGfwqH/filec47e71cfac73.csv	
