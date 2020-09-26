@@ -96,17 +96,36 @@ get_service_ticket <-
                 service_ticket
         }
 
+#' @title
+#' Search
+#'
+#' @param string			 A human readable term, such as ‘gestatational diabetes’, or a code from a source vocabulary, such as 11687002 from SNOMEDCT_US.
+#' @param inputType			 (optional)  Specifies the data type you are using as your search parameter.
+#' @param includeObsolete		 (optional)  Return content that is a result of matches on obsolete terms.
+#' @param includeSuppressible		 (optional)  Return content that is a result of matches on suppressible terms.
+#' @param returnIdType			 (optional)  Specifies the type of identifier you wish to retrieve.
+#' @param sabs			         (optional)  Comma-separated list of source vocabularies to include in your search
+#' @param searchType			 (optional)  Type of search you wish to use.
+#' @param pageNumber			 (optional)  Whole number that specifies which page of results to fetch.
+#' @param pageSize			 (optional)  Whole number that specifies the number of results to include per page.
+#' @details
+#' '/search/current?string=fracture of carpal bone'path Retrieves CUIs for a search term and returns a JSON Object classType of searchResults
+#' '/search/current?string=fracture of carpal bone&searchType=exact'path Uses ‘exact’ searching and returns a JSON Object classType of searchResults
+#' '/search/current?string=fracture of carpal bone&sabs=SNOMEDCT_US&returnIdType=code'path Returns SNOMEDCT concepts associated with a search term and returns a JSON Object classType of searchResults
+#' '/search/current?string=9468002&inputType=sourceUi&searchType=exact&sabs=SNOMEDCT_US'path Returns UMLS CUIs associated with a SNOMEDCT_US concept and returns a JSON Object classType of searchResults
 
-search_umls_api <-
+umls_api_search <-
         function(string,
                  searchType = "normalizedString",
                  inputType = "sourceConcept",
+                 includeObsolete = NULL,
+                 includeSuppressible = NULL,
+                 returnIdType = NULL,
+                 sabs = NULL,
                  pageSize = 100,
                  sleep_time = 5) {
 
                 baseURL <- "https://uts-ws.nlm.nih.gov/rest/search/current"
-
-                service_ticket <- get_service_ticket()
 
                 pageNumber <- 1
                 search_response <-
@@ -116,7 +135,11 @@ search_umls_api <-
                                                string = string,
                                                searchType = searchType,
                                                inputType = inputType,
-                                               ticket = service_ticket))
+                                               includeObsolete = includeObsolete,,
+                                               includeSuppressible = includeSuppressible,
+                                               returnIdType = returnIdType,
+                                               sabs = sabs,
+                                               ticket = get_service_ticket()))
 
                 parsed_response <-
                         search_response %>%
@@ -218,7 +241,7 @@ log_umls_search <-
                 if (proceed) {
 
                         output <-
-                                search_umls_api(string = string) %>%
+                                umls_api_search(string = string) %>%
                                 dplyr::distinct()
 
                         Tables <- pg13::lsTables(conn = conn,
@@ -293,9 +316,24 @@ for (i in 1:length(link2_path)) {
 }
 names(link2_responses) <- link2_path
 
-set1 <-
-link2_responses %>%
-        purrr::keep(~!is.null(.)) %>%
+link2_responses2 <- list()
+
+for (i in 1:length(link2_path)) {
+
+         url <- paste0("https://documentation.uts.nlm.nih.gov/rest/", link2_path[i])
+
+         Sys.sleep(10)
+
+         link2_responses2[[i]] <- police::try_catch_error_as_na(xml2::read_html(url))
+         names(link2_responses2)[i] <- url
+
+         Sys.sleep(5)
+}
+
+link2_responses2$`https://documentation.uts.nlm.nih.gov/rest/authentication.html` <- NULL
+set2 <-
+        link2_responses2 %>%
+        purrr::keep(~length(.)==2) %>%
         purrr::map(function(x)
                         x %>%
                            rvest::html_nodes("table") %>%
@@ -303,11 +341,10 @@ link2_responses %>%
                            purrr::set_names(c("Retrieval", "Query Parameters")))
 
 
-
 script_front_matter <- list()
-for (i in 1:length(set1)) {
-        input <- set1[[i]]$`Query Parameters`
-        page_basename <- basename(names(set1)[i])
+for (i in 1:length(set2)) {
+        input <- set2[[i]]$`Query Parameters`
+        page_basename <- basename(names(set2)[i])
         input <-
         input %>%
                 dplyr::mutate(ParamDescription = ifelse(`Required? Y/N` == "N",
@@ -323,7 +360,7 @@ for (i in 1:length(set1)) {
         function_arguments <- input$FunctionArgs
 
 
-        input_b <- set1[[i]]$Retrieval
+        input_b <- set2[[i]]$Retrieval
         roxygen_details <-
                 input_b %>%
                 dplyr::mutate(`Sample URI` = paste0("'",`Sample URI`, "'path")) %>%
@@ -382,7 +419,7 @@ for (i in 1:length(set1)) {
                                       "}") %>%
                 paste0(collapse = "\n")
 
-        names(script_front_matter)[i] <- names(set1)[i]
+        names(script_front_matter)[i] <- names(set2)[i]
 
 }
 
