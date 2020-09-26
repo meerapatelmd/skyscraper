@@ -300,20 +300,101 @@ link2_responses %>%
                         x %>%
                            rvest::html_nodes("table") %>%
                            rvest::html_table() %>%
-                           purrr::set_names(c("Retrieving", "Query Parameters"))) %>%
-        purrr::transpose()
+                           purrr::set_names(c("Retrieval", "Query Parameters")))
 
 
-set1$`Query Parameters` %>%
-        purrr::map2(names(set1$`Query Parameters`),
-                    function(x,y) {
-                            new_function_name <- stringr::str_replace_all(basename(y), "[[:punct:]]", '_')
-                            new_function_name <- paste0("lookup_", new_function_name)
+
+script_front_matter <- list()
+for (i in 1:length(set1)) {
+        input <- set1[[i]]$`Query Parameters`
+        page_basename <- basename(names(set1)[i])
+        input <-
+        input %>%
+                dplyr::mutate(ParamDescription = ifelse(`Required? Y/N` == "N",
+                                                   paste("(optional) ", Description),
+                                                   Description)) %>%
+                dplyr::mutate(FunctionArgs = ifelse(`Required? Y/N` == "N",
+                                                    paste0(`Parameter name`, " = NULL"),
+                                                    `Parameter name`))
 
 
-                            paste0("function(", paste(x$`Parameter name`, collapse = ",\n"), ")")
-                    }
+        parameter_names <- input$`Parameter name`
+        parameter_descriptions <- input$ParamDescription
+        function_arguments <- input$FunctionArgs
+
+
+        input_b <- set1[[i]]$Retrieval
+        roxygen_details <-
+                input_b %>%
+                dplyr::mutate(`Sample URI` = paste0("'",`Sample URI`, "'path")) %>%
+                tidyr::unite(col = Details, `Sample URI`, Description, sep = " ") %>%
+                tidyr::unite(col = Details, Details, `Returned JSON Object classType`, sep = " and returns a JSON Object classType of ") %>%
+                unlist() %>%
+                paste(collapse = "\n") %>%
+                purrr::map(~paste0("#' @details \n", .)) %>%
+                unlist()
+
+        roxygen_title <-
+                paste0("#' @title ", stringr::str_to_title(string = stringr::str_replace_all(page_basename, "[[:punct:]]", ' ')))
+
+
+        roxygen_params <-
+                parameter_names %>%
+                purrr::map2(parameter_descriptions,
+                            function(x,y) paste0("#' @param ", x, "\t\t\t", y)) %>%
+                unlist()
+
+
+        new_function_name <- page_basename
+        new_function_name <- stringr::str_replace_all(basename(new_function_name), "[[:punct:]]", '_')
+        new_function_name <- paste0("lookup_", new_function_name)
+
+        declaration <-
+        paste0(new_function_name, " <- \n\t\tfunction(\n\t\t\t", paste(function_arguments, collapse = ",\n\t\t\t"), ") { \n\n")
+
+
+        commented_paths <-
+                input_b %>%
+                dplyr::transmute(commented_paths = paste0("## ", `Sample URI`)) %>%
+                unlist() %>%
+                paste(collapse = ", ")
+
+        query_parameters <-
+                parameter_names %>%
+                purrr::map(function(x) paste0(x, " = ", x)) %>%
+                unlist() %>%
+                paste(collapse = ",\n")
+
+        script_block_1 <-
+                paste0(
+                        "link_response <- httr::GET(url = baseURL,
+                        path = ", commented_paths, "
+                        query = list(", query_parameters,
+                        ")
+                        )")
+
+        script_front_matter[[i]] <- c(roxygen_title,
+                                      roxygen_params,
+                                      roxygen_details,
+                                      "\n\n",
+                                      declaration,
+                                      script_block_1,
+                                      "}") %>%
+                paste0(collapse = "\n")
+
+        names(script_front_matter)[i] <- names(set1)[i]
+
+}
+
+
+
+
+
+link_response <-
+        httr::GET(url = baseURL,
+                  path =
         )
+
 
 
 read_endpoints_page %>%
