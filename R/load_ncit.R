@@ -15,7 +15,8 @@
 #' @rdname load_ncit
 #' @family nci evs schema
 #' @export
-#' @importFrom pg13 send dropTable
+#' @importFrom secretary typewrite_italic timepunch
+#' @importFrom pg13 send dropTable lsTables appendTable writeTable
 #' @importFrom SqlRender render
 
 
@@ -88,7 +89,7 @@ load_ncit <-
                                    ll_table =  tableName)
 
 
-                Tables <- lsTables(conn = conn,
+                Tables <- pg13::lsTables(conn = conn,
                                 schema = schema)
 
                 if ("LOAD_LOG" %in% Tables) {

@@ -131,9 +131,16 @@ export_schema_to_data_repo <-
                                                                     lubridate::ymd_hms) %>%
                                                    dplyr::mutate_at(dplyr::vars(tidyselect::contains("concept_id")),
                                                                     as.integer) %>%
+                                                   dplyr::mutate_at(dplyr::vars(tidyselect::contains("levels_of_separation")),
+                                                                    as.integer) %>%
                                                    dplyr::mutate_at(dplyr::vars(tidyselect::matches("valid_start_date"),
                                                                                 tidyselect::matches("valid_end_date")),
-                                                                    as.Date)
+                                                                    as.Date) %>%
+                                                   dplyr::mutate_at(dplyr::vars(tidyselect::matches("response_received"),
+                                                                                tidyselect::matches("no_record"),
+                                                                                tidyselect::matches("response_recorded"),
+                                                                                tidyselect::matches("is_404")),
+                                                                    as.character)
                                            )
 
                         ############
@@ -143,7 +150,7 @@ export_schema_to_data_repo <-
                         Tables <-
                                 pg13::lsTables(conn = conn,
                                                schema = schema)
-                        localData <<-
+                        localData <-
                                 Tables %>%
                                 rubix::map_names_set(~pg13::readTable(conn = conn,
                                                                       schema = schema,
@@ -153,9 +160,16 @@ export_schema_to_data_repo <-
                                                                     lubridate::ymd_hms) %>%
                                                    dplyr::mutate_at(dplyr::vars(tidyselect::contains("concept_id")),
                                                                     as.integer) %>%
+                                                   dplyr::mutate_at(dplyr::vars(tidyselect::contains("levels_of_separation")),
+                                                                    as.integer) %>%
                                                    dplyr::mutate_at(dplyr::vars(tidyselect::matches("valid_start_date"),
                                                                                 tidyselect::matches("valid_end_date")),
-                                                                    as.Date)
+                                                                    as.Date) %>%
+                                                   dplyr::mutate_at(dplyr::vars(tidyselect::matches("response_received"),
+                                                                                tidyselect::matches("no_record"),
+                                                                                tidyselect::matches("response_recorded"),
+                                                                                tidyselect::matches("is_404")),
+                                                                    as.character)
                                 )
 
                         ##############
@@ -287,7 +301,7 @@ export_schema_to_data_repo <-
                         setwd(target_dir)
                         source(path_to_DATASET,
                                local = TRUE)
-                        glitter::docPushInstall(commit_message = commit_message,
+                        glitter::docPushInstall(commit_message = "update data package",
                                                 has_vignettes = FALSE)
 
                         rm(list = "mergedData2",
