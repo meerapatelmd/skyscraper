@@ -26,6 +26,100 @@
 #' @name cancergov_functions
 NULL
 
+#' @title
+#' Get the NCI Drug Dictionary Count
+#' @description
+#' Get the total number of drugs in the NCI Drug Dictionary
+#' @return
+#' An integer in the "X results found for: ALL" at "https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=1"
+#' @seealso
+#'  \code{\link[xml2]{read_xml}}
+#'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
+#' @rdname nci_count
+#' @export
+#' @importFrom xml2 read_html
+#' @importFrom rvest html_nodes html_text
+#' @importFrom magrittr %>%
+
+nci_count <-
+        function() {
+                page_scrape <-
+                        xml2::read_html("https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=1")
+
+                page_scrape %>%
+                        rvest::html_nodes("#ctl36_ctl00_lblNumResults") %>%
+                        rvest::html_text() %>%
+                        as.integer()
+
+        }
+
+#' @title FUNCTION_TITLE
+#' @description FUNCTION_DESCRIPTION
+#' @param conn PARAM_DESCRIPTION
+#' @return OUTPUT_DESCRIPTION
+#' @details
+#' This function must be run before a log entry is made using the log_drug_count function.
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'  #EXAMPLE1
+#'  }
+#' }
+#' @seealso
+#'  \code{\link[pg13]{lsTables}},\code{\link[pg13]{query}}
+#'  \code{\link[skyscraper]{nci_count}}
+#' @rdname has_new_drug_count
+#' @export
+#' @importFrom pg13 lsTables query
+
+
+has_new_drug_count <-
+        function(conn) {
+
+
+                Tables <- pg13::lsTables(conn = conn,
+                                         schema = "cancergov")
+
+                nci_dd_count <- nci_count()
+
+                if ("DRUG_DICTIONARY_LOG" %in% Tables) {
+
+                        most_recent_drug_count <-
+                                pg13::query(conn = conn,
+                                            sql_statement =
+                                                    "
+                                                SELECT drug_count
+                                                        FROM cancergov.DRUG_DICTIONARY_LOG
+                                                WHERE ddl_datetime = (
+                                                        SELECT MAX(ddl_datetime)
+                                                        FROM cancergov.DRUG_DICTIONARY_LOG
+                                                )
+                                                ;
+                                                "
+                                ) %>%
+                                unlist() %>%
+                                as.integer()
+
+
+                        if (nci_dd_count != most_recent_drug_count) {
+
+                                TRUE
+
+                        } else {
+
+                                FALSE
+                        }
+
+                } else {
+
+                        TRUE
+
+                }
+        }
+
+
+
+
 
 #' @title
 #' Scrape the Drug Definitions and Links from the NCI Drug Dictionary
