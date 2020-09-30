@@ -29,7 +29,7 @@ if(interactive()){
 \code{\link[pg13]{send}},\code{\link[pg13]{dropTable}}
 \code{\link[SqlRender]{render}}
 
-Other nci: 
+Other nci evs schema: 
 \code{\link{load_mrconso}()}
 }
-\concept{nci}
+\concept{nci evs schema}

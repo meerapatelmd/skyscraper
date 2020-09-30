@@ -1,6 +1,8 @@
 Package: skyscraper
 Title: Scrape Clinical Drug Data 
-Version: 1.0.0
+Version: 0.1.0
+URL: https://meerapatelmd.github.io/skyscraper/, https://github.com/meerapatelmd/skyscraper/issues"
+BugReports: https://github.com/meerapatelmd/skyscraper/issues/
 Authors@R: 
     person(given = "Meera",
            family = "Patel, MD",

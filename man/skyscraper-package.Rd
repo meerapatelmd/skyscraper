@@ -25,6 +25,15 @@ PubMed Search Results
 ClinicalTrials.gov
 }
 
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://meerapatelmd.github.io/skyscraper/}
+  \item \url{https://github.com/meerapatelmd/skyscraper/issues"}
+  \item Report bugs at \url{https://github.com/meerapatelmd/skyscraper/issues/}
+}
+
+}
 \author{
 \strong{Maintainer}: Meera Patel, MD \email{patelmeeray@gmail.com} (\href{https://orcid.org/0000-0002-3401-3948}{ORCID})
 
