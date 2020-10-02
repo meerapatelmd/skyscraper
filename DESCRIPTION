@@ -7,14 +7,13 @@ Authors@R:
            role = c("aut", "cre"),
            email = "patelmeeray@gmail.com",
            comment = c(ORCID = "0000-0002-3401-3948"))
-Description:  Scrape, store, and maintain clinical drug
+Description: Scrape, store, and maintain clinical drug
     data across various disparate web and data sources, including the
     ChemiDPlus, NCI Drug Dictionary, and the ClinicalTrials.gov AACT
     Database.  
 License: Apache License 2.0
-URL: https://meerapatelmd.github.io/skyscraper/,
-    https://github.com/meerapatelmd/skyscraper/issues"
-BugReports: https://github.com/meerapatelmd/skyscraper/issues/
+URL: https://github.com/meerapatelmd/skyscraper
+BugReports: https://github.com/meerapatelmd/skyscraper/issues
 Imports: 
     broca,
     cave,
