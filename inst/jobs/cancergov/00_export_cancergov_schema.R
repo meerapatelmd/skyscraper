@@ -2,8 +2,8 @@ library(skyscraper)
 library(chariot)
 
 conn <- chariot::connectAthena()
-skyscraper::export_schema_to_data_repo(target_dir = "~/GitHub/cancergovData/",
-                                       schema = "cancergov")
+export_schema_to_data_repo(target_dir = "~/GitHub/cancergovData/",
+                                       schema = "cancergov", conn = conn)
 chariot::dcAthena(conn = conn,
                   remove = TRUE)
 

@@ -37,6 +37,7 @@
 #' @importFrom stringr str_replace
 #' @importFrom glitter docPushInstall
 #' @importFrom magrittr %>%
+#' @importFrom rlang parse_expr
 
 
 export_schema_to_data_repo <-
@@ -57,6 +58,7 @@ export_schema_to_data_repo <-
 
                         # Create the dataPackage and
                         dataPackage <- unlist((schema_map[schema_map$schema == schema, "dataPackage"]))
+                        tables <- eval(rlang::parse_expr(unlist((schema_map[schema_map$schema == schema, "tables"]))))
                         repo <- unlist((schema_map[schema_map$schema == schema, "repo"]))
 
 
@@ -119,13 +121,13 @@ export_schema_to_data_repo <-
                                 character.only = TRUE)
 
                         # Getting package datasets name
-                        DATASETS <- data(package = dataPackage)
+                        DATASETS <- data(package = dataPackage, envir = environment())
                         DATASETS <- DATASETS$results[, "Item"]
 
                         # Load package datasets to merge with the local datasets
-                        importedData <<-
-                                DATASETS %>%
-                                rubix::map_names_set(get) %>%
+                        importedData <-
+                                tables %>%
+                                rubix::map_names_set(~get(., envir = environment())) %>%
                                 purrr::map(function(x) x %>%
                                                    dplyr::mutate_at(dplyr::vars(tidyselect::ends_with("datetime")),
                                                                     lubridate::ymd_hms) %>%
@@ -145,13 +147,10 @@ export_schema_to_data_repo <-
 
                         ############
                         ## Local Datasets
-                        ############
+                        ## ##########
 
-                        Tables <-
-                                pg13::lsTables(conn = conn,
-                                               schema = schema)
                         localData <-
-                                Tables %>%
+                                tables %>%
                                 rubix::map_names_set(~pg13::readTable(conn = conn,
                                                                       schema = schema,
                                                                       tableName = .)) %>%
@@ -175,18 +174,17 @@ export_schema_to_data_repo <-
                         ##############
                         #### Merge Local with Imported Data
                         ##############
-                        if (length(localData) > length(importedData)) {
-                                mergedData <-
-                                        list(localData,
-                                             importedData) %>%
-                                        purrr::transpose() %>%
-                                        purrr::map(dplyr::bind_rows)
-                        } else {
-                                mergedData <-
-                                        list(importedData,
-                                             localData) %>%
-                                        purrr::transpose() %>%
-                                        purrr::map(dplyr::bind_rows)
+
+                        mergedData <- list()
+
+                        for (i in 1:length(tables)) {
+
+                                mergedData[[i]] <-
+                                                dplyr::bind_rows(importedData[[tables[i]]],
+                                                                 localData[[tables[i]]])
+
+                                names(mergedData)[i] <- tables[i]
+
                         }
 
                         # Dedupe Merged Data
@@ -198,8 +196,8 @@ export_schema_to_data_repo <-
 
                                                                                 x %>%
                                                                                         dplyr::distinct() %>%
-                                                                                        dplyr::group_by_at(vars(!contains("datetime"))) %>%
-                                                                                        dplyr::arrange_at(vars(contains("datetime")), .by_group = TRUE) %>%
+                                                                                        dplyr::group_by_at(dplyr::vars(!contains("datetime"))) %>%
+                                                                                        dplyr::arrange_at(dplyr::vars(contains("datetime")), .by_group = TRUE) %>%
                                                                                         rubix::filter_first_row() %>%
                                                                                         dplyr::ungroup()
 
