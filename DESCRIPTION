@@ -1,55 +1,56 @@
 Package: skyscraper
-Title: Scrape Clinical Drug Data 
+Title: Scrape Clinical Drug Data
 Version: 0.1.0
-URL: https://meerapatelmd.github.io/skyscraper/, https://github.com/meerapatelmd/skyscraper/issues"
-BugReports: https://github.com/meerapatelmd/skyscraper/issues/
 Authors@R: 
     person(given = "Meera",
            family = "Patel, MD",
            role = c("aut", "cre"),
            email = "patelmeeray@gmail.com",
            comment = c(ORCID = "0000-0002-3401-3948"))
-Description: 
-    Scrape, store, and maintain clinical drug data across various disparate web and data sources, including the ChemiDPlus, NCI Drug Dictionary, and the ClinicalTrials.gov AACT Database.     
+Description:  Scrape, store, and maintain clinical drug
+    data across various disparate web and data sources, including the
+    ChemiDPlus, NCI Drug Dictionary, and the ClinicalTrials.gov AACT
+    Database.  
 License: Apache License 2.0
+URL: https://meerapatelmd.github.io/skyscraper/,
+    https://github.com/meerapatelmd/skyscraper/issues"
+BugReports: https://github.com/meerapatelmd/skyscraper/issues/
+Imports: 
+    broca,
+    cave,
+    centipede,
+    chariot,
+    curl,
+    devtools,
+    dplyr,
+    glitter,
+    httr,
+    lubridate,
+    magrittr,
+    pg13,
+    police,
+    purrr,
+    readr,
+    rubix,
+    rvest,
+    secretary,
+    sinew,
+    SqlRender,
+    stringr,
+    tibble,
+    tidyr,
+    xml2
+Remotes:
+    meerapatelmd/broca,
+    meerapatelmd/cave,
+    meerapatelmd/centipede,
+    meerapatelmd/chariot,
+    meerapatelmd/glitter,
+    meerapatelmd/pg13,
+    meerapatelmd/police,
+    meerapatelmd/rubix,
+    meerapatelmd/secretary
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
-Imports: 
-        magrittr,
-        SqlRender,
-        broca,
-        cave,
-        centipede,
-        chariot,
-        curl,
-        devtools,
-        dplyr,
-        glitter,
-        httr,
-        lubridate,
-        pg13,
-        police,
-        purrr,
-        readr,
-        rubix,
-        rvest,
-        secretary,
-        sinew,
-        stringr,
-        tibble,
-        tidyr,
-        xml2
-Remotes:
-        meerapatelmd/pg13,
-        meerapatelmd/police,
-        meerapatelmd/secretary,
-        meerapatelmd/broca,
-        meerapatelmd/cave,
-        meerapatelmd/centipede,
-        meerapatelmd/chariot,
-        meerapatelmd/glitter,
-        meerapatelmd/rubix
-
-    
