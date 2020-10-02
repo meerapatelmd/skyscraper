@@ -38,7 +38,6 @@ Other cancergov:
 \code{\link{get_drug_link_synonym}()},
 \code{\link{get_drug_link_url}()},
 \code{\link{log_drug_count}()},
-\code{\link{process_drug_link_synonym}()},
-\code{\link{process_drug_link_url}()}
+\code{\link{process_drug_link_synonym}()}
 }
 \concept{cancergov}
