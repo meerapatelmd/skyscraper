@@ -45,6 +45,7 @@ export_schema_to_data_repo <-
                  schema,
                  commit_message = "automated export",
                  target_dir,
+                 force_install = FALSE,
                  reset = TRUE) {
 
 
@@ -87,6 +88,8 @@ export_schema_to_data_repo <-
                                                 system(paste0("find ~/GitHub -name ", dataPackage),
                                                        intern = TRUE)
 
+                                        System.sleep(5)
+
                                 }
 
 
@@ -116,7 +119,10 @@ export_schema_to_data_repo <-
 
 
                         # Install Data Package to UNION with current schema data
-                        devtools::install_github(repo, force = TRUE)
+                        devtools::install_github(repo)
+
+                        Sys.sleep(5)
+
                         library(dataPackage,
                                 character.only = TRUE)
 
@@ -150,7 +156,7 @@ export_schema_to_data_repo <-
                         ## ##########
 
                         localData <-
-                                tables %>%
+                                pg13::lsTables(conn = conn, schema = schema)  %>%
                                 rubix::map_names_set(~pg13::readTable(conn = conn,
                                                                       schema = schema,
                                                                       tableName = .)) %>%
@@ -237,7 +243,7 @@ export_schema_to_data_repo <-
                                 unlist()
 
                         usethisLines <-
-                                paste0("\nusethis::use_data(\n", paste(paste0("\t",Tables), collapse = ",\n"), "\n, overwrite = TRUE)")
+                                paste0("\nusethis::use_data(\n", paste(paste0("\t", names(mergedData2)), collapse = ",\n"), "\n, overwrite = TRUE)")
 
 
                         cat(c("library(readr)",
