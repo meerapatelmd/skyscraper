@@ -9,6 +9,7 @@ export_schema_to_data_repo(
   schema,
   commit_message = "automated export",
   target_dir,
+  force_install = FALSE,
   reset = TRUE
 )
 }
