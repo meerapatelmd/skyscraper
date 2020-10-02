@@ -1,44 +1,4 @@
 #' @title
-#' ChemiDPlus Scraping Functions
-#'
-#' @description
-#' All ChemiDPlus Scraping Functions operate on a Registry Number URL (`rn_url`). The initial search is logged to a "REGISTRY_NUMBER_LOG" Table. If the RN URL is then tested for 404 Status and logged to the "RN_URL_VALIDITY" Table. The major sections found at the ChemiDPlus site are: "Names and Synonyms", "Classification", "Registry Numbers", "Links to Resources" with these sections are written to their respective tables "NAMES_AND_SYNONYMS", "CLASSIFICATION", "REGISTRY_NUMBERS", and "LINKS_TO_RESOURCES".
-#'
-#' @return
-#' Each section is parsed by a respective skyscraper function that stores the scraped results in a table of the same name in a schema. If a connection argument is not provided, the results are returned as a dataframe in the R console.
-#'
-#' @section
-#' Names and Synonyms:
-#' The "Names and Synonyms" Section scraped results contain a Timestamp, RN URL. If the section has subheadings, the subheading is scraped as the Synonym Type along with the Synonym itself.
-#' @section
-#' Classification:
-#' The "Classification" Section results contain a Timestamp, RN URL, and the drug classifications on the page.
-#' @section
-#' Links to Resources:
-#' The "Links to Resources" Section derives all the HTML links to other data and web sources for the drug. The results include a Timestamp, RN URL, and the Resource Agency and its HTML link.
-#' @section
-#' Registry Numbers:
-#' The "Registry Numbers" Section contains other identifiers for the given drug at other Agencies.
-#' @section
-#' Registry Number Log Table:
-#' The REGISTRY_NUMBER_LOG Table is the landing table for any ChemiDPlus searches using skyscrape. It is the place where a source concept is searched based on a given set of parameters and all the possible Registry Numbers (RN) that source concept can be associated with in ChemiDPlus. The Registry Number then serves as a jump-off point from where a second RN URL is read and split based on the sections, and read into their corresponding ChemiDPlus Tables.
-#'
-#' The Table logs the Raw Concept, the processed version of the Concept (ie removed spaces and error-throwing characters to generate a valid search URL for the Concept), the type of search (ie equals or contains), and the final search URL used to read a search result. A series of booleans are performed to determine whether the search was performed (ie a response was received), and if the results were for any records, and if these records were saved. If an RN was found, it is included along with the full URL associated with the URL.
-#'
-#' @section
-#' RN URL Validity Table:
-#' The RN_URL_VALIDITY Table logs whether a HTTP 404 Error was recorded for a RN URL found in the REGISTRY_NUMBER_LOG Table for QA purposes.
-#'
-#' @param conn          Postgres connection object
-#' @param rn_url        Registry number URL to read that also serves as an Identifier
-#' @param response      (optional) "xml_document" "xml_node" class object returned by xml2::read_html for the `rn_url` argument. Providing a response from a single HTML read reduces the chance of encountering a HTTP 503 error when parsing multiple sections from a single URL. If a response argument is missing, a response is read. Followed by the `sleep_time` in seconds.
-#' @param schema        Schema that the returned data is written to, Default: 'chemidplus'
-#' @param sleep_time    If the response argument is missing, the number seconds to pause after reading the URL, Default: 3
-#'
-#' @name chemidplus_scraping_functions
-NULL
-
-#' @title
 #' Scrape the Classification Code in the Summary Header of the RN URL
 #' @description FUNCTION_DESCRIPTION
 #' @param conn PARAM_DESCRIPTION
@@ -243,7 +203,7 @@ get_classification_code <-
 
                 if (missing(conn)) {
 
-                        classifications
+                       classifications
 
                 }
 
@@ -391,14 +351,14 @@ get_classification <-
 
 
                         classifications <-
-                                response %>%
-                                rvest::html_nodes("#classifications li") %>%
-                                rvest::html_text() %>%
-                                tibble::as_tibble_col("concept_classification") %>%
-                                dplyr::transmute(c_datetime = Sys.time(),
-                                                 concept_classification,
-                                                 rn_url = rn_url) %>%
-                                dplyr::distinct()   %>%
+                               response %>%
+                                       rvest::html_nodes("#classifications li") %>%
+                                       rvest::html_text() %>%
+                               tibble::as_tibble_col("concept_classification") %>%
+                               dplyr::transmute(c_datetime = Sys.time(),
+                                                concept_classification,
+                                                rn_url = rn_url) %>%
+                               dplyr::distinct()   %>%
                                 dplyr::filter_at(vars(concept_classification),
                                                  any_vars(nchar(.) < 255))
 
@@ -427,7 +387,7 @@ get_classification <-
 
                 if (missing(conn)) {
 
-                        classifications
+                       classifications
 
                 }
 
@@ -576,65 +536,65 @@ get_links_to_resources <-
                 if (proceed) {
 
 
-                        # locator_types <-
-                        #         response %>%
-                        #         rvest::html_nodes("#locators h3") %>%
-                        #         rvest::html_text()
-                        #
-                        #
-                        # if (length(locator_types) == 0) {
-                        #         locator_types <-
-                        #         response %>%
-                        #                 rvest::html_nodes("#locators h2") %>%
-                        #                 rvest::html_text()
-                        # }
+                       # locator_types <-
+                       #         response %>%
+                       #         rvest::html_nodes("#locators h3") %>%
+                       #         rvest::html_text()
+                       #
+                       #
+                       # if (length(locator_types) == 0) {
+                       #         locator_types <-
+                       #         response %>%
+                       #                 rvest::html_nodes("#locators h2") %>%
+                       #                 rvest::html_text()
+                       # }
 
 
 
-                        # locators_content <-
-                        # response %>%
-                        #         rvest::html_nodes("#locators") %>%
-                        #         rvest::html_text()
-                        #
-                        # locators_link <-
-                        #         response %>%
-                        #         rvest::html_nodes("#locators") %>%
-                        #         rvest::html_text()
+                       # locators_content <-
+                       # response %>%
+                       #         rvest::html_nodes("#locators") %>%
+                       #         rvest::html_text()
+                       #
+                       # locators_link <-
+                       #         response %>%
+                       #         rvest::html_nodes("#locators") %>%
+                       #         rvest::html_text()
 
 
-                        links_to_resources <-
-                                response %>%
-                                rvest::html_nodes("#locators a") %>%
-                                rvest::html_attrs() %>%
-                                purrr::map(tibble::as_tibble_row) %>%
-                                dplyr::bind_rows() %>%
-                                dplyr::transmute(
-                                        ltr_datetime = Sys.time(),
-                                        resource_agency = `data-name`,
-                                        resource_link = href,
-                                        rn_url = rn_url) %>%
-                                dplyr::filter_at(vars(resource_link),
-                                                 any_vars(nchar(.) < 255))
+                       links_to_resources <-
+                               response %>%
+                                       rvest::html_nodes("#locators a") %>%
+                                       rvest::html_attrs() %>%
+                                       purrr::map(tibble::as_tibble_row) %>%
+                                       dplyr::bind_rows() %>%
+                                       dplyr::transmute(
+                                               ltr_datetime = Sys.time(),
+                                               resource_agency = `data-name`,
+                                               resource_link = href,
+                                               rn_url = rn_url) %>%
+                                        dplyr::filter_at(vars(resource_link),
+                                                         any_vars(nchar(.) < 255))
 
 
 
 
-                        if (!missing(conn)) {
+                       if (!missing(conn)) {
 
 
-                                if ("LINKS_TO_RESOURCES" %in% chemiTables) {
-                                        pg13::appendTable(conn = conn,
-                                                          schema = schema,
-                                                          tableName = "LINKS_TO_RESOURCES",
-                                                          links_to_resources)
-                                } else {
-                                        pg13::writeTable(conn = conn,
+                               if ("LINKS_TO_RESOURCES" %in% chemiTables) {
+                                       pg13::appendTable(conn = conn,
                                                          schema = schema,
                                                          tableName = "LINKS_TO_RESOURCES",
                                                          links_to_resources)
-                                }
+                               } else {
+                                       pg13::writeTable(conn = conn,
+                                                        schema = schema,
+                                                        tableName = "LINKS_TO_RESOURCES",
+                                                        links_to_resources)
+                               }
 
-                        }
+                       }
 
                 }
 
@@ -756,110 +716,110 @@ get_names_and_synonyms <-
                 if (proceed) {
 
 
-                        synonym_types <-
-                                response %>%
-                                rvest::html_nodes("#names h3") %>%
-                                rvest::html_text()
+                       synonym_types <-
+                               response %>%
+                               rvest::html_nodes("#names h3") %>%
+                               rvest::html_text()
 
 
-                        if (length(synonym_types) == 0) {
-                                synonym_types <-
-                                        response %>%
-                                        rvest::html_nodes("#names h2") %>%
-                                        rvest::html_text()
-                        }
+                       if (length(synonym_types) == 0) {
+                               synonym_types <-
+                               response %>%
+                                       rvest::html_nodes("#names h2") %>%
+                                       rvest::html_text()
+                       }
 
 
 
-                        synonyms_content <-
-                                response %>%
-                                rvest::html_nodes("#names") %>%
-                                rvest::html_text()
+                       synonyms_content <-
+                       response %>%
+                               rvest::html_nodes("#names") %>%
+                               rvest::html_text()
 
 
-                        synonyms_content <-
-                                synonyms_content %>%
-                                stringr::str_remove_all(pattern = "Names and Synonyms")
+                       synonyms_content <-
+                               synonyms_content %>%
+                               stringr::str_remove_all(pattern = "Names and Synonyms")
 
 
                         synonyms_content2 <- unlist(strsplit(synonyms_content, split = "[\r\n\t]"))
 
 
-                        synonyms_content3 <-
-                                stringr::str_remove_all(synonyms_content2, "[^ -~]")
+                       synonyms_content3 <-
+                               stringr::str_remove_all(synonyms_content2, "[^ -~]")
 
-                        synonyms_content4 <- unlist(centipede::strsplit(synonyms_content3,
-                                                                        type = "after",
-                                                                        split = paste(synonym_types, collapse = "|")))
-
-
-
-                        if (length(synonym_types) > 1) {
-                                index <- list()
-                                synonym_types2 <- synonym_types
-                                while (length(synonym_types)) {
-
-                                        synonym_type <- synonym_types[1]
-
-                                        index[[length(index)+1]] <-
-                                                grep(synonym_type,
-                                                     synonyms_content4)
-
-
-                                        synonym_types <- synonym_types[-1]
-                                }
-
-                                index <- unlist(index)
-                                ending <- c((index[-1])-1,
-                                            length(synonyms_content4))
-
-                                df <-
-                                        data.frame(index, ending) %>%
-                                        dplyr::mutate(starting = index+1)
-
-
-                                synonyms <-
-                                        df$starting %>%
-                                        purrr::map2(df$ending,
-                                                    function(x,y) synonyms_content4[x:y]) %>%
-                                        purrr::set_names(synonym_types2) %>%
-                                        purrr::map(tibble::as_tibble_col, "concept_synonym_name") %>%
-                                        dplyr::bind_rows(.id = "concept_synonym_type") %>%
-                                        dplyr::transmute(nas_datetime = Sys.time(),
-                                                         rn_url = rn_url,
-                                                         concept_synonym_type,
-                                                         concept_synonym_name
-                                        ) %>%
-                                        dplyr::mutate_at(vars(concept_synonym_name),
-                                                         ~substr(., 1, 254)) %>%
-                                        dplyr::distinct()
-                        } else {
-                                synonyms <-
-                                        data.frame(nas_datetime = Sys.time(),
-                                                   rn_url = rn_url,
-                                                   concept_synonym_type = "NA",
-                                                   concept_synonym_name = synonyms_content4)
-
-                        }
+                       synonyms_content4 <- unlist(centipede::strsplit(synonyms_content3,
+                                                                       type = "after",
+                                                                       split = paste(synonym_types, collapse = "|")))
 
 
 
-                        if (!missing(conn)) {
+                       if (length(synonym_types) > 1) {
+                                       index <- list()
+                                       synonym_types2 <- synonym_types
+                                       while (length(synonym_types)) {
+
+                                               synonym_type <- synonym_types[1]
+
+                                               index[[length(index)+1]] <-
+                                                         grep(synonym_type,
+                                                              synonyms_content4)
 
 
-                                if ("NAMES_AND_SYNONYMS" %in% chemiTables) {
-                                        pg13::appendTable(conn = conn,
-                                                          schema = schema,
-                                                          tableName = "names_and_synonyms",
-                                                          synonyms)
-                                } else {
-                                        pg13::writeTable(conn = conn,
+                                               synonym_types <- synonym_types[-1]
+                                       }
+
+                                       index <- unlist(index)
+                                       ending <- c((index[-1])-1,
+                                                   length(synonyms_content4))
+
+                                       df <-
+                                       data.frame(index, ending) %>%
+                                               dplyr::mutate(starting = index+1)
+
+
+                                       synonyms <-
+                                               df$starting %>%
+                                                       purrr::map2(df$ending,
+                                                                   function(x,y) synonyms_content4[x:y]) %>%
+                                                       purrr::set_names(synonym_types2) %>%
+                                                       purrr::map(tibble::as_tibble_col, "concept_synonym_name") %>%
+                                                       dplyr::bind_rows(.id = "concept_synonym_type") %>%
+                                               dplyr::transmute(nas_datetime = Sys.time(),
+                                                                rn_url = rn_url,
+                                                                concept_synonym_type,
+                                                                concept_synonym_name
+                                                                ) %>%
+                                               dplyr::mutate_at(vars(concept_synonym_name),
+                                                                ~substr(., 1, 254)) %>%
+                                               dplyr::distinct()
+                       } else {
+                               synonyms <-
+                                       data.frame(nas_datetime = Sys.time(),
+                                                      rn_url = rn_url,
+                                                      concept_synonym_type = "NA",
+                                                      concept_synonym_name = synonyms_content4)
+
+                       }
+
+
+
+                       if (!missing(conn)) {
+
+
+                               if ("NAMES_AND_SYNONYMS" %in% chemiTables) {
+                                       pg13::appendTable(conn = conn,
                                                          schema = schema,
                                                          tableName = "names_and_synonyms",
                                                          synonyms)
-                                }
+                               } else {
+                                       pg13::writeTable(conn = conn,
+                                                        schema = schema,
+                                                        tableName = "names_and_synonyms",
+                                                        synonyms)
+                               }
 
-                        }
+                       }
 
                 }
 
@@ -1024,110 +984,110 @@ get_registry_numbers <-
                 if (proceed) {
 
 
-                        number_types <-
-                                response %>%
-                                rvest::html_nodes("#numbers h3") %>%
-                                rvest::html_text()
+                       number_types <-
+                               response %>%
+                               rvest::html_nodes("#numbers h3") %>%
+                               rvest::html_text()
 
 
-                        if (length(number_types) == 0) {
-                                number_types <-
-                                        response %>%
-                                        rvest::html_nodes("#numbers h2") %>%
-                                        rvest::html_text()
-                        }
+                       if (length(number_types) == 0) {
+                               number_types <-
+                               response %>%
+                                       rvest::html_nodes("#numbers h2") %>%
+                                       rvest::html_text()
+                       }
 
 
 
-                        registry_numbers_content <-
-                                response %>%
-                                rvest::html_nodes("#numbers") %>%
-                                rvest::html_text()
+                       registry_numbers_content <-
+                       response %>%
+                               rvest::html_nodes("#numbers") %>%
+                               rvest::html_text()
 
 
-                        registry_numbers_content <-
-                                registry_numbers_content %>%
-                                stringr::str_remove(pattern = "Registry Numbers")
+                       registry_numbers_content <-
+                               registry_numbers_content %>%
+                               stringr::str_remove(pattern = "Registry Numbers")
 
 
                         registry_numbers_content2 <- unlist(strsplit(registry_numbers_content, split = "[\r\n\t]"))
 
 
-                        registry_numbers_content3 <-
-                                stringr::str_remove_all(registry_numbers_content2, "[^ -~]")
+                       registry_numbers_content3 <-
+                               stringr::str_remove_all(registry_numbers_content2, "[^ -~]")
 
-                        registry_numbers_content4 <- unlist(centipede::strsplit(registry_numbers_content3,
-                                                                                type = "after",
-                                                                                split = paste(number_types, collapse = "|")))
-
-
-
-                        if (length(number_types) > 1) {
-                                index <- list()
-                                number_types2 <- number_types
-                                while (length(number_types)) {
-
-                                        number_type <- number_types[1]
-
-                                        index[[length(index)+1]] <-
-                                                grep(number_type,
-                                                     registry_numbers_content4)
-
-
-                                        number_types <- number_types[-1]
-                                }
-
-                                index <- unlist(index)
-                                ending <- c((index[-1])-1,
-                                            length(registry_numbers_content4))
-
-                                df <-
-                                        data.frame(index, ending) %>%
-                                        dplyr::mutate(starting = index+1)
-
-
-                                registry_numbers <-
-                                        df$starting %>%
-                                        purrr::map2(df$ending,
-                                                    function(x,y) registry_numbers_content4[x:y]) %>%
-                                        purrr::set_names(number_types2) %>%
-                                        purrr::map(tibble::as_tibble_col, "concept_registry_number") %>%
-                                        dplyr::bind_rows(.id = "concept_registry_number_type") %>%
-                                        dplyr::transmute(rn_datetime = Sys.time(),
-                                                         rn_url = rn_url,
-                                                         concept_registry_number_type,
-                                                         concept_registry_number
-                                        ) %>%
-                                        dplyr::mutate_at(vars(concept_registry_number),
-                                                         ~substr(., 1, 254)) %>%
-                                        dplyr::distinct()
-                        } else {
-                                registry_numbers <-
-                                        data.frame(rn_datetime = Sys.time(),
-                                                   rn_url = rn_url,
-                                                   concept_registry_number_type = "NA",
-                                                   concept_registry_number = registry_numbers_content4)
-
-                        }
+                       registry_numbers_content4 <- unlist(centipede::strsplit(registry_numbers_content3,
+                                                                       type = "after",
+                                                                       split = paste(number_types, collapse = "|")))
 
 
 
-                        if (!missing(conn)) {
+                       if (length(number_types) > 1) {
+                                       index <- list()
+                                       number_types2 <- number_types
+                                       while (length(number_types)) {
+
+                                               number_type <- number_types[1]
+
+                                               index[[length(index)+1]] <-
+                                                         grep(number_type,
+                                                              registry_numbers_content4)
 
 
-                                if ("REGISTRY_NUMBERS" %in% chemiTables) {
-                                        pg13::appendTable(conn = conn,
-                                                          schema = schema,
-                                                          tableName = "REGISTRY_NUMBERS",
-                                                          registry_numbers)
-                                } else {
-                                        pg13::writeTable(conn = conn,
+                                               number_types <- number_types[-1]
+                                       }
+
+                                       index <- unlist(index)
+                                       ending <- c((index[-1])-1,
+                                                   length(registry_numbers_content4))
+
+                                       df <-
+                                       data.frame(index, ending) %>%
+                                               dplyr::mutate(starting = index+1)
+
+
+                                       registry_numbers <-
+                                               df$starting %>%
+                                                       purrr::map2(df$ending,
+                                                                   function(x,y) registry_numbers_content4[x:y]) %>%
+                                                       purrr::set_names(number_types2) %>%
+                                                       purrr::map(tibble::as_tibble_col, "concept_registry_number") %>%
+                                                       dplyr::bind_rows(.id = "concept_registry_number_type") %>%
+                                               dplyr::transmute(rn_datetime = Sys.time(),
+                                                                rn_url = rn_url,
+                                                                concept_registry_number_type,
+                                                                concept_registry_number
+                                                                ) %>%
+                                               dplyr::mutate_at(vars(concept_registry_number),
+                                                                ~substr(., 1, 254)) %>%
+                                               dplyr::distinct()
+                       } else {
+                               registry_numbers <-
+                                       data.frame(rn_datetime = Sys.time(),
+                                                      rn_url = rn_url,
+                                                      concept_registry_number_type = "NA",
+                                                      concept_registry_number = registry_numbers_content4)
+
+                       }
+
+
+
+                       if (!missing(conn)) {
+
+
+                               if ("REGISTRY_NUMBERS" %in% chemiTables) {
+                                       pg13::appendTable(conn = conn,
                                                          schema = schema,
                                                          tableName = "REGISTRY_NUMBERS",
                                                          registry_numbers)
-                                }
+                               } else {
+                                       pg13::writeTable(conn = conn,
+                                                        schema = schema,
+                                                        tableName = "REGISTRY_NUMBERS",
+                                                        registry_numbers)
+                               }
 
-                        }
+                       }
 
                 }
 
@@ -1202,141 +1162,141 @@ get_response <-
 #' @importFrom magrittr %>%
 
 get_rn_url_validity <-
-        function(conn,
-                 rn_url,
-                 response,
-                 schema = "chemidplus",
-                 sleep_time = 3) {
+    function(conn,
+             rn_url,
+             response,
+             schema = "chemidplus",
+             sleep_time = 3) {
+
+
+        if (!missing(conn)) {
+
+                connSchemas <-
+                    pg13::lsSchema(conn = conn)
+
+                if (!(schema %in% connSchemas)) {
+
+                    pg13::createSchema(conn = conn,
+                                       schema = schema)
+
+                }
+
+                chemiTables <- pg13::lsTables(conn = conn,
+                                              schema = schema)
+
+                if ("RN_URL_VALIDITY" %in% chemiTables) {
+
+                    rn_url_validity <-
+                        pg13::query(conn = conn,
+                                    sql_statement = pg13::buildQuery(distinct = TRUE,
+                                                                     schema = schema,
+                                                                     tableName = "RN_URL_VALIDITY",
+                                                                     whereInField = "rn_url",
+                                                                     whereInVector = rn_url))
+
+                }
+
+        }
+
+
+        # Proceed if:
+        # Connection was provided and a rn_url_validity table is present: nrow(rn_url_validity) == 0
+        # Connection was provided and rn_url_validity table was not present
+        # Connection was not provided
+        if (!missing(conn)) {
+
+            if ("RN_URL_VALIDITY" %in% chemiTables) {
+
+                        proceed <- nrow(rn_url_validity) == 0
+
+            } else {
+
+                        proceed <- TRUE
+
+            }
+
+        } else {
+
+            proceed <- TRUE
+
+        }
+
+        if (proceed) {
+
+
+            if (!missing(response)) {
+
+                    if (!is.null(response)) {
+
+                            status_df <-
+                                tibble::tibble(rnuv_datetime = Sys.time(),
+                                               rn_url = rn_url,
+                                               is_404 = FALSE)
+
+
+                    } else {
+                        status_df <-
+                            tibble::tibble(rnuv_datetime = Sys.time(),
+                                           rn_url = rn_url,
+                                           is_404 = is404(rn_url = rn_url))
+                        Sys.sleep(sleep_time)
+                    }
+
+            } else {
+
+                status_df <-
+                    tibble::tibble(rnuv_datetime = Sys.time(),
+                                   rn_url = rn_url,
+                                   is_404 = is404(rn_url = rn_url))
+
+                Sys.sleep(sleep_time)
+            }
+
+                if (nrow(showConnections())) {
+                    suppressWarnings(closeAllConnections())
+                }
+
 
 
                 if (!missing(conn)) {
 
                         connSchemas <-
-                                pg13::lsSchema(conn = conn)
+                            pg13::lsSchema(conn = conn)
 
                         if (!(schema %in% connSchemas)) {
 
-                                pg13::createSchema(conn = conn,
-                                                   schema = schema)
+                            pg13::createSchema(conn = conn,
+                                               schema = schema)
 
                         }
 
-                        chemiTables <- pg13::lsTables(conn = conn,
-                                                      schema = schema)
+
+                        chemiTables <-
+                            pg13::lsTables(conn = conn,
+                                           schema = schema)
 
                         if ("RN_URL_VALIDITY" %in% chemiTables) {
 
-                                rn_url_validity <-
-                                        pg13::query(conn = conn,
-                                                    sql_statement = pg13::buildQuery(distinct = TRUE,
-                                                                                     schema = schema,
-                                                                                     tableName = "RN_URL_VALIDITY",
-                                                                                     whereInField = "rn_url",
-                                                                                     whereInVector = rn_url))
-
-                        }
-
-                }
-
-
-                # Proceed if:
-                # Connection was provided and a rn_url_validity table is present: nrow(rn_url_validity) == 0
-                # Connection was provided and rn_url_validity table was not present
-                # Connection was not provided
-                if (!missing(conn)) {
-
-                        if ("RN_URL_VALIDITY" %in% chemiTables) {
-
-                                proceed <- nrow(rn_url_validity) == 0
+                            pg13::appendTable(conn = conn,
+                                              schema = schema,
+                                              tableName = "RN_URL_VALIDITY",
+                                              status_df)
 
                         } else {
 
-                                proceed <- TRUE
-
+                            pg13::writeTable(conn = conn,
+                                              schema = schema,
+                                              tableName = "RN_URL_VALIDITY",
+                                              status_df)
                         }
 
                 } else {
 
-                        proceed <- TRUE
+                    status_df
 
-                }
-
-                if (proceed) {
-
-
-                        if (!missing(response)) {
-
-                                if (!is.null(response)) {
-
-                                        status_df <-
-                                                tibble::tibble(rnuv_datetime = Sys.time(),
-                                                               rn_url = rn_url,
-                                                               is_404 = FALSE)
-
-
-                                } else {
-                                        status_df <-
-                                                tibble::tibble(rnuv_datetime = Sys.time(),
-                                                               rn_url = rn_url,
-                                                               is_404 = is404(rn_url = rn_url))
-                                        Sys.sleep(sleep_time)
-                                }
-
-                        } else {
-
-                                status_df <-
-                                        tibble::tibble(rnuv_datetime = Sys.time(),
-                                                       rn_url = rn_url,
-                                                       is_404 = is404(rn_url = rn_url))
-
-                                Sys.sleep(sleep_time)
-                        }
-
-                        if (nrow(showConnections())) {
-                                suppressWarnings(closeAllConnections())
-                        }
-
-
-
-                        if (!missing(conn)) {
-
-                                connSchemas <-
-                                        pg13::lsSchema(conn = conn)
-
-                                if (!(schema %in% connSchemas)) {
-
-                                        pg13::createSchema(conn = conn,
-                                                           schema = schema)
-
-                                }
-
-
-                                chemiTables <-
-                                        pg13::lsTables(conn = conn,
-                                                       schema = schema)
-
-                                if ("RN_URL_VALIDITY" %in% chemiTables) {
-
-                                        pg13::appendTable(conn = conn,
-                                                          schema = schema,
-                                                          tableName = "RN_URL_VALIDITY",
-                                                          status_df)
-
-                                } else {
-
-                                        pg13::writeTable(conn = conn,
-                                                         schema = schema,
-                                                         tableName = "RN_URL_VALIDITY",
-                                                         status_df)
-                                }
-
-                        } else {
-
-                                status_df
-
-                        }
                 }
         }
+    }
 
 
 
@@ -1430,32 +1390,32 @@ isMultipleHits <-
         function(response) {
 
                 output <-
-                        response %>%
+                response %>%
                         rvest::html_nodes(".bodytext") %>%
                         rvest::html_text()
 
 
                 chem_names <-
-                        response %>%
+                response %>%
                         rvest::html_nodes(".chem-name") %>%
                         rvest::html_text() %>%
                         paste(collapse = "|")
 
                 output_a <-
                         police::try_catch_error_as_null(
-                                output  %>%
-                                        tibble::as_tibble_col(column_name = "multiple_match") %>%
-                                        rubix::filter_at_grepl(multiple_match,
-                                                               grepl_phrase = "MW[:]{1} ",
-                                                               evaluates_to = FALSE) %>%
-                                        tidyr::extract(col = multiple_match,
-                                                       into = c("compound_match", "rn"),
-                                                       regex = paste0("(^", chem_names, ") \\[.*?\\](.*$)")) %>%
-                                        dplyr::mutate(rn_url = paste0("https://chem.nlm.nih.gov/chemidplus/rn/",rn)) %>%
-                                        dplyr::mutate_all(stringr::str_remove_all, "No Structure") %>%
-                                        dplyr::filter_at(vars(compound_match,
-                                                              rn),
-                                                         all_vars(!is.na(.))))
+                        output  %>%
+                        tibble::as_tibble_col(column_name = "multiple_match") %>%
+                        rubix::filter_at_grepl(multiple_match,
+                                               grepl_phrase = "MW[:]{1} ",
+                                               evaluates_to = FALSE) %>%
+                        tidyr::extract(col = multiple_match,
+                                       into = c("compound_match", "rn"),
+                                       regex = paste0("(^", chem_names, ") \\[.*?\\](.*$)")) %>%
+                        dplyr::mutate(rn_url = paste0("https://chem.nlm.nih.gov/chemidplus/rn/",rn)) %>%
+                        dplyr::mutate_all(stringr::str_remove_all, "No Structure") %>%
+                        dplyr::filter_at(vars(compound_match,
+                                              rn),
+                                         all_vars(!is.na(.))))
 
 
                 if (is.null(output_a)) {
@@ -1466,11 +1426,11 @@ isMultipleHits <-
                                 rvest::html_text()
 
 
-                        output  %>%
-                                tibble::as_tibble_col(column_name = "multiple_match") %>%
-                                rubix::filter_at_grepl(multiple_match,
-                                                       grepl_phrase = "MW[:]{1} ",
-                                                       evaluates_to = FALSE) %>%
+                                output  %>%
+                                                tibble::as_tibble_col(column_name = "multiple_match") %>%
+                                                rubix::filter_at_grepl(multiple_match,
+                                                                       grepl_phrase = "MW[:]{1} ",
+                                                                       evaluates_to = FALSE) %>%
                                 dplyr::mutate(compound_match = chem_name_vector) %>%
                                 dplyr::mutate(nchar_compound_name = nchar(compound_match)) %>%
                                 dplyr::mutate(string_start_rn = nchar_compound_name+1) %>%
@@ -1485,16 +1445,16 @@ isMultipleHits <-
                                 tibble::as_tibble() %>%
                                 rubix::normalize_all_to_na() %>%
                                 dplyr::transmute(compound_match,
-                                                 rn,
-                                                 rn_url = ifelse(!is.na(rn),
-                                                                 paste0("https://chem.nlm.nih.gov/chemidplus/rn/", rn),
-                                                                 NA))
+                                              rn,
+                                              rn_url = ifelse(!is.na(rn),
+                                                              paste0("https://chem.nlm.nih.gov/chemidplus/rn/", rn),
+                                                              NA))
 
 
                 } else {
 
-                        output_b <-
-                                output  %>%
+                output_b <-
+                        output  %>%
                                 tibble::as_tibble_col(column_name = "multiple_match") %>%
                                 rubix::filter_at_grepl(multiple_match,
                                                        grepl_phrase = "MW[:]{1} ",
@@ -1508,24 +1468,24 @@ isMultipleHits <-
                                                       rn),
                                                  all_vars(!is.na(.)))
 
-                        output <-
-                                dplyr::bind_rows(output_a,
-                                                 output_b)  %>%
-                                dplyr::distinct()
+                output <-
+                        dplyr::bind_rows(output_a,
+                                 output_b)  %>%
+                        dplyr::distinct()
 
 
-                        if (nrow(output)) {
-                                output %>%
-                                        tibble::as_tibble() %>%
-                                        rubix::normalize_all_to_na() %>%
-                                        dplyr::transmute(compound_match,
-                                                         rn,
-                                                         rn_url = ifelse(!is.na(rn),
-                                                                         paste0("https://chem.nlm.nih.gov/chemidplus/rn/", rn),
-                                                                         NA))
-                        } else {
-                                tibble::tribble(~compound_match, ~rn, ~rn_url)
-                        }
+                if (nrow(output)) {
+                        output %>%
+                        tibble::as_tibble() %>%
+                        rubix::normalize_all_to_na() %>%
+                        dplyr::transmute(compound_match,
+                                         rn,
+                                         rn_url = ifelse(!is.na(rn),
+                                                         paste0("https://chem.nlm.nih.gov/chemidplus/rn/", rn),
+                                                         NA))
+                } else {
+                        tibble::tribble(~compound_match, ~rn, ~rn_url)
+                }
                 }
 
         }
@@ -1557,7 +1517,7 @@ isNoRecord <-
         function(response) {
 
                 result <-
-                        response %>%
+                response %>%
                         rvest::html_nodes("h3") %>%
                         rvest::html_text()
 
@@ -1675,117 +1635,117 @@ isSingleHit <-
 #' @importFrom magrittr %>%
 
 log_registry_number <-
-        function(conn,
-                 raw_concept,
-                 type = "contains",
-                 sleep_time = 3,
-                 schema = "chemidplus") {
+    function(conn,
+             raw_concept,
+             type = "contains",
+             sleep_time = 3,
+             schema = "chemidplus") {
 
-                # tositumomab and I 131 tositumomab
-                # tositumomab and iodine-131 tositumomab
-                # trametinib dimethyl sulfoxide
-                # trastuzumab and hyaluronidase-oysk
-                # trastuzumab emtansine
-                # tretinoin
-                # trifluridine and tipiracil
-                # trifluridine/tipiracil
-                # tucidinostat
-                # uramustine
-                # valaciclovir
-                # valaciclovir Hcl
-                # valproic acid
-                # vinblastine sulfate
+        # tositumomab and I 131 tositumomab
+        # tositumomab and iodine-131 tositumomab
+        # trametinib dimethyl sulfoxide
+        # trastuzumab and hyaluronidase-oysk
+        # trastuzumab emtansine
+        # tretinoin
+        # trifluridine and tipiracil
+        # trifluridine/tipiracil
+        # tucidinostat
+        # uramustine
+        # valaciclovir
+        # valaciclovir Hcl
+        # valproic acid
+        # vinblastine sulfate
 
-                #conn <- chariot::connectAthena()
-                #raw_concept <- "Interleukin-2"
-                #raw_concept <- "Anthracycline"
+        #conn <- chariot::connectAthena()
+        #raw_concept <- "Interleukin-2"
+        #raw_concept <- "Anthracycline"
 
-                #raw_concept <- "olmutinib"
-                #
+        #raw_concept <- "olmutinib"
+        #
 
-                search_type <- type
+        search_type <- type
 
-                if (!missing(conn)) {
+        if (!missing(conn)) {
 
-                        connSchemas <-
-                                pg13::lsSchema(conn = conn)
+                connSchemas <-
+                    pg13::lsSchema(conn = conn)
 
-                        if (!(schema %in% connSchemas)) {
+                if (!(schema %in% connSchemas)) {
 
-                                pg13::createSchema(conn = conn,
-                                                   schema = schema)
+                    pg13::createSchema(conn = conn,
+                                       schema = schema)
 
-                        }
+                }
 
-                        chemiTables <- pg13::lsTables(conn = conn,
-                                                      schema = schema)
+                chemiTables <- pg13::lsTables(conn = conn,
+                                              schema = schema)
 
-                        if ("REGISTRY_NUMBER_LOG" %in% chemiTables) {
+                if ("REGISTRY_NUMBER_LOG" %in% chemiTables) {
 
-                                registry_number_log <-
-                                        pg13::query(conn = conn,
-                                                    sql_statement = pg13::buildQuery(distinct = TRUE,
-                                                                                     schema = schema,
-                                                                                     tableName = "REGISTRY_NUMBER_LOG",
-                                                                                     whereInField = "raw_concept",
-                                                                                     whereInVector = raw_concept)) %>%
-                                        dplyr::filter(type == search_type) %>%
-                                        dplyr::filter(response_received == "TRUE")
-
-                        }
-
+                    registry_number_log <-
+                        pg13::query(conn = conn,
+                                    sql_statement = pg13::buildQuery(distinct = TRUE,
+                                                                     schema = schema,
+                                                                     tableName = "REGISTRY_NUMBER_LOG",
+                                                                     whereInField = "raw_concept",
+                                                                     whereInVector = raw_concept)) %>%
+                        dplyr::filter(type == search_type) %>%
+                        dplyr::filter(response_received == "TRUE")
 
                 }
 
 
-                # Proceed if:
-                # Connection was provided and a registry_number_log table is present: nrow(registry_number_log) == 0
-                # Connection was provided and registry_number_log table was not present
-                # Connection was not provided
-                if (!missing(conn)) {
+        }
 
-                        if ("REGISTRY_NUMBER_LOG" %in% chemiTables) {
 
-                                proceed <- nrow(registry_number_log) == 0
+        # Proceed if:
+        # Connection was provided and a registry_number_log table is present: nrow(registry_number_log) == 0
+        # Connection was provided and registry_number_log table was not present
+        # Connection was not provided
+        if (!missing(conn)) {
 
-                        } else {
+            if ("REGISTRY_NUMBER_LOG" %in% chemiTables) {
 
-                                proceed <- TRUE
+                        proceed <- nrow(registry_number_log) == 0
 
-                        }
-
-                } else {
+            } else {
 
                         proceed <- TRUE
 
-                }
+            }
 
-                if (proceed) {
+        } else {
 
+            proceed <- TRUE
 
-                        #Remove all spaces
-                        processed_concept <- stringr::str_remove_all(raw_concept, "\\s|[']{1}")
+        }
 
-
-                        #url <- "https://chem.nlm.nih.gov/chemidplus/name/contains/technetiumTc99m-labeledtilmanocept"
-
-                        url <- paste0("https://chem.nlm.nih.gov/chemidplus/name/", search_type, "/",  processed_concept)
+        if (proceed) {
 
 
-                        status_df <-
-                                tibble::tibble(rnl_datetime = Sys.time(),
-                                               raw_concept = raw_concept,
-                                               processed_concept = processed_concept,
-                                               type = search_type) %>%
-                                dplyr::mutate(url = url)
+                #Remove all spaces
+                processed_concept <- stringr::str_remove_all(raw_concept, "\\s|[']{1}")
 
 
-                        Sys.sleep(sleep_time)
+                #url <- "https://chem.nlm.nih.gov/chemidplus/name/contains/technetiumTc99m-labeledtilmanocept"
 
-                        resp <- xml2::read_html(url)
+                url <- paste0("https://chem.nlm.nih.gov/chemidplus/name/", search_type, "/",  processed_concept)
 
 
-                        if (!is.null(resp)) {
+                status_df <-
+                    tibble::tibble(rnl_datetime = Sys.time(),
+                                   raw_concept = raw_concept,
+                                   processed_concept = processed_concept,
+                                   type = search_type) %>%
+                    dplyr::mutate(url = url)
+
+
+                Sys.sleep(sleep_time)
+
+                resp <- xml2::read_html(url)
+
+
+                if (!is.null(resp)) {
 
                                 status_df <-
                                         status_df %>%
@@ -1796,27 +1756,27 @@ log_registry_number <-
                                 if (!status_df$no_record) {
 
                                         results <-
-                                                dplyr::bind_rows(
-                                                        isSingleHit(response = resp),
-                                                        isMultipleHits(response = resp)) %>%
-                                                dplyr::mutate(url = url)
+                                            dplyr::bind_rows(
+                                                    isSingleHit(response = resp),
+                                                    isMultipleHits(response = resp)) %>%
+                                            dplyr::mutate(url = url)
 
                                         status_df <-
-                                                status_df %>%
-                                                dplyr::mutate(response_recorded = "TRUE") %>%
-                                                dplyr::left_join(results, by = "url") %>%
-                                                dplyr::distinct() %>%
-                                                dplyr::filter(rn_url != "https://chem.nlm.nih.gov/chemidplus/rn/NA")
+                                            status_df %>%
+                                            dplyr::mutate(response_recorded = "TRUE") %>%
+                                            dplyr::left_join(results, by = "url") %>%
+                                            dplyr::distinct() %>%
+                                            dplyr::filter(rn_url != "https://chem.nlm.nih.gov/chemidplus/rn/NA")
 
 
                                 } else {
 
-                                        status_df <-
-                                                status_df %>%
-                                                dplyr::mutate(response_recorded = "FALSE") %>%
-                                                dplyr::mutate(compound_match = NA,
-                                                              rn = NA,
-                                                              rn_url = NA)
+                                    status_df <-
+                                        status_df %>%
+                                        dplyr::mutate(response_recorded = "FALSE") %>%
+                                        dplyr::mutate(compound_match = NA,
+                                                      rn = NA,
+                                                      rn_url = NA)
 
 
                                 }
@@ -1825,62 +1785,62 @@ log_registry_number <-
                         } else {
 
                                 status_df <-
-                                        status_df %>%
-                                        dplyr::mutate(response_received = "FALSE",
-                                                      no_record = NA,
-                                                      response_recorded = "FALSE")  %>%
-                                        dplyr::mutate(compound_match = NA,
-                                                      rn = NA,
-                                                      rn_url = NA)
+                                    status_df %>%
+                                    dplyr::mutate(response_received = "FALSE",
+                                                  no_record = NA,
+                                                  response_recorded = "FALSE")  %>%
+                                    dplyr::mutate(compound_match = NA,
+                                                  rn = NA,
+                                                  rn_url = NA)
 
                         }
 
 
-                        if (nrow(showConnections())) {
-                                suppressWarnings(closeAllConnections())
+                if (nrow(showConnections())) {
+                    suppressWarnings(closeAllConnections())
+                }
+
+
+
+                if (!missing(conn)) {
+
+                        connSchemas <-
+                            pg13::lsSchema(conn = conn)
+
+                        if (!(schema %in% connSchemas)) {
+
+                            pg13::createSchema(conn = conn,
+                                               schema = schema)
+
                         }
 
 
+                        chemiTables <-
+                            pg13::lsTables(conn = conn,
+                                           schema = schema)
 
-                        if (!missing(conn)) {
+                        if ("REGISTRY_NUMBER_LOG" %in% chemiTables) {
 
-                                connSchemas <-
-                                        pg13::lsSchema(conn = conn)
-
-                                if (!(schema %in% connSchemas)) {
-
-                                        pg13::createSchema(conn = conn,
-                                                           schema = schema)
-
-                                }
-
-
-                                chemiTables <-
-                                        pg13::lsTables(conn = conn,
-                                                       schema = schema)
-
-                                if ("REGISTRY_NUMBER_LOG" %in% chemiTables) {
-
-                                        pg13::appendTable(conn = conn,
-                                                          schema = schema,
-                                                          tableName = "REGISTRY_NUMBER_LOG",
-                                                          status_df)
-
-                                } else {
-
-                                        pg13::writeTable(conn = conn,
-                                                         schema = schema,
-                                                         tableName = "REGISTRY_NUMBER_LOG",
-                                                         status_df)
-                                }
+                            pg13::appendTable(conn = conn,
+                                              schema = schema,
+                                              tableName = "REGISTRY_NUMBER_LOG",
+                                              status_df)
 
                         } else {
 
-                                return(status_df)
-
+                            pg13::writeTable(conn = conn,
+                                              schema = schema,
+                                              tableName = "REGISTRY_NUMBER_LOG",
+                                              status_df)
                         }
+
+                } else {
+
+                    return(status_df)
+
                 }
         }
+    }
 
 
 
