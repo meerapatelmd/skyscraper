@@ -6,4 +6,5 @@ inst/doc
 Meta
 .zip
 errorReportSql.txt
+*err_pid*.log
 
