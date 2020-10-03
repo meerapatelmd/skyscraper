@@ -30,6 +30,6 @@ if(interactive()){
 \code{\link[SqlRender]{render}}
 
 Other nci evs schema: 
-\code{\link{load_mrconso}()}
+\code{\link{load_all_mth}()}
 }
 \concept{nci evs schema}
