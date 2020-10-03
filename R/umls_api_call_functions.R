@@ -12,10 +12,15 @@ get_service_ticket <-
                 service_ticket_file_path <- file.path(store_creds_at, ".umls_api_service_ticket.txt")
 
                 if (file.exists(tgt_file_path)) {
-                        if (Sys.time() - file.info(tgt_file_path)$mtime > 480) {
+
+                        if (difftime(Sys.time(), file.info(tgt_file_path)$mtime, units = "hours")  > 8) {
+
                                 proceed <- TRUE
+
                         } else {
+
                                 proceed <- FALSE
+
                         }
                 } else {
                         proceed <- TRUE
@@ -31,6 +36,7 @@ get_service_ticket <-
                                         encode = "form"
                                         )
 
+
                         TGT <-
                                 httr::content(auth_response, type = "text/html", encoding = "UTF-8") %>%
                                         rvest::html_nodes("form") %>%
@@ -45,6 +51,17 @@ get_service_ticket <-
                                         url = TGT,
                                         body = list(service = "http://umlsks.nlm.nih.gov"),
                                         encode = "form")
+
+                        if (httr::status_code(tgt_response) != 200) {
+                                stop(
+                                        sprintf(
+                                                "API request for Service Ticket failed",
+                                                httr::status_code(auth_response)
+                                        ),
+                                        call. = FALSE
+                                )
+                        }
+
 
                         service_ticket <-
                                 tgt_response %>%
@@ -77,6 +94,16 @@ get_service_ticket <-
                                                 url = TGT,
                                                 body = list(service = "http://umlsks.nlm.nih.gov"),
                                                 encode = "form")
+
+                                if (httr::status_code(tgt_response) != 200) {
+                                        stop(
+                                                sprintf(
+                                                        "API request for Service Ticket failed",
+                                                        httr::status_code(auth_response)
+                                                ),
+                                                call. = FALSE
+                                        )
+                                }
 
                                 service_ticket <-
                                         tgt_response %>%
@@ -135,7 +162,7 @@ umls_api_search <-
                                                string = string,
                                                searchType = searchType,
                                                inputType = inputType,
-                                               includeObsolete = includeObsolete,,
+                                               includeObsolete = includeObsolete,
                                                includeSuppressible = includeSuppressible,
                                                returnIdType = returnIdType,
                                                sabs = sabs,
@@ -283,166 +310,166 @@ log_umls_search <-
         }
 
 
-read_endpoints_page <-
-        xml2::read_html("https://documentation.uts.nlm.nih.gov/rest/home.html")
-
-api_endpoints_table <-
-read_endpoints_page %>%
-        rvest::html_nodes("table") %>%
-        rvest::html_table() %>%
-        purrr::pluck(2) %>%
-        dplyr::slice(-1) %>%
-        dplyr::mutate(Path = stringr::str_replace_all(Path,
-                                                      "(^.*)([{]{1}version[}]{1})(.*$)",
-                                                      "\\1v1\\3"))
-
-
-link2_path <-
-read_endpoints_page %>%
-        rvest::html_nodes("td a") %>%
-        rvest::html_attr("href") %>%
-        unique()
-
-link2_responses <- list()
-
-for (i in 1:length(link2_path)) {
-
-        url <-
-        httr::modify_url(url = "https://documentation.uts.nlm.nih.gov/rest/",
-                         path = link2_path[i])
-        Sys.sleep(5)
-        link2_responses[[i]] <- police::try_catch_error_as_null(xml2::read_html(url))
-        Sys.sleep(5)
-}
-names(link2_responses) <- link2_path
-
-link2_responses2 <- list()
-
-for (i in 1:length(link2_path)) {
-
-         url <- paste0("https://documentation.uts.nlm.nih.gov/rest/", link2_path[i])
-
-         Sys.sleep(10)
-
-         link2_responses2[[i]] <- police::try_catch_error_as_na(xml2::read_html(url))
-         names(link2_responses2)[i] <- url
-
-         Sys.sleep(5)
-}
-
-link2_responses2$`https://documentation.uts.nlm.nih.gov/rest/authentication.html` <- NULL
-set2 <-
-        link2_responses2 %>%
-        purrr::keep(~length(.)==2) %>%
-        purrr::map(function(x)
-                        x %>%
-                           rvest::html_nodes("table") %>%
-                           rvest::html_table() %>%
-                           purrr::set_names(c("Retrieval", "Query Parameters")))
-
-
-script_front_matter <- list()
-for (i in 1:length(set2)) {
-        input <- set2[[i]]$`Query Parameters`
-        page_basename <- basename(names(set2)[i])
-        input <-
-        input %>%
-                dplyr::mutate(ParamDescription = ifelse(`Required? Y/N` == "N",
-                                                   paste("(optional) ", Description),
-                                                   Description)) %>%
-                dplyr::mutate(FunctionArgs = ifelse(`Required? Y/N` == "N",
-                                                    paste0(`Parameter name`, " = NULL"),
-                                                    `Parameter name`))
-
-
-        parameter_names <- input$`Parameter name`
-        parameter_descriptions <- input$ParamDescription
-        function_arguments <- input$FunctionArgs
-
-
-        input_b <- set2[[i]]$Retrieval
-        roxygen_details <-
-                input_b %>%
-                dplyr::mutate(`Sample URI` = paste0("'",`Sample URI`, "'path")) %>%
-                tidyr::unite(col = Details, `Sample URI`, Description, sep = " ") %>%
-                tidyr::unite(col = Details, Details, `Returned JSON Object classType`, sep = " and returns a JSON Object classType of ") %>%
-                unlist() %>%
-                paste(collapse = "\n") %>%
-                purrr::map(~paste0("#' @details \n", .)) %>%
-                unlist()
-
-        roxygen_title <-
-                paste0("#' @title ", stringr::str_to_title(string = stringr::str_replace_all(page_basename, "[[:punct:]]", ' ')))
-
-
-        roxygen_params <-
-                parameter_names %>%
-                purrr::map2(parameter_descriptions,
-                            function(x,y) paste0("#' @param ", x, "\t\t\t", y)) %>%
-                unlist()
-
-
-        new_function_name <- page_basename
-        new_function_name <- stringr::str_replace_all(basename(new_function_name), "[[:punct:]]", '_')
-        new_function_name <- paste0("lookup_", new_function_name)
-
-        declaration <-
-        paste0(new_function_name, " <- \n\t\tfunction(\n\t\t\t", paste(function_arguments, collapse = ",\n\t\t\t"), ") { \n\n")
-
-
-        commented_paths <-
-                input_b %>%
-                dplyr::transmute(commented_paths = paste0("## ", `Sample URI`)) %>%
-                unlist() %>%
-                paste(collapse = ", ")
-
-        query_parameters <-
-                parameter_names %>%
-                purrr::map(function(x) paste0(x, " = ", x)) %>%
-                unlist() %>%
-                paste(collapse = ",\n")
-
-        script_block_1 <-
-                paste0(
-                        "link_response <- httr::GET(url = baseURL,
-                        path = ", commented_paths, "
-                        query = list(", query_parameters,
-                        ")
-                        )")
-
-        script_front_matter[[i]] <- c(roxygen_title,
-                                      roxygen_params,
-                                      roxygen_details,
-                                      "\n\n",
-                                      declaration,
-                                      script_block_1,
-                                      "}") %>%
-                paste0(collapse = "\n")
-
-        names(script_front_matter)[i] <- names(set2)[i]
-
-}
-
-
-
-
-
-link_response <-
-        httr::GET(url = baseURL,
-                  path =
-        )
-
-
-
-read_endpoints_page %>%
-        rvest::html_nodes("td a :last-child")
-
-
-rate_limit_response <-
-        httr::GET(url = "https://uts-ws.nlm.nih.gov/rest/search/current",
-                  path = "/rate_limit")
-
-rate_limit_response %>%
-        httr::content() %>%
-        rvest::html_nodes("div") %>%
-        rvest::html_text()
+# read_endpoints_page <-
+#         xml2::read_html("https://documentation.uts.nlm.nih.gov/rest/home.html")
+#
+# api_endpoints_table <-
+# read_endpoints_page %>%
+#         rvest::html_nodes("table") %>%
+#         rvest::html_table() %>%
+#         purrr::pluck(2) %>%
+#         dplyr::slice(-1) %>%
+#         dplyr::mutate(Path = stringr::str_replace_all(Path,
+#                                                       "(^.*)([{]{1}version[}]{1})(.*$)",
+#                                                       "\\1v1\\3"))
+#
+#
+# link2_path <-
+# read_endpoints_page %>%
+#         rvest::html_nodes("td a") %>%
+#         rvest::html_attr("href") %>%
+#         unique()
+#
+# link2_responses <- list()
+#
+# for (i in 1:length(link2_path)) {
+#
+#         url <-
+#         httr::modify_url(url = "https://documentation.uts.nlm.nih.gov/rest/",
+#                          path = link2_path[i])
+#         Sys.sleep(5)
+#         link2_responses[[i]] <- police::try_catch_error_as_null(xml2::read_html(url))
+#         Sys.sleep(5)
+# }
+# names(link2_responses) <- link2_path
+#
+# link2_responses2 <- list()
+#
+# for (i in 1:length(link2_path)) {
+#
+#          url <- paste0("https://documentation.uts.nlm.nih.gov/rest/", link2_path[i])
+#
+#          Sys.sleep(10)
+#
+#          link2_responses2[[i]] <- police::try_catch_error_as_na(xml2::read_html(url))
+#          names(link2_responses2)[i] <- url
+#
+#          Sys.sleep(5)
+# }
+#
+# link2_responses2$`https://documentation.uts.nlm.nih.gov/rest/authentication.html` <- NULL
+# set2 <-
+#         link2_responses2 %>%
+#         purrr::keep(~length(.)==2) %>%
+#         purrr::map(function(x)
+#                         x %>%
+#                            rvest::html_nodes("table") %>%
+#                            rvest::html_table() %>%
+#                            purrr::set_names(c("Retrieval", "Query Parameters")))
+#
+#
+# script_front_matter <- list()
+# for (i in 1:length(set2)) {
+#         input <- set2[[i]]$`Query Parameters`
+#         page_basename <- basename(names(set2)[i])
+#         input <-
+#         input %>%
+#                 dplyr::mutate(ParamDescription = ifelse(`Required? Y/N` == "N",
+#                                                    paste("(optional) ", Description),
+#                                                    Description)) %>%
+#                 dplyr::mutate(FunctionArgs = ifelse(`Required? Y/N` == "N",
+#                                                     paste0(`Parameter name`, " = NULL"),
+#                                                     `Parameter name`))
+#
+#
+#         parameter_names <- input$`Parameter name`
+#         parameter_descriptions <- input$ParamDescription
+#         function_arguments <- input$FunctionArgs
+#
+#
+#         input_b <- set2[[i]]$Retrieval
+#         roxygen_details <-
+#                 input_b %>%
+#                 dplyr::mutate(`Sample URI` = paste0("'",`Sample URI`, "'path")) %>%
+#                 tidyr::unite(col = Details, `Sample URI`, Description, sep = " ") %>%
+#                 tidyr::unite(col = Details, Details, `Returned JSON Object classType`, sep = " and returns a JSON Object classType of ") %>%
+#                 unlist() %>%
+#                 paste(collapse = "\n") %>%
+#                 purrr::map(~paste0("#' @details \n", .)) %>%
+#                 unlist()
+#
+#         roxygen_title <-
+#                 paste0("#' @title ", stringr::str_to_title(string = stringr::str_replace_all(page_basename, "[[:punct:]]", ' ')))
+#
+#
+#         roxygen_params <-
+#                 parameter_names %>%
+#                 purrr::map2(parameter_descriptions,
+#                             function(x,y) paste0("#' @param ", x, "\t\t\t", y)) %>%
+#                 unlist()
+#
+#
+#         new_function_name <- page_basename
+#         new_function_name <- stringr::str_replace_all(basename(new_function_name), "[[:punct:]]", '_')
+#         new_function_name <- paste0("lookup_", new_function_name)
+#
+#         declaration <-
+#         paste0(new_function_name, " <- \n\t\tfunction(\n\t\t\t", paste(function_arguments, collapse = ",\n\t\t\t"), ") { \n\n")
+#
+#
+#         commented_paths <-
+#                 input_b %>%
+#                 dplyr::transmute(commented_paths = paste0("## ", `Sample URI`)) %>%
+#                 unlist() %>%
+#                 paste(collapse = ", ")
+#
+#         query_parameters <-
+#                 parameter_names %>%
+#                 purrr::map(function(x) paste0(x, " = ", x)) %>%
+#                 unlist() %>%
+#                 paste(collapse = ",\n")
+#
+#         script_block_1 <-
+#                 paste0(
+#                         "link_response <- httr::GET(url = baseURL,
+#                         path = ", commented_paths, "
+#                         query = list(", query_parameters,
+#                         ")
+#                         )")
+#
+#         script_front_matter[[i]] <- c(roxygen_title,
+#                                       roxygen_params,
+#                                       roxygen_details,
+#                                       "\n\n",
+#                                       declaration,
+#                                       script_block_1,
+#                                       "}") %>%
+#                 paste0(collapse = "\n")
+#
+#         names(script_front_matter)[i] <- names(set2)[i]
+#
+# }
+#
+#
+#
+#
+#
+# link_response <-
+#         httr::GET(url = baseURL,
+#                   path =
+#         )
+#
+#
+#
+# read_endpoints_page %>%
+#         rvest::html_nodes("td a :last-child")
+#
+#
+# rate_limit_response <-
+#         httr::GET(url = "https://uts-ws.nlm.nih.gov/rest/search/current",
+#                   path = "/rate_limit")
+#
+# rate_limit_response %>%
+#         httr::content() %>%
+#         rvest::html_nodes("div") %>%
+#         rvest::html_text()

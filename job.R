@@ -33,26 +33,47 @@ for (i in 1:length(randomized_list)) {
                         concept <- randomized_list[[i]][j]
 
                         output[[i]][[j]] <-
-                                        search_umls_api(concept = concept)
+                                CallMeMaybe::umls_api_search(string = concept)
 
                         Sys.sleep(sample(3:10,1))
 
         }
          results <- dplyr::bind_rows(output[[i]])
-         results <-
-                 results %>%
-                 dplyr::transmute(
-                         search_datetime,
-                         concept_id = names(randomized_list)[i],
-                         concept,
-                         string,
-                         searchType,
-                         classType,
-                         pageSize,
-                         pageNumber,
-                         ui,
-                         ui_str = name
-                 )
+
+         if ("rootSource" %in% colnames(results)) {
+
+                 results <-
+                         results %>%
+                         dplyr::transmute(
+                                 search_datetime = Sys.time(),
+                                 concept_id = as.integer(names(randomized_list)[i]),
+                                 string = concept,
+                                 searchType,
+                                 classType,
+                                 pageSize,
+                                 pageNumber,
+                                 ui,
+                                 ui_str = name,
+                                 rootSource
+                         )
+
+
+         } else {
+                 results <-
+                         results %>%
+                         dplyr::transmute(
+                                 search_datetime = Sys.time(),
+                                 concept_id = as.integer(names(randomized_list)[i]),
+                                 string = concept,
+                                 searchType,
+                                 classType,
+                                 pageSize,
+                                 pageNumber,
+                                 ui,
+                                 ui_str = name,
+                                 rootSource = NA
+                         )
+         }
 
                 Tables <- pg13::lsTables(conn = conn,
                                          schema = "omop_drug_to_umls_api")
@@ -71,16 +92,21 @@ for (i in 1:length(randomized_list)) {
                                                         pagesize integer,
                                                         pagenumber integer,
                                                         ui character varying(255),
-                                                        rootsource character varying(255),
-                                                        uri character varying(255),
-                                                        name character varying(255)
+                                                        ui_str character varying(255),
+                                                        rootsource character varying(255)
                                                 )
                                                 ;
                                                 ")
+
+                        pg13::appendTable(conn = conn,
+                                          schema = "omop_drug_to_umls_api",
+                                          tableName = "SEARCH_LOG",
+                                          results)
+                } else {
+                        pg13::appendTable(conn = conn,
+                                          schema = "omop_drug_to_umls_api",
+                                          tableName = "SEARCH_LOG",
+                                          results)
                 }
 
-                pg13::appendTable(conn = conn,
-                                  schema = "omop_drug_to_umls_api",
-                                  tableName = "SEARCH_LOG",
-                                  results)
 }

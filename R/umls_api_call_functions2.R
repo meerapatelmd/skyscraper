@@ -1,5 +1,6 @@
 #' @title
-#' Concept
+#' Lookup a Concept
+#'
 #' @details
 #' '/content/current/CUI/C0009044'path Retrieves CUI and returns a JSON Object classType of Concept
 #' '/content/current/CUI/C0009044/atoms'path Retrieve atoms in a CUI and returns a JSON Object classType of Atom
@@ -8,14 +9,19 @@
 
 
 lookup_concept <-
-        function() {
+        function(CUI) {
 
+                baseURL <- paste0("https://uts-ws.nlm.nih.gov/rest/content/current/CUI/",CUI)
 
                 link_response <- httr::GET(url = baseURL,
-                                           path = ## /content/current/CUI/C0009044, ## /content/current/CUI/C0009044/atoms, ## /content/current/CUI/C0009044/definitions, ## /content/current/CUI/C0009044/relations
+                                                   ## /content/current/CUI/C0009044, ## /content/current/CUI/C0009044/atoms, ## /content/current/CUI/C0009044/definitions, ## /content/current/CUI/C0009044/relations
                                                    query = list(ticket = get_service_ticket())
                 )
+
+                link_response %>%
+                        httr::content()
         }
+
 
 
 #' @title
@@ -45,7 +51,7 @@ lookup_concept <-
 
 
 lookup_atoms <-
-        function(
+        function(CUI,
                 sabs = NULL,
                 ttys = NULL,
                 language = NULL,
@@ -54,9 +60,19 @@ lookup_atoms <-
                 pageNumber = NULL,
                 pageSize = NULL) {
 
+                # sabs = NULL
+                # ttys = NULL
+                # language = NULL
+                # includeObsolete = NULL
+                # includeSuppressible = NULL
+                # pageNumber = NULL
+                # pageSize = NULL
+
+
+                baseURL <- paste0("https://uts-ws.nlm.nih.gov/rest/content/current/CUI/",CUI, "/atoms")
 
                 link_response <- httr::GET(url = baseURL,
-                                           path = ## /content/current/CUI/C0155502/atoms, ## /content/current/CUI/C0155502/atoms/preferred, ## /content/current/CUI/C0155502/atoms?language=ENG, ## /content/current/CUI/C0155502/atoms?sabs=SNOMEDCT_US,ICD9CM&ttys=PT, ## /content/current/source/SNOMEDCT_US/111541001/atoms, ## /content/current/source/SNOMEDCT_US/111541001/atoms/preferred, ## /content/current/AUI/A8345234, ## /content/current/AUI/A8345234/ancestors, ## /content/current/AUI/A8345234/descendants, ## /content/current/AUI/A8345234/parents, ## /content/current/AUI/A8345234/children
+                                                   ## /content/current/CUI/C0155502/atoms, ## /content/current/CUI/C0155502/atoms/preferred, ## /content/current/CUI/C0155502/atoms?language=ENG, ## /content/current/CUI/C0155502/atoms?sabs=SNOMEDCT_US,ICD9CM&ttys=PT, ## /content/current/source/SNOMEDCT_US/111541001/atoms, ## /content/current/source/SNOMEDCT_US/111541001/atoms/preferred, ## /content/current/AUI/A8345234, ## /content/current/AUI/A8345234/ancestors, ## /content/current/AUI/A8345234/descendants, ## /content/current/AUI/A8345234/parents, ## /content/current/AUI/A8345234/children
                                                    query = list(ticket = get_service_ticket(),
                                                                 sabs = sabs,
                                                                 ttys = ttys,
@@ -66,10 +82,14 @@ lookup_atoms <-
                                                                 pageNumber = pageNumber,
                                                                 pageSize = pageSize)
                 )
+
+                link_response %>%
+                        httr::content()
         }
 
-#' @title Definitions
-#' @param ticket		 A single-use service ticket is required for each call to the API. See authentication for more information
+#' @title
+#' Lookup Definitions
+#'
 #' @param sabs			 (optional)  Comma-separated list of source vocabularies to include in your search
 #' @param pageNumber		 (optional)  Whole number that specifies which page of results to fetch.
 #' @param pageSize		 (optional)  Whole number that specifies the number of results to include per page.
@@ -84,127 +104,181 @@ lookup_definitions <-
                 pageSize = NULL) {
 
 
+                baseURL <- paste0("https://uts-ws.nlm.nih.gov/rest/content/current/CUI/",CUI, "/definitions")
+
                 link_response <- httr::GET(url = baseURL,
-                                           path = ## /content/current/CUI/C0155502/definitions
                                                    query = list(ticket = get_service_ticket(),
                                                                 sabs = sabs,
                                                                 pageNumber = pageNumber,
-                                                                pageSize = pageSize)
-                )
+                                                                pageSize = pageSize))
+
+                link_response %>%
+                        httr::content()
         }
 
-#' @title Relations
-#' @param ticket			A single-use service ticket is required for each call to the API. See authentication for more information
-#' @param pageNumber			(optional)  Whole number that specifies which page of results to fetch.
-#' @param pageSize			(optional)  Whole number that specifies the number of results to include per page.
+#' @title
+#' Lookup Relations
+#'
+#' @param ticket			 A single-use service ticket is required for each call to the API. See authentication for more information
+#' @param pageNumber			 (optional)  Whole number that specifies which page of results to fetch.
+#' @param pageSize			 (optional)  Whole number that specifies the number of results to include per page.
 #' @details
-'/content/current/CUI/C0009044/relations'path Retrieves NLM-asserted relationships of the CUI and returns a JSON Object classType of ConceptRelation
+#' '/content/current/CUI/C0009044/relations' path Retrieves NLM-asserted relationships of the CUI and returns a JSON Object classType of ConceptRelation
 
 
 
 lookup_relations <-
         function(
-                ticket,
                 pageNumber = NULL,
                 pageSize = NULL) {
 
+                baseURL <- paste0("https://uts-ws.nlm.nih.gov/rest/content/current/CUI/",CUI, "/relations")
 
                 link_response <- httr::GET(url = baseURL,
-                                           path = ## /content/current/CUI/C0009044/relations
-                                                   query = list(ticket = ticket,
+                                                   query = list(ticket = get_service_ticket(),
                                                                 pageNumber = pageNumber,
                                                                 pageSize = pageSize)
                 )
+                link_response %>%
+                        httr::content()
         }
-#' @title Source Asserted Identifiers
-#' @param ticket			A single-use service ticket is required for each call to the API. See authentication for more information
-#' @details
-'/content/current/source/SNOMEDCT_US/9468002'path Retrieves Source Concept and returns a JSON Object classType of SourceAtomCluster
-'/content/current/source/MSH/D015242'path Retrieves Source Descriptor and returns a JSON Object classType of SourceAtomCluster
-'/content/current/source/LNC/54112-8'path Retrieves Code and returns a JSON Object classType of SourceAtomCluster
-'/content/current/source/SNOMEDCT_US/9468002/atoms'path Retrieve atoms in a source-asserted identifier and returns a JSON Object classType of Atom
-'/content/current/source/SNOMEDCT_US/9468002/parents'path Retrieve immediate parents of a source-asserted identifier and returns a JSON Object classType of SourceAtomCluster
-'/content/current/source/SNOMEDCT_US/9468002/children'path Retrieve immediate children of source-asserted identifier and returns a JSON Object classType of SourceAtomCluster
-'/content/current/source/SNOMEDCT_US/9468002/ancestors'path Retrieve all ancestors of a source-asserted identifier and returns a JSON Object classType of SourceAtomCluster
-'/content/current/source/SNOMEDCT_US/9468002/descendants'path Retrieve all descendants of source-asserted identifier and returns a JSON Object classType of SourceAtomCluster
-'/content/current/source/SNOMEDCT_US/9468002/attributes'path Retrieves information about source-asserted attributes and returns a JSON Object classType of Attribute
 
+
+#' @title
+#' Lookup Source Asserted Identifiers
+
+#' @details
+#' '/content/current/source/SNOMEDCT_US/9468002'path Retrieves Source Concept and returns a JSON Object classType of SourceAtomCluster
+#' '/content/current/source/MSH/D015242'path Retrieves Source Descriptor and returns a JSON Object classType of SourceAtomCluster
+#' '/content/current/source/LNC/54112-8'path Retrieves Code and returns a JSON Object classType of SourceAtomCluster
+#' '/content/current/source/SNOMEDCT_US/9468002/atoms'path Retrieve atoms in a source-asserted identifier and returns a JSON Object classType of Atom
+#' '/content/current/source/SNOMEDCT_US/9468002/parents'path Retrieve immediate parents of a source-asserted identifier and returns a JSON Object classType of SourceAtomCluster
+#' '/content/current/source/SNOMEDCT_US/9468002/children'path Retrieve immediate children of source-asserted identifier and returns a JSON Object classType of SourceAtomCluster
+#' '/content/current/source/SNOMEDCT_US/9468002/ancestors'path Retrieve all ancestors of a source-asserted identifier and returns a JSON Object classType of SourceAtomCluster
+#' '/content/current/source/SNOMEDCT_US/9468002/descendants'path Retrieve all descendants of source-asserted identifier and returns a JSON Object classType of SourceAtomCluster
+#' '/content/current/source/SNOMEDCT_US/9468002/attributes'path Retrieves information about source-asserted attributes and returns a JSON Object classType of Attribute
 
 
 lookup_source_asserted_identifiers <-
-        function(
-                ticket) {
+        function(sourceId,
+                 sab) {
+
+                baseURL <- paste0("https://uts-ws.nlm.nih.gov/rest/content/current/source/",sab, "/", sourceId)
 
 
                 link_response <- httr::GET(url = baseURL,
-                                           path = ## /content/current/source/SNOMEDCT_US/9468002, ## /content/current/source/MSH/D015242, ## /content/current/source/LNC/54112-8, ## /content/current/source/SNOMEDCT_US/9468002/atoms, ## /content/current/source/SNOMEDCT_US/9468002/parents, ## /content/current/source/SNOMEDCT_US/9468002/children, ## /content/current/source/SNOMEDCT_US/9468002/ancestors, ## /content/current/source/SNOMEDCT_US/9468002/descendants, ## /content/current/source/SNOMEDCT_US/9468002/attributes
-                                                   query = list(ticket = ticket)
+                                                   query = list(ticket = get_service_ticket())
                 )
+
+                link_response %>%
+                        httr::content()
         }
-#' @title Parents And Children
-#' @param ticket			A single-use service ticket is required for each call to the API. See authentication for more information
-#' @param pageNumber			(optional)  Whole number that specifies which page of results to fetch.
-#' @param pageSize			(optional)  Whole number that specifies the number of results to include per page.
+
+
+#' @title
+#' Lookup Source Parents
+#'
+#' @param pageNumber		 (optional)  Whole number that specifies which page of results to fetch.
+#' @param pageSize		 (optional)  Whole number that specifies the number of results to include per page.
+#'
 #' @details
-'/content/current/source/SNOMEDCT_US/9468002/parents'path Retrieves parents a source-asserted identifier and returns a JSON Object classType of SourceAtomCluster*
-        '/content/current/source/SNOMEDCT_US/9468002/children'path Retrieves children of a source-asserted identifier and returns a JSON Object classType of SourceAtomCluster*
+#' '/content/current/source/SNOMEDCT_US/9468002/parents'path Retrieves parents a source-asserted identifier and returns a JSON Object classType of SourceAtomCluster*
+#' '/content/current/source/SNOMEDCT_US/9468002/children'path Retrieves children of a source-asserted identifier and returns a JSON Object classType of SourceAtomCluster*
 
 
-
-        lookup_parents_and_children <-
-        function(
-                ticket,
+lookup_source_parents <-
+        function(sourceId,
+                 sab,
                 pageNumber = NULL,
                 pageSize = NULL) {
 
 
+                baseURL <- paste0("https://uts-ws.nlm.nih.gov/rest/content/current/source/",sab, "/", sourceId, "/parents")
                 link_response <- httr::GET(url = baseURL,
                                            path = ## /content/current/source/SNOMEDCT_US/9468002/parents, ## /content/current/source/SNOMEDCT_US/9468002/children
                                                    query = list(ticket = ticket,
                                                                 pageNumber = pageNumber,
                                                                 pageSize = pageSize)
                 )
+
+                link_response %>%
+                        httr::content()
         }
-#' @title Ancestors And Descendants
-#' @param ticket			A single-use service ticket is required for each call to the API. See authentication for more information
+
+
+#' @title
+#' Lookup Source Children
+#'
+#' @param pageNumber		 (optional)  Whole number that specifies which page of results to fetch.
+#' @param pageSize		 (optional)  Whole number that specifies the number of results to include per page.
+#'
+#' @details
+#' '/content/current/source/SNOMEDCT_US/9468002/parents'path Retrieves parents a source-asserted identifier and returns a JSON Object classType of SourceAtomCluster*
+#' '/content/current/source/SNOMEDCT_US/9468002/children'path Retrieves children of a source-asserted identifier and returns a JSON Object classType of SourceAtomCluster*
+
+
+lookup_source_children <-
+        function(sourceId,
+                 sab,
+                 pageNumber = NULL,
+                 pageSize = NULL) {
+
+
+                baseURL <- paste0("https://uts-ws.nlm.nih.gov/rest/content/current/source/",sab, "/", sourceId, "/children")
+
+                link_response <- httr::GET(url = baseURL,
+                                                   query = list(ticket = ticket,
+                                                                pageNumber = pageNumber,
+                                                                pageSize = pageSize)
+                )
+
+                link_response %>%
+                        httr::content()
+        }
+
+
+
+#' @title
+#' Lookup Source Ancestors And Descendants
+#'
 #' @param pageNumber			(optional)  Whole number that specifies which page of results to fetch.
 #' @param pageSize			(optional)  Whole number that specifies the number of results to include per page.
 #' @details
-'/content/current/source/SNOMEDCT_US/9468002/ancestors'path Retrieves ancestors of a source-asserted identifier and returns a JSON Object classType of SourceAtomCluster*
-        '/content/current/source/SNOMEDCT_US/9468002/descendants'path Retrieves descendants of a source-asserted identifier and returns a JSON Object classType of SourceAtomCluster*
+#' '/content/current/source/SNOMEDCT_US/9468002/ancestors'path Retrieves ancestors of a source-asserted identifier and returns a JSON Object classType of SourceAtomCluster*
+#' '/content/current/source/SNOMEDCT_US/9468002/descendants'path Retrieves descendants of a source-asserted identifier and returns a JSON Object classType of SourceAtomCluster*
 
 
 
-        lookup_ancestors_and_descendants <-
-        function(
-                ticket,
-                pageNumber = NULL,
+lookup_source_ancestors_and_descendants <-
+        function(pageNumber = NULL,
                 pageSize = NULL) {
 
 
                 link_response <- httr::GET(url = baseURL,
                                            path = ## /content/current/source/SNOMEDCT_US/9468002/ancestors, ## /content/current/source/SNOMEDCT_US/9468002/descendants
-                                                   query = list(ticket = ticket,
+                                                   query = list(ticket = get_service_ticket(),
                                                                 pageNumber = pageNumber,
                                                                 pageSize = pageSize)
                 )
         }
-#' @title Relations
-#' @param ticket			A single-use service ticket is required for each call to the API. See authentication for more information
-#' @param includeRelationLabels			(optional)  One or more relation labels
-#' @param includeAdditionalRelationLabels			(optional)  One or more relation attribute
-#' @param includeObsolete			(optional)  Include content that is obsolete according to the content provider or NLM.
-#' @param includeSuppressible			(optional)  Include content that is suppressible according to NLM Editors.
-#' @param pageNumber			(optional)  Whole number that specifies which page of results to fetch.
-#' @param pageSize			(optional)  Whole number that specifies the number of results to include per page.
+
+
+#' @title
+#' Lookup Source Relations
+#'
+#' @param includeRelationLabels		  (optional)  One or more relation labels
+#' @param includeAdditionalRelationLabels (optional)  One or more relation attribute
+#' @param includeObsolete		  (optional)  Include content that is obsolete according to the content provider or NLM.
+#' @param includeSuppressible		  (optional)  Include content that is suppressible according to NLM Editors.
+#' @param pageNumber			  (optional)  Whole number that specifies which page of results to fetch.
+#' @param pageSize			  (optional)  Whole number that specifies the number of results to include per page.
+#'
 #' @details
-'/content/current/source/LNC/44255-8/relations'path Retrieves relationships of LOINC code 44255-8 and returns a JSON Object classType of AtomClusterRelation
+#' '/content/current/source/LNC/44255-8/relations'path Retrieves relationships of LOINC code 44255-8 and returns a JSON Object classType of AtomClusterRelation
 
 
-
-lookup_relations <-
+lookup_source_relations <-
         function(
-                ticket,
                 includeRelationLabels = NULL,
                 includeAdditionalRelationLabels = NULL,
                 includeObsolete = NULL,
@@ -215,7 +289,7 @@ lookup_relations <-
 
                 link_response <- httr::GET(url = baseURL,
                                            path = ## /content/current/source/LNC/44255-8/relations
-                                                   query = list(ticket = ticket,
+                                                   query = list(ticket = get_service_ticket(),
                                                                 includeRelationLabels = includeRelationLabels,
                                                                 includeAdditionalRelationLabels = includeAdditionalRelationLabels,
                                                                 includeObsolete = includeObsolete,
@@ -224,17 +298,18 @@ lookup_relations <-
                                                                 pageSize = pageSize)
                 )
         }
-#' @title Subsets
-#' @param ticket			A single-use service ticket is required for each call to the API. See authentication for more information
+
+#' @title
+#' Lookup Source Subsets
+#'
 #' @param pageNumber			(optional)  Whole number that specifies which page of results to fetch.
 #' @param pageSize			(optional)  Whole number that specifies the number of results to include per page.
 #' @param language			(optional)  3-letter abbreviation for language
 #' @details
-'/subsets/current'path Retrieves information about all subsets from the current release and returns a JSON Object classType of Subset
-'/subsets/current/source/SNOMEDCT_US/6011000124106'path Retrieves information for a SNOMED CT subset and returns a JSON Object classType of Subset
-'/subsets/current/source/SNOMEDCT_US/6011000124106/members'path Retrieves members of a SNOMED CT subset and returns a JSON Object classType of SourceConceptSubsetMember
-'/subsets/current/source/SNOMEDCT_US/6011000124106/member/89361000119103'path Retrieves an individual member of a SNOMED CT subset and returns a JSON Object classType of SourceConceptSubsetMember
-
+#' '/subsets/current'path Retrieves information about all subsets from the current release and returns a JSON Object classType of Subset
+#' '/subsets/current/source/SNOMEDCT_US/6011000124106'path Retrieves information for a SNOMED CT subset and returns a JSON Object classType of Subset
+#' '/subsets/current/source/SNOMEDCT_US/6011000124106/members'path Retrieves members of a SNOMED CT subset and returns a JSON Object classType of SourceConceptSubsetMember
+#' '/subsets/current/source/SNOMEDCT_US/6011000124106/member/89361000119103' path Retrieves an individual member of a SNOMED CT subset and returns a JSON Object classType of SourceConceptSubsetMember
 
 
 lookup_subsets <-
@@ -253,19 +328,19 @@ lookup_subsets <-
                                                                 language = language)
                 )
         }
-#' @title Attributes
-#' @param ticket			A single-use service ticket is required for each call to the API. See authentication for more information
-#' @param pageNumber			(optional)  Whole number that specifies which page of results to fetch.
-#' @param pageSize			(optional)  Whole number that specifies the number of results to include per page.
-#' @param includeAttributeNames			(optional)  One or more attribute names
+
+#' @title
+#' Lookup Source Attributes
+#'
+#' @param pageNumber			 (optional)  Whole number that specifies which page of results to fetch.
+#' @param pageSize			 (optional)  Whole number that specifies the number of results to include per page.
+#' @param includeAttributeNames		 (optional)  One or more attribute names
 #' @details
-'/content/current/source/SNOMEDCT_US/9468002/attributes'path Retrieves attributes of the SNOMED CT concept and returns a JSON Object classType of Attribute
+#' '/content/current/source/SNOMEDCT_US/9468002/attributes'path Retrieves attributes of the SNOMED CT concept and returns a JSON Object classType of Attribute
 
 
-
-lookup_attributes <-
+lookup_source_attributes <-
         function(
-                ticket,
                 pageNumber = NULL,
                 pageSize = NULL,
                 includeAttributeNames = NULL) {
@@ -273,16 +348,12 @@ lookup_attributes <-
 
                 link_response <- httr::GET(url = baseURL,
                                            path = ## /content/current/source/SNOMEDCT_US/9468002/attributes
-                                                   query = list(ticket = ticket,
+                                                   query = list(ticket = get_service_ticket(),
                                                                 pageNumber = pageNumber,
                                                                 pageSize = pageSize,
                                                                 includeAttributeNames = includeAttributeNames)
                 )
         }
-
-
-
-
 
 
 #' @title
