@@ -480,6 +480,7 @@ export_schema_to_data_repo <-
 #' @importFrom lubridate ymd_hms
 #' @importFrom magrittr %>%
 #' @importFrom rlang parse_expr
+#' @importFrom SqlRender render
 
 import_schemas <-
         function(conn,
@@ -595,9 +596,9 @@ import_schemas <-
                         secretary::typewrite("Dropping", secretary::italicize(dataPackageSchema),"...")
                         Sys.sleep(5)
 
-                        pg13::dropSchema(conn = conn,
-                                         schema = dataPackageSchema,
-                                         cascade = TRUE)
+                        pg13::send(conn = conn,
+                                   sql_statement = SqlRender::render("DROP SCHEMA @dataPackageSchema CASCADE;",
+                                                                     dataPackageSchema = dataPackageSchema))
 
 
                         Sys.sleep(10)
