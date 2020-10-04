@@ -501,31 +501,24 @@ import_schemas <-
 
                 schema_map <- map_schema()
 
-                if (all) {
-
-                        dataPackages <- schema_map$dataPackage
-                        dataPackagesSchema <- schema_map$schema
-                        dataPackagesRepo <- schema_map$repo
-                        dataPackagesTables <- schema_map$tables
-
-
-                } else {
-
-                        current_schema_map <- schema_map %>%
-                                rubix::filter_for(filter_col = "schema",
-                                                  inclusion_vector = schemas)
-
-                        dataPackages <- current_schema_map$dataPackage
-                        dataPackagesSchema <- current_schema_map$schema
-                        dataPackagesRepo <- current_schema_map$repo
-                        dataPackagesTables <- schema_map$tables
-
-                }
-
-                # Unload Namespaces
+                # Unload All Namespaces
                 unloadPackages <- schema_map$dataPackage
                 unloadPackages %>%
                         purrr::map(~unloadNamespace(.))
+
+
+                if (!all) {
+
+                        schema_map <- schema_map %>%
+                                rubix::filter_for(filter_col = "schema",
+                                                  inclusion_vector = schemas)
+
+                }
+
+                dataPackages <- schema_map$dataPackage
+                dataPackagesSchema <- schema_map$schema
+                dataPackagesRepo <- schema_map$repo
+                dataPackagesTables <- schema_map$tables
 
 
 
@@ -543,19 +536,16 @@ import_schemas <-
 
                         library(dataPackage,
                                 character.only = TRUE)
-
-                        DATASETS <- data(package = dataPackage, envir = environment())
+                        data(package = dataPackage, envir = environment())
 
 
 
                         importedData <-
-                                        dataPackageTables %>%
+                                dataPackageTables %>%
                                         rubix::map_names_set(~get(., envir = environment())) %>%
                                         purrr::map(function(x) x %>%
                                                            dplyr::mutate_at(dplyr::vars(ends_with("datetime")),
                                                                             lubridate::ymd_hms))
-
-
 
                         localData <-
                                 dataPackageTables %>%
@@ -569,7 +559,6 @@ import_schemas <-
                         ##############
 
                         mergedData <- list()
-
                         for (j in 1:length(dataPackageTables)) {
 
                                 mergedData[[j]] <-
@@ -577,7 +566,6 @@ import_schemas <-
                                                          localData[[dataPackageTables[j]]])
 
                                 names(mergedData)[j] <- dataPackageTables[j]
-
                         }
 
 
@@ -604,24 +592,36 @@ import_schemas <-
 
                                 )
 
-                                pg13::dropSchema(conn = conn,
+                        secretary::typewrite("Dropping", secretary::italicize(dataPackageSchema),"...")
+                        Sys.sleep(5)
+
+                        pg13::dropSchema(conn = conn,
+                                         schema = dataPackageSchema,
+                                         cascade = TRUE)
+
+
+                        Sys.sleep(10)
+
+                        pg13::createSchema(conn = conn,
+                                           schema = dataPackageSchema)
+
+                        Sys.sleep(5)
+
+                        secretary::typewrite("Importing", secretary::italicize(dataPackageSchema),"...")
+
+                        for (j in 1:length(mergedData2)) {
+
+
+                                pg13::writeTable(conn = conn,
                                                  schema = dataPackageSchema,
-                                                 cascade = TRUE)
+                                                 tableName = names(mergedData2)[j],
+                                                 mergedData2[[j]])
 
-
-                                pg13::createSchema(conn = conn,
-                                                   schema = dataPackageSchema)
-
-                                mergedData2 %>%
-                                        purrr::map2(names(mergedData2),
-                                                    function(x,y) pg13::writeTable(conn = conn,
-                                                                                   schema = dataPackageSchema,
-                                                                                   tableName = y,
-                                                                                   x))
-
+                                Sys.sleep(10)
 
 
                         }
+                }
         }
 
 
