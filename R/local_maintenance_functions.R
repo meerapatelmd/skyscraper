@@ -479,6 +479,7 @@ export_schema_to_data_repo <-
 #' @importFrom dplyr mutate_at vars
 #' @importFrom lubridate ymd_hms
 #' @importFrom magrittr %>%
+#' @importFrom rlang parse_expr
 
 import_schemas <-
         function(conn,
@@ -505,6 +506,7 @@ import_schemas <-
                         dataPackages <- schema_map$dataPackage
                         dataPackagesSchema <- schema_map$schema
                         dataPackagesRepo <- schema_map$repo
+                        dataPackagesTables <- schema_map$tables
 
 
                 } else {
@@ -516,12 +518,12 @@ import_schemas <-
                         dataPackages <- current_schema_map$dataPackage
                         dataPackagesSchema <- current_schema_map$schema
                         dataPackagesRepo <- current_schema_map$repo
+                        dataPackagesTables <- schema_map$tables
 
                 }
 
                 # Unload Namespaces
                 unloadPackages <- schema_map$dataPackage
-
                 unloadPackages %>%
                         purrr::map(~unloadNamespace(.))
 
@@ -532,172 +534,59 @@ import_schemas <-
                         dataPackage <- dataPackages[i]
                         dataPackageSchema <- dataPackagesSchema[i]
                         dataPackageRepo <- dataPackagesRepo[i]
-
-                        install_msg <-
-                                utils::capture.output(
-                                        devtools::install_github(dataPackageRepo, force = force_update),
-                                        type = "message")
+                        dataPackageTables <- eval(rlang::parse_expr(dataPackageTables[i]))
 
 
-                        if (!force_update) {
+                        install_msg <- devtools::install_github(dataPackageRepo, force = TRUE, quiet = TRUE)
 
-                                if (!any(grepl(pattern = "the SHA1.*has not changed since last install",
-                                               x = install_msg))) {
+                        secretary::typewrite("Dropping and importing", secretary::italicize(dataPackageSchema),"...")
 
-                                        secretary::typewrite(secretary::italicize(dataPackageSchema),"data is being imported...")
+                        library(dataPackage,
+                                character.only = TRUE)
 
-
-                                        pg13::dropSchema(conn = conn,
-                                                         schema = dataPackageSchema,
-                                                         cascade = TRUE)
-
-                                        pg13::createSchema(conn = conn,
-                                                           schema = dataPackageSchema)
-
-                                        library(dataPackage,
-                                                character.only = TRUE)
-
-                                        DATASETS <- data(package = dataPackage)
-                                        DATASETS <- DATASETS$results[, "Item"]
-
-
-                                        importedData <-
-                                                DATASETS %>%
-                                                rubix::map_names_set(get) %>%
-                                                purrr::map(function(x) x %>%
-                                                                   dplyr::mutate_at(dplyr::vars(ends_with("datetime")),
-                                                                                    lubridate::ymd_hms))
-
-
-                                        ############
-                                        ## Local Datasets
-                                        ############
-                                        Tables <-
-                                                pg13::lsTables(conn = conn,
-                                                               schema = schema)
-                                        localData <-
-                                                Tables %>%
-                                                rubix::map_names_set(~pg13::readTable(conn = conn,
-                                                                                      schema = dataPackageSchema,
-                                                                                      tableName = .))
-
-
-                                        ##############
-                                        #### Merge Local with Imported Data
-                                        ##############
-                                        if (length(localData) > length(importedData)) {
-                                                mergedData <-
-                                                        list(localData,
-                                                             importedData) %>%
-                                                        purrr::transpose() %>%
-                                                        purrr::map(dplyr::bind_rows)
-                                        } else {
-                                                mergedData <-
-                                                        list(importedData,
-                                                             localData) %>%
-                                                        purrr::transpose() %>%
-                                                        purrr::map(dplyr::bind_rows)
-                                        }
-
-
-                                        # Dedupe Merged Data
-                                        # All dataframes with a datetime are deduped and then grouped on all other columns and filtered or the earliest entry
-                                        # If a datetime column is not present, the dataframe is deduped only
-                                        mergedData2 <-
-                                                mergedData %>%
-                                                rubix::map_names_set(function(x) if (any(grepl("datetime", colnames(x)))) {
-
-                                                        x %>%
-                                                                dplyr::distinct() %>%
-                                                                dplyr::group_by_at(vars(!contains("datetime"))) %>%
-                                                                dplyr::arrange_at(vars(contains("datetime")), .by_group = TRUE) %>%
-                                                                rubix::filter_first_row() %>%
-                                                                dplyr::ungroup()
-
-                                                } else {
-
-                                                        x %>%
-                                                                dplyr::distinct()
-
-                                                }
-                                                )
-
-                                        mergedData2 %>%
-                                                purrr::map2(names(mergedData2),
-                                                            function(x,y) pg13::writeTable(conn = conn,
-                                                                                           schema = dataPackageSchema,
-                                                                                           tableName = y,
-                                                                                           x))
+                        DATASETS <- data(package = dataPackage, envir = environment())
 
 
 
-
-                                        unloadNamespace(dataPackage)
-
-                                } else {
-                                        secretary::typewrite(secretary::italicize(dataPackageSchema),"is already up-to-date. data import skipped.")
-
-                                }
-                        } else {
-
-                                secretary::typewrite("Dropping and importing", secretary::italicize(dataPackageSchema),"...")
-
-
-                                library(dataPackage,
-                                        character.only = TRUE)
-
-                                DATASETS <- data(package = dataPackage)
-                                DATASETS <- DATASETS$results[, "Item"]
-
-
-                                importedData <-
-                                        DATASETS %>%
-                                        rubix::map_names_set(get) %>%
+                        importedData <-
+                                        dataPackageTables %>%
+                                        rubix::map_names_set(~get(., envir = environment())) %>%
                                         purrr::map(function(x) x %>%
                                                            dplyr::mutate_at(dplyr::vars(ends_with("datetime")),
                                                                             lubridate::ymd_hms))
 
 
-                                ############
-                                ## Local Datasets
-                                ############
-                                Tables <-
-                                        pg13::lsTables(conn = conn,
-                                                       schema = dataPackageSchema)
-                                localData <-
-                                        Tables %>%
-                                        rubix::map_names_set(~pg13::readTable(conn = conn,
-                                                                              schema = dataPackageSchema,
-                                                                              tableName = .))
+
+                        localData <-
+                                dataPackageTables %>%
+                                rubix::map_names_set(~pg13::readTable(conn = conn,
+                                                                      schema = dataPackageSchema,
+                                                                      tableName = .))
 
 
-                                ##############
-                                #### Merge Local with Imported Data
-                                ##############
+                        ##############
+                        #### Merge Local with Imported Data
+                        ##############
 
-                                if (length(localData) > length(importedData)) {
+                        mergedData <- list()
 
-                                        mergedData <-
-                                                list(localData,
-                                                     importedData) %>%
-                                                purrr::transpose() %>%
-                                                purrr::map(dplyr::bind_rows)
+                        for (j in 1:length(dataPackageTables)) {
 
-                                } else {
-                                        mergedData <-
-                                                list(importedData,
-                                                     localData) %>%
-                                                purrr::transpose() %>%
-                                                purrr::map(dplyr::bind_rows)
-                                }
+                                mergedData[[j]] <-
+                                        dplyr::bind_rows(importedData[[dataPackageTables[j]]],
+                                                         localData[[dataPackageTables[j]]])
+
+                                names(mergedData)[j] <- dataPackageTables[j]
+
+                        }
 
 
-                                # Dedupe Merged Data
-                                # All dataframes with a datetime are deduped and then grouped on all other columns and filtered or the earliest entry
-                                # If a datetime column is not present, the dataframe is deduped only
-                                mergedData2 <-
-                                        mergedData %>%
-                                        rubix::map_names_set(function(x) if (any(grepl("datetime", colnames(x)))) {
+                        # Dedupe Merged Data
+                        # All dataframes with a datetime are deduped and then grouped on all other columns and filtered or the earliest entry
+                        # If a datetime column is not present, the dataframe is deduped only
+                        mergedData2 <-
+                                mergedData %>%
+                                rubix::map_names_set(function(x) if (any(grepl("datetime", colnames(x)))) {
 
                                                 x %>%
                                                         dplyr::distinct() %>%
@@ -712,7 +601,8 @@ import_schemas <-
                                                         dplyr::distinct()
 
                                         }
-                                        )
+
+                                )
 
                                 pg13::dropSchema(conn = conn,
                                                  schema = dataPackageSchema,
@@ -731,11 +621,9 @@ import_schemas <-
 
 
 
-
-                                unloadNamespace(dataPackage)
                         }
-                }
         }
+
 
 
 
