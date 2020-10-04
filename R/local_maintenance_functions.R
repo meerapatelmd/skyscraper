@@ -527,7 +527,7 @@ import_schemas <-
                         dataPackage <- dataPackages[i]
                         dataPackageSchema <- dataPackagesSchema[i]
                         dataPackageRepo <- dataPackagesRepo[i]
-                        dataPackageTables <- eval(rlang::parse_expr(dataPackageTables[i]))
+                        dataPackageTables <- eval(rlang::parse_expr(dataPackagesTables[i]))
 
 
                         install_msg <- devtools::install_github(dataPackageRepo, force = TRUE, quiet = TRUE)
