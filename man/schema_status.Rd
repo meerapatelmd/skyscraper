@@ -11,7 +11,7 @@ Local maintenance functions are meant to be used to export and instantiate/updat
 }
 \section{Check Schema Status}{
 
-All the Data Packages in the Schema Map returned by \code{\link{map_schema}} are installed if there are changes to the SHA hash. An "updated" field is added to the Schema Map that contain the values of TRUE if a new installation occurred and FALSE otherwise. If an update to the schema is desired after running this function, \code{\link{update_schemas}}, should be run with \code{force_update} set to \code{TRUE}.
+All the Data Packages in the Schema Map returned by \code{\link{load_schema_map}} are installed if there are changes to the SHA hash. An "updated" field is added to the Schema Map that contain the values of TRUE if a new installation occurred and FALSE otherwise. If an update to the schema is desired after running this function, \code{\link{update_schemas}}, should be run with \code{force_update} set to \code{TRUE}.
 }
 
 \seealso{
@@ -23,6 +23,6 @@ All the Data Packages in the Schema Map returned by \code{\link{map_schema}} are
 Other local maintenance: 
 \code{\link{export_schema_to_data_repo}()},
 \code{\link{import_schemas}()},
-\code{\link{map_schema}()}
+\code{\link{load_schema_map}()}
 }
 \concept{local maintenance}

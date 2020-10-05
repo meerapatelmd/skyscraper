@@ -6,7 +6,7 @@
 #'
 #' @section
 #' Check Schema Status:
-#' All the Data Packages in the Schema Map returned by \code{\link{map_schema}} are installed if there are changes to the SHA hash. An "updated" field is added to the Schema Map that contain the values of TRUE if a new installation occurred and FALSE otherwise. If an update to the schema is desired after running this function, \code{\link{update_schemas}}, should be run with `force_update` set to `TRUE`.
+#' All the Data Packages in the Schema Map returned by \code{\link{load_schema_map}} are installed if there are changes to the SHA hash. An "updated" field is added to the Schema Map that contain the values of TRUE if a new installation occurred and FALSE otherwise. If an update to the schema is desired after running this function, \code{\link{update_schemas}}, should be run with `force_update` set to `TRUE`.
 #'
 #' @section
 #' Update Schemas:
@@ -30,7 +30,7 @@ NULL
 #' @seealso
 #'  \code{\link[tibble]{tribble}}
 #'  \code{\link[dplyr]{mutate}}
-#' @rdname map_schema
+#' @rdname load_schema_map
 #' @family local maintenance
 #' @export
 #' @importFrom tibble tribble
@@ -38,13 +38,12 @@ NULL
 #' @importFrom magrittr %>%
 
 
-map_schema <-
+load_schema_map <-
         function(repo_username = "meerapatelmd") {
 
 
                 tibble::tribble(~schema, ~dataPackage, ~tables,
                                 "cancergov", "cancergovData", "c('DRUG_DICTIONARY', 'DRUG_DICTIONARY_LOG', 'DRUG_LINK', 'DRUG_LINK_SYNONYM', 'DRUG_LINK_URL', 'DRUG_LINK_NCIT')",
-                                "chemidplus_search", "chemidplusSearchData", "c('CLASSIFICATION', 'LINKS_TO_RESOURCES', 'NAMES_AND_SYNONYMS', 'REGISTRY_NUMBER_LOG', 'REGISTRY_NUMBERS', 'RN_URL_VALIDITY')",
                                 "chemidplus", "chemidplusData", "c('CLASSIFICATION', 'LINKS_TO_RESOURCES', 'NAMES_AND_SYNONYMS', 'REGISTRY_NUMBER_LOG', 'REGISTRY_NUMBERS', 'RN_URL_VALIDITY')",
                                 "pubmed_search", "pubmedSearchData", NA) %>%
                         dplyr::mutate(repo = paste0(repo_username, "/", dataPackage))
@@ -85,7 +84,7 @@ map_schema <-
 schema_status <-
         function() {
 
-                schema_map <- map_schema()
+                schema_map <- load_schema_map()
 
                 if (!missing(schemas)) {
 
@@ -171,7 +170,7 @@ export_schema_to_data_repo <-
                 # schema <- "cancergov"
 
                 # Load Schema Map
-                schema_map <- map_schema()
+                schema_map <- load_schema_map()
 
                 # Create the dataPackage and
                 dataPackage <- unlist((schema_map[schema_map$schema == schema, "dataPackage"]))
@@ -440,7 +439,7 @@ export_schema_to_data_repo <-
 #' Update Schemas with a Data Package
 #'
 #' @description
-#' Instantiate or Update any of the Postgres schemas governed by the skyscraper Package with the data found in its corresponding Data Package. The map from the skyscraper schema to its Data Package Repository is stored and maintained by \code{\link{map_schema}}.
+#' Instantiate or Update any of the Postgres schemas governed by the skyscraper Package with the data found in its corresponding Data Package. The map from the skyscraper schema to its Data Package Repository is stored and maintained by \code{\link{load_schema_map}}.
 #'
 #' @param conn                  Postgres connection
 #' @param schemas               Character vector of length 1 or more of the schemas to update
@@ -451,7 +450,7 @@ export_schema_to_data_repo <-
 #' Postgres schemas are dropped and repopulated with data found in the corresponding Data Package.
 #'
 #' @details
-#' This function operates on the dataframe returned by \code{\link{map_schema}}. This dataframe is then filtered for the `schemas` argument, if provided, or is otherwise run to completion on all schemas. Since this function cascade drops a schema before repopulating it with package data, the arguments are structured in such a way that a user has to call for a complete refresh of all possible schemas by setting the `all` argument to `TRUE` in order to prevent data loss due to bugs.
+#' This function operates on the dataframe returned by \code{\link{load_schema_map}}. This dataframe is then filtered for the `schemas` argument, if provided, or is otherwise run to completion on all schemas. Since this function cascade drops a schema before repopulating it with package data, the arguments are structured in such a way that a user has to call for a complete refresh of all possible schemas by setting the `all` argument to `TRUE` in order to prevent data loss due to bugs.
 #'
 #' The Namespace for all the Data Packages are unloaded at the start of execution to prevent the wrong Data Package from being loaded into the wrong schema since the dataframe names are duplicated across packages. Without a forced update, the corresponding Data Package is first installed only if there is a new version of the package detected when installing from GitHub. The fresh install of the Data Package is loaded, all columns with a "datetime" string match are converted to "POSIXct" "POSIXt", and then populates the schema after the present schema is dropped. In a forced update, the corresponding Data Package is force-installed and the schema is dropped and refreshed regardless of whether or not a difference has been detected in the Data Package GitHub repo.
 #' @inheritSection  local_maintenance_functions Update Schemas
@@ -500,7 +499,7 @@ import_schemas <-
                         stop('schemas argument required when all == FALSE')
                 }
 
-                schema_map <- map_schema()
+                schema_map <- load_schema_map()
 
                 # Unload All Namespaces
                 unloadPackages <- schema_map$dataPackage
@@ -632,7 +631,7 @@ import_schemas <-
 #' Update Schemas with a Data Package
 #'
 #' @description
-#' Instantiate or Update any of the Postgres schemas governed by the skyscraper Package with the data found in its corresponding Data Package. The map from the skyscraper schema to its Data Package Repository is stored and maintained by \code{\link{map_schema}}.
+#' Instantiate or Update any of the Postgres schemas governed by the skyscraper Package with the data found in its corresponding Data Package. The map from the skyscraper schema to its Data Package Repository is stored and maintained by \code{\link{load_schema_map}}.
 #'
 #' @param conn                  Postgres connection
 #' @param schemas               Character vector of length 1 or more of the schemas to update
@@ -643,7 +642,7 @@ import_schemas <-
 #' Postgres schemas are dropped and repopulated with data found in the corresponding Data Package.
 #'
 #' @details
-#' This function operates on the dataframe returned by \code{\link{map_schema}}. This dataframe is then filtered for the `schemas` argument, if provided, or is otherwise run to completion on all schemas. Since this function cascade drops a schema before repopulating it with package data, the arguments are structured in such a way that a user has to call for a complete refresh of all possible schemas by setting the `all` argument to `TRUE` in order to prevent data loss due to bugs.
+#' This function operates on the dataframe returned by \code{\link{load_schema_map}}. This dataframe is then filtered for the `schemas` argument, if provided, or is otherwise run to completion on all schemas. Since this function cascade drops a schema before repopulating it with package data, the arguments are structured in such a way that a user has to call for a complete refresh of all possible schemas by setting the `all` argument to `TRUE` in order to prevent data loss due to bugs.
 #'
 #' The Namespace for all the Data Packages are unloaded at the start of execution to prevent the wrong Data Package from being loaded into the wrong schema since the dataframe names are duplicated across packages. Without a forced update, the corresponding Data Package is first installed only if there is a new version of the package detected when installing from GitHub. The fresh install of the Data Package is loaded, all columns with a "datetime" string match are converted to "POSIXct" "POSIXt", and then populates the schema after the present schema is dropped. In a forced update, the corresponding Data Package is force-installed and the schema is dropped and refreshed regardless of whether or not a difference has been detected in the Data Package GitHub repo.
 #' @inheritSection  local_maintenance_functions Update Schemas
@@ -692,7 +691,7 @@ update_schemas <-
                         stop('schemas argument required when all == FALSE')
                 }
 
-                schema_map <- map_schema()
+                schema_map <- load_schema_map()
 
                 if (all) {
 

@@ -42,7 +42,7 @@ Exporting schemas requires having a local clone of its Data Package Repository. 
 
 Other local maintenance: 
 \code{\link{import_schemas}()},
-\code{\link{map_schema}()},
+\code{\link{load_schema_map}()},
 \code{\link{schema_status}()}
 }
 \concept{local maintenance}
