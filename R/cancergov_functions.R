@@ -1622,5 +1622,133 @@ get_ncit_synonym <-
 
         }
 
+#' @title FUNCTION_TITLE
+#' @description FUNCTION_DESCRIPTION
+#' @param conn PARAM_DESCRIPTION
+#' @param sleep_time PARAM_DESCRIPTION, Default: 5
+#' @return OUTPUT_DESCRIPTION
+#' @details DETAILS
+#' @seealso
+#'  \code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{readTable}},\code{\link[pg13]{appendTable}}
+#'  \code{\link[xml2]{read_xml}}
+#'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_table}}
+#'  \code{\link[purrr]{keep}}
+#'  \code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{select_all}}
+#'  \code{\link[rubix]{format_colnames}}
+#' @rdname lookup_ncit_synonym
+#' @export
+#' @importFrom pg13 lsTables query readTable appendTable
+#' @importFrom xml2 read_html
+#' @importFrom rvest html_nodes html_table
+#' @importFrom purrr keep
+#' @importFrom dplyr bind_rows mutate rename_all transmute
+#' @importFrom rubix format_colnames
+
+lookup_ncit_synonym <-
+        function(ncit_code,
+                 conn,
+                 sleep_time = 5) {
+
+                # conn <- chariot::connectAthena()
+
+                cgTables <- pg13::lsTables(conn = conn,
+                                           schema = "cancergov")
+
+
+
+                ncit_synonym_table <-
+                        pg13::query(conn = conn,
+                                    sql_statement =
+                                            SqlRender::render(
+                                                            "
+                                                SELECT DISTINCT
+                                                        dln.*, ns.ns_datetime
+                                                FROM cancergov.drug_link_ncit dln
+                                                LEFT JOIN cancergov.ncit_synonym ns
+                                                ON ns.ncit_code = dln.ncit_code
+                                                WHERE dln.ncit_code = '@ncit_code';",
+                                                            ncit_code = ncit_code))
+
+                # If invalid ncit code
+                if (nrow(ncit_synonym_table) == 0) {
+
+                        stop('`ncit_code` not found')
+
+
+                } else {
+
+                        if (is.na(ncit_synonym_table$ns_datetime)) {
+
+                                # Proceed to read url, otherwise, return what is in the table
+                                proceed <- TRUE
+                        } else {
+
+                                proceed <- FALSE
+                        }
+                }
+
+
+                if (proceed) {
+
+                        ncit_code_url <- paste0("https://ncithesaurus.nci.nih.gov/ncitbrowser/pages/concept_details.jsf?dictionary=NCI_Thesaurus&code=",ncit_code, "&ns=ncit&type=synonym&key=null&b=1&n=0&vse=null#")
+
+                        Sys.sleep(sleep_time)
+
+                        response <- tryCatch(xml2::read_html(ncit_code_url),
+                                             error = function(error) NULL)
+
+                        if (is.null(response)) {
+
+                                Sys.sleep(sleep_time)
+
+
+                                response <- tryCatch(xml2::read_html(ncit_code_url),
+                                                     error = function(error) NULL)
+
+                        }
+
+                        if (!is.null(response)) {
+
+                                output <-
+                                        response %>%
+                                        rvest::html_nodes("table") %>%
+                                        rvest::html_table(fill = TRUE) %>%
+                                        purrr::keep(function(x) "Term" %in% colnames(x)) %>%
+                                        dplyr::bind_rows() %>%
+                                        dplyr::mutate(ncit_code = ncit_code) %>%
+                                        dplyr::mutate(ncit_code_url = ncit_code_url) %>%
+                                        rubix::format_colnames() %>%
+                                        dplyr::rename_all(tolower) %>%
+                                        dplyr::transmute(ns_datetime = Sys.time(),
+                                                         ncit_code,
+                                                         ncit_code_url,
+                                                         term,
+                                                         source,
+                                                         tty = type,
+                                                         code)
+
+                                pg13::appendTable(conn = conn,
+                                                  schema = "cancergov",
+                                                  tableName = "ncit_synonym",
+                                                  output)
+
+                                return(output)
+
+                        } else {
+                                NULL
+                        }
+
+                } else {
+
+                        pg13::query(conn = conn,
+                                    SqlRender::render(
+                                    "SELECT *
+                                    FROM cancergov.ncit_synonym ns
+                                    WHERE ns.ncit_code = '@ncit_code'", ncit_code = ncit_code))
+
+                }
+
+        }
+
 
 
