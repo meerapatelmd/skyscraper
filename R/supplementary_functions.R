@@ -181,21 +181,25 @@ load_mrconso <-
 #' @importFrom SqlRender render
 
 
-load_ncit <-
-        function(conn) {
 
+load_ncit <-
+        function(conn,
+                 file = "",
+                 append = TRUE) {
+
+                # conn <- chariot::connectAthena()
                 schema <- "nci_evs"
                 tableName <- "thesaurus"
 
-                secretary::typewrite_italic(secretary::timepunch(),"\tDownloading Thesaurus.FLAT.zip....")
-                temp <- tempfile()
+                secretary::typewrite("##### START NCIt Update")
+                secretary::typewrite("Downloading Thesaurus.FLAT.zip")
                 download.file("https://evs.nci.nih.gov/ftp1/NCI_Thesaurus/Thesaurus.FLAT.zip",
                               destfile = temp)
                 unzipped_file <- unzip(temp)
 
 
                 Sys.sleep(1)
-                secretary::typewrite_italic(secretary::timepunch(),"\tCreating", schema, "if it didn't exist...")
+
                 pg13::send(conn = conn,
                            sql_statement =
                                    SqlRender::render(
@@ -205,7 +209,7 @@ load_ncit <-
 
 
                 Sys.sleep(1)
-                secretary::typewrite_italic(secretary::timepunch(),"\tNCIt Table in", schema, "dropped if it existed...")
+
                 pg13::dropTable(conn = conn,
                                 schema = schema,
                                 tableName = tableName)
@@ -227,7 +231,7 @@ load_ncit <-
                                                     ncit_concept_type text,
                                                     ncit_semantic_type text
                                                 );", schema = schema,
-                                           tableName = tableName
+                                           tableName = "thesaurus_staging"
                                    )
                 )
 
@@ -237,13 +241,41 @@ load_ncit <-
                 pg13::send(conn = conn,
                            SqlRender::render(
                                    "COPY @schema.@tableName FROM '@vocabulary_file' WITH DELIMITER E'\t' CSV HEADER QUOTE E'\b' ;",
-                                   tableName = tableName,
+                                   tableName = "thesaurus_staging",
                                    schema = schema,
                                    vocabulary_file = file.path(getwd(), unzipped_file)))
 
 
                 Sys.sleep(1)
-                secretary::typewrite_italic(secretary::timepunch(),"\tCopying", unzipped_file, "to NCIt Table in", schema, "...")
+
+                pg13::send(
+                        conn = conn,
+                        "
+                        DROP TABLE nci_evs.thesaurus;
+                        CREATE TABLE nci_evs.thesaurus (
+                        cui character varying(7),
+                        ncit_code text,
+                        ncit_concept text,
+                        ncit_description text,
+                        ncit_class text,
+                        ncit_concept_type text,
+                        ncit_semantic_type text
+                );"
+                )
+
+
+                pg13::send(
+                        conn = conn,
+                        "
+                                SELECT
+                                        cui,
+                                        regexp_split_to_table(ncit_code, '[|]{1}') AS ncit_code,
+                                        regexp_split_to_table(ncit_concepts, '[|]{1}') AS ncit_concept
+                                        FROM nci_evs.thesaurus_staging
+                                        ;
+
+                        "
+                )
 
                 load_log <-
                         data.frame(ll_datetime = Sys.time(),

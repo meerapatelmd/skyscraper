@@ -4,7 +4,7 @@
 \alias{load_ncit}
 \title{FUNCTION_TITLE}
 \usage{
-load_ncit(conn)
+load_ncit(conn, file = "", append = TRUE)
 }
 \arguments{
 \item{conn}{PARAM_DESCRIPTION}
