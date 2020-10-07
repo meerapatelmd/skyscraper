@@ -43,7 +43,7 @@ load_schema_map <-
 
 
                 tibble::tribble(~schema, ~dataPackage, ~tables,
-                                "cancergov", "cancergovData", "c('DRUG_DICTIONARY', 'DRUG_DICTIONARY_LOG', 'DRUG_LINK', 'DRUG_LINK_SYNONYM', 'DRUG_LINK_URL', 'DRUG_LINK_NCIT')",
+                                "cancergov", "cancergovData", "c('DRUG_DICTIONARY', 'DRUG_DICTIONARY_LOG', 'DRUG_LINK', 'DRUG_LINK_SYNONYM', 'DRUG_LINK_URL', 'DRUG_LINK_NCIT', 'NCIT_SYNONYM)",
                                 "chemidplus", "chemidplusData", "c('CLASSIFICATION', 'LINKS_TO_RESOURCES', 'NAMES_AND_SYNONYMS', 'REGISTRY_NUMBER_LOG', 'REGISTRY_NUMBERS', 'RN_URL_VALIDITY')",
                                 "pubmed_search", "pubmedSearchData", NA) %>%
                         dplyr::mutate(repo = paste0(repo_username, "/", dataPackage))
