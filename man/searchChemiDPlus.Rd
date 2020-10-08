@@ -8,10 +8,10 @@ searchChemiDPlus(
   conn,
   search_term,
   type = "contains",
-  sleep_time = 3,
-  schema = "chemidplus_search",
-  export_repo = TRUE,
-  target_dir = "~/GitHub/Public-Packages/chemidplusSearchData/"
+  sleep_time = 5,
+  schema = "chemidplus",
+  export_repo = FALSE,
+  target_dir = "~/GitHub/Public-Packages/chemidplusData/"
 )
 }
 \description{

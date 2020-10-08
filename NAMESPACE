@@ -2,6 +2,7 @@
 
 export("%>%")
 export(chemidplus_tables_to_omop)
+export(export_schema)
 export(export_schema_to_data_repo)
 export(get_classification)
 export(get_classification_code)

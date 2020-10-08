@@ -221,3 +221,10 @@ Timestamp	Activity Type	Function	File	Details
 2020-10-02T04:23:59Z	write	simply_write_csv	/Users/meerapatel/GitHub/chemidplusData/data-raw/REGISTRY_NUMBER_LOG.csv	
 2020-10-02T04:23:59Z	write	simply_write_csv	/Users/meerapatel/GitHub/chemidplusData/data-raw/REGISTRY_NUMBERS.csv	
 2020-10-02T04:23:59Z	write	simply_write_csv	/Users/meerapatel/GitHub/chemidplusData/data-raw/RN_URL_VALIDITY.csv	
+2020-10-08T00:47:37Z	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/DRUG_DICTIONARY.csv	
+2020-10-08T00:47:37Z	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/DRUG_DICTIONARY_LOG.csv	
+2020-10-08T00:47:37Z	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/DRUG_LINK.csv	
+2020-10-08T00:47:37Z	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/DRUG_LINK_SYNONYM.csv	
+2020-10-08T00:47:37Z	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/DRUG_LINK_URL.csv	
+2020-10-08T00:47:37Z	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/DRUG_LINK_NCIT.csv	
+2020-10-08T00:47:37Z	write	simply_write_csv	/Users/patelm9/GitHub/Public-Packages/cancergovData/data-raw/NCIT_SYNONYM.csv	

@@ -1930,12 +1930,12 @@ searchChemiDPlus <-
         function(conn,
                  search_term,
                  type = "contains",
-                 sleep_time = 3,
-                 schema = "chemidplus_search",
-                 export_repo = TRUE,
-                 target_dir = "~/GitHub/Public-Packages/chemidplusSearchData/") {
+                 sleep_time = 5,
+                 schema = "chemidplus",
+                 export_repo = FALSE,
+                 target_dir = "~/GitHub/Public-Packages/chemidplusData/") {
 
-                #search_term <- "Protocol #14-068: AG-120 Tablets"
+                # search_term <- "3F8 MOAB"
 
                 log_registry_number(conn = conn,
                                     raw_concept = search_term,
