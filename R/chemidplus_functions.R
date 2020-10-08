@@ -1668,7 +1668,8 @@ isSingleHit <-
 
                         } else {
 
-                                tibble::tibble(compound_match = `Substance Name`,
+                                output2 %>%
+                                dplyr::transmute(compound_match = `Substance Name`,
                                                rn = NA_character_,
                                                rn_url = NA_character_)
                         }
