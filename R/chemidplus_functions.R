@@ -1638,6 +1638,8 @@ isNoRecord <-
 isSingleHit <-
         function(response) {
 
+                #response <- resp
+
                 output <-
                         response %>%
                         rvest::html_node("h1") %>%
@@ -1645,18 +1647,33 @@ isSingleHit <-
 
 
                 if (!is.na(output)) {
+                        output2 <-
                         output %>%
-                                centipede::strsplit(split = "Substance Name[:]{1}|RN[:]{1}|UNII[:]{1}|InChIKey[:]{1}", type = "before") %>%
+                                centipede::strsplit(split = "Substance Name[:]{1}|RN[:]{1}|UNII[:]{1}|InChIKey[:]{1}|ID[:]{1}", type = "before") %>%
                                 unlist() %>%
                                 tibble::as_tibble_col(column_name = "h1") %>%
                                 tidyr::extract(col = h1,
                                                into = c("identifier_type", "identifier"),
                                                regex = "(^.*?)[:]{1}(.*$)") %>%
                                 tidyr::pivot_wider(names_from = identifier_type,
-                                                   values_from = identifier) %>%
+                                                   values_from = identifier)
+
+                        if ("RN" %in% colnames(output2)) {
+
+                                output2 %>%
                                 dplyr::transmute(compound_match = `Substance Name`,
                                                  rn = stringr::str_remove_all(RN, "\\s{1,}")) %>%
                                 dplyr::mutate(rn_url = paste0("https://chem.nlm.nih.gov/chemidplus/rn/",rn))
+
+
+                        } else {
+
+                                tibble::tibble(compound_match = `Substance Name`,
+                                               rn = NA_character_,
+                                               rn_url = NA_character_)
+                        }
+
+
                 } else {
                         tibble::tribble(~compound_match,
                                         ~rn,
@@ -1706,27 +1723,12 @@ log_registry_number <-
                  sleep_time = 3,
                  schema = "chemidplus") {
 
-                # tositumomab and I 131 tositumomab
-                # tositumomab and iodine-131 tositumomab
-                # trametinib dimethyl sulfoxide
-                # trastuzumab and hyaluronidase-oysk
-                # trastuzumab emtansine
-                # tretinoin
-                # trifluridine and tipiracil
-                # trifluridine/tipiracil
-                # tucidinostat
-                # uramustine
-                # valaciclovir
-                # valaciclovir Hcl
-                # valproic acid
-                # vinblastine sulfate
-
-                #conn <- chariot::connectAthena()
-                #raw_concept <- "Interleukin-2"
-                #raw_concept <- "Anthracycline"
-
-                #raw_concept <- "olmutinib"
-                #
+                # conn <- chariot::connectAthena()
+                # raw_concept <- "BI 836858"
+                # type <- "contains"
+                # sleep_time <- 5
+                # schema <- "chemidplus"
+                # export_repo <- FALSE
 
                 search_type <- type
 
@@ -1935,7 +1937,12 @@ searchChemiDPlus <-
                  export_repo = FALSE,
                  target_dir = "~/GitHub/Public-Packages/chemidplusData/") {
 
-                # search_term <- "3F8 MOAB"
+                # conn <- chariot::connectAthena()
+                # search_term <- "BI 836858"
+                # type <- "contains"
+                # sleep_time <- 5
+                # schema <- "chemidplus"
+                # export_repo <- FALSE
 
                 log_registry_number(conn = conn,
                                     raw_concept = search_term,
