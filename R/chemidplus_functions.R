@@ -1810,7 +1810,7 @@ log_registry_number <-
 
                         Sys.sleep(sleep_time)
 
-                        resp <- xml2::read_html(url)
+                        resp <- xml2::read_html(url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
 
 
                         if (!is.null(resp)) {
