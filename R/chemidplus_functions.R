@@ -1454,17 +1454,23 @@ is404 <-
 isMultipleHits <-
         function(response) {
 
+                # Get list of the search results that can be in the format of a. "{SubstanceName}{RNNumber}No Structure" or b. "MW: {molecular weight}"
                 output <-
                         response %>%
                         rvest::html_nodes(".bodytext") %>%
-                        rvest::html_text()
+                        rvest::html_text() %>%
+                        stringr::str_remove_all("No Structure") %>%
+                        grep(pattern = "^MW[:]{1}[ ]{1}", invert = TRUE, value = TRUE)
 
-
+                # Concatenate 1 or more {SubstanceName} out of the "{SubstanceName}{RNNumber}" in a pipe-separated string to isolate RN number in output above using regex
                 chem_names <-
                         response %>%
                         rvest::html_nodes(".chem-name") %>%
                         rvest::html_text() %>%
                         paste(collapse = "|")
+
+
+
 
                 output_a <-
                         police::try_catch_error_as_null(
@@ -1553,6 +1559,66 @@ isMultipleHits <-
                         }
                 }
 
+        }
+
+#' @title FUNCTION_TITLE
+#' @description FUNCTION_DESCRIPTION
+#' @param response PARAM_DESCRIPTION
+#' @return OUTPUT_DESCRIPTION
+#' @details DETAILS
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'  #EXAMPLE1
+#'  }
+#' }
+#' @seealso
+#'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
+#'  \code{\link[stringr]{str_remove}},\code{\link[stringr]{modifiers}}
+#'  \code{\link[tibble]{tibble}}
+#'  \code{\link[dplyr]{bind}}
+#' @rdname isMultipleHits2
+#' @export
+#' @importFrom rvest html_nodes html_text
+#' @importFrom stringr str_remove_all str_remove fixed
+#' @importFrom tibble tibble
+#' @importFrom dplyr bind_rows
+
+
+isMultipleHits2 <-
+        function(response) {
+
+                #response <- xml2::read_html("https://chem.nlm.nih.gov/chemidplus/name/contains/DEPATUXIZUMAB")
+
+                # Get list of the search results that can be in the format of a. "{SubstanceName}{RNNumber}No Structure" or b. "MW: {molecular weight}"
+                output <-
+                        response %>%
+                        rvest::html_nodes(".bodytext") %>%
+                        rvest::html_text() %>%
+                        stringr::str_remove_all("No Structure") %>%
+                        grep(pattern = "^MW[:]{1}[ ]{1}", invert = TRUE, value = TRUE)
+
+                #  Get{SubstanceName} out of the "{SubstanceName}{RNNumber}" to isolate RN number in output above using regex
+                chem_names <-
+                        response %>%
+                        rvest::html_nodes(".chem-name") %>%
+                        rvest::html_text()
+
+                # For each chem_name found, to match it with the appropriate vector in output above and then get the RN number
+                multiple_hits_results <- list()
+                for (chem_name in chem_names) {
+
+                        rn_match <- grep(chem_name, output, value = TRUE, fixed = TRUE)
+                        rn_match <- stringr::str_remove(rn_match, pattern = stringr::fixed(chem_name))
+
+                        multiple_hits_results[[1+length(multiple_hits_results)]] <-
+                                tibble::tibble(compound_match = chem_name,
+                                               rn = rn_match,
+                                               rn_url = paste0("https://chem.nlm.nih.gov/chemidplus/rn/", rn_match))
+
+                }
+
+                dplyr::bind_rows(multiple_hits_results)
         }
 
 
