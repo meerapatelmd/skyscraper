@@ -1782,6 +1782,7 @@ isSingleHit <-
 #' @importFrom tibble tibble
 #' @importFrom xml2 read_html
 #' @importFrom magrittr %>%
+#' @importFrom purrr keep
 
 log_registry_number <-
         function(conn,
@@ -1889,10 +1890,24 @@ log_registry_number <-
 
                                 if (!status_df$no_record) {
 
+                                        single_hit_resultset <-
+                                                tryCatch(isSingleHit(response = resp),
+                                                         error = function(e) NULL)
+
+                                        multiple_hit_resultset1 <-
+                                                tryCatch(isMultipleHits(response = resp),
+                                                         error = function(e) NULL)
+
+                                        multiple_hit_resultset2 <-
+                                                tryCatch(isMultipleHit2(response = resp),
+                                                         error = function(e) NULL)
+
                                         results <-
-                                                dplyr::bind_rows(
-                                                        isSingleHit(response = resp),
-                                                        isMultipleHits(response = resp)) %>%
+                                                list(single_hit_resultset,
+                                                     multiple_hit_resultset1,
+                                                     multiple_hit_resultset2) %>%
+                                                purrr::keep(~!is.null(.)) %>%
+                                                dplyr::bind_rows() %>%
                                                 dplyr::mutate(url = url)
 
                                         status_df <-
