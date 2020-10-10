@@ -1796,7 +1796,15 @@ log_registry_number <-
                 # schema <- "chemidplus"
                 # export_repo <- FALSE
 
+                # conn <- chariot::connectAthena()
+                # raw_concept <- "BEZ235"
+                # type <- "contains"
+                # sleep_time <- 5
+                # schema <- "chemidplus"
+                # export_repo <- FALSE
+
                 search_type <- type
+
 
                 if (!missing(conn)) {
 
@@ -1897,7 +1905,7 @@ log_registry_number <-
                                                          error = function(e) NULL)
 
                                         multiple_hit_resultset2 <-
-                                                tryCatch(isMultipleHit2(response = resp),
+                                                tryCatch(isMultipleHits2(response = resp),
                                                          error = function(e) NULL)
 
                                         results <-
