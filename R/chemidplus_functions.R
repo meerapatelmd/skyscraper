@@ -1620,6 +1620,88 @@ isMultipleHits2 <-
         }
 
 
+#' @title FUNCTION_TITLE
+#' @description FUNCTION_DESCRIPTION
+#' @param response PARAM_DESCRIPTION
+#' @return OUTPUT_DESCRIPTION
+#' @details DETAILS
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'  #EXAMPLE1
+#'  }
+#' }
+#' @seealso
+#'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
+#'  \code{\link[centipede]{strsplit}},\code{\link[centipede]{no_na}}
+#'  \code{\link[tibble]{as_tibble}},\code{\link[tibble]{tribble}}
+#'  \code{\link[tidyr]{extract}},\code{\link[tidyr]{pivot_wider}}
+#'  \code{\link[dplyr]{mutate}}
+#'  \code{\link[stringr]{str_remove}}
+#' @rdname isSingleHit2
+#' @export
+#' @importFrom rvest html_nodes html_text
+#' @importFrom centipede strsplit no_na
+#' @importFrom tibble as_tibble_col tribble
+#' @importFrom tidyr extract pivot_wider
+#' @importFrom dplyr transmute mutate
+#' @importFrom stringr str_remove_all
+
+isSingleHit2 <-
+        function(response) {
+
+                # response <- xml2::read_html("https://chem.nlm.nih.gov/chemidplus/name/contains/BI836858")
+
+                # Get list of the search results that can be in the format of a. "{SubstanceName}{RNNumber}No Structure" or b. "MW: {molecular weight}"
+                output <-
+                        response %>%
+                        rvest::html_nodes("h1") %>%
+                        rvest::html_text() %>%
+                        centipede::strsplit(split = "Substance Name[:]{1}|RN[:]{1}|UNII[:]{1}|InChIKey[:]{1}|ID[:]{1}", type = "before")  %>%
+                        unlist() %>%
+                        centipede::no_na()
+
+                if (length(output)) {
+                                output2 <-
+                                        output %>%
+                                        centipede::strsplit(split = "Substance Name[:]{1}|RN[:]{1}|UNII[:]{1}|InChIKey[:]{1}|ID[:]{1}", type = "before") %>%
+                                        unlist() %>%
+                                        tibble::as_tibble_col(column_name = "h1") %>%
+                                        tidyr::extract(col = h1,
+                                                       into = c("identifier_type", "identifier"),
+                                                       regex = "(^.*?)[:]{1}(.*$)") %>%
+                                        tidyr::pivot_wider(names_from = identifier_type,
+                                                           values_from = identifier)
+
+                                if (!("RN" %in% colnames(output2))) {
+
+                                        if ("ID" %in% colnames(output2)) {
+
+                                                output2 %>%
+                                                        dplyr::transmute(compound_match = `Substance Name`,
+                                                                         rn = stringr::str_remove_all(ID, "\\s{1,}")) %>%
+                                                        dplyr::mutate(rn_url = paste0("https://chem.nlm.nih.gov/chemidplus/rn/",rn))
+                                        }
+
+
+                                } else {
+
+                                        tibble::tribble(~compound_match,
+                                                        ~rn,
+                                                        ~rn_url)
+                                }
+
+
+                        } else {
+                                tibble::tribble(~compound_match,
+                                                ~rn,
+                                                ~rn_url)
+                        }
+        }
+
+
+
+
 
 #' @title
 #' Does the RN URL indicate that no records were found?
@@ -1732,10 +1814,9 @@ isSingleHit <-
 
                         } else {
 
-                                output2 %>%
-                                dplyr::transmute(compound_match = `Substance Name`,
-                                               rn = NA_character_,
-                                               rn_url = NA_character_)
+                                tibble::tribble(~compound_match,
+                                                ~rn,
+                                                ~rn_url)
                         }
 
 
@@ -1896,8 +1977,12 @@ log_registry_number <-
 
                                 if (!status_df$no_record) {
 
-                                        single_hit_resultset <-
+                                        single_hit_resultset1 <-
                                                 tryCatch(isSingleHit(response = resp),
+                                                         error = function(e) NULL)
+
+                                        single_hit_resultset2 <-
+                                                tryCatch(isSingleHit2(response = resp),
                                                          error = function(e) NULL)
 
                                         multiple_hit_resultset1 <-
@@ -1909,7 +1994,8 @@ log_registry_number <-
                                                          error = function(e) NULL)
 
                                         results <-
-                                                list(single_hit_resultset,
+                                                list(single_hit_resultset1,
+                                                     single_hit_resultset2,
                                                      multiple_hit_resultset1,
                                                      multiple_hit_resultset2) %>%
                                                 purrr::keep(~!is.null(.)) %>%
