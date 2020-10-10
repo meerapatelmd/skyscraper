@@ -1977,6 +1977,88 @@ log_registry_number <-
         }
 
 
+#' @title FUNCTION_TITLE
+#' @description FUNCTION_DESCRIPTION
+#' @param conn PARAM_DESCRIPTION
+#' @param schema PARAM_DESCRIPTION
+#' @param errors PARAM_DESCRIPTION
+#' @param search_type PARAM_DESCRIPTION
+#' @return OUTPUT_DESCRIPTION
+#' @details DETAILS
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'  #EXAMPLE1
+#'  }
+#' }
+#' @seealso
+#'  \code{\link[tibble]{tibble}}
+#'  \code{\link[dplyr]{mutate}}
+#'  \code{\link[stringr]{str_remove}}
+#'  \code{\link[pg13]{dropTable}},\code{\link[pg13]{writeTable}},\code{\link[pg13]{query}},\code{\link[pg13]{appendTable}}
+#' @rdname log_errors
+#' @export
+#' @importFrom tibble tibble
+#' @importFrom dplyr mutate
+#' @importFrom stringr str_remove_all
+#' @importFrom pg13 dropTable writeTable query appendTable
+
+
+log_errors <-
+        function(conn,
+                 schema,
+                 errors,
+                 search_type) {
+
+                errors_to_rnl <-
+                tibble::tibble(rnl_datetime = Sys.time(),
+                               raw_concept = errors) %>%
+                        dplyr::mutate(processed_concept =  stringr::str_remove_all(raw_concept, "\\s|[']{1}")) %>%
+                        dplyr::mutate(url = paste0("https://chem.nlm.nih.gov/chemidplus/name/", search_type, "/",processed_concept)) %>%
+                        dplyr::mutate(response_received = "ERROR",
+                                      no_record = NA_character_,
+                                      response_recorded = NA_character_,
+                                      compound_match = NA_character_,
+                                      rn = NA_character_,
+                                      rn_url = NA_character_)
+
+
+                temp_table_name <- paste0("v", stringr::str_remove_all(as.character(Sys.time()), "[[:punct:]]|\\s"))
+
+                pg13::dropTable(conn = conn,
+                                schema = schema,
+                                tableName = temp_table_name)
+
+                pg13::writeTable(conn = conn,
+                                 schema = schema,
+                                 tableName = temp_table_name,
+                                 errors_to_rnl)
+
+
+                new_errors_to_rnl <-
+                        pg13::query(conn = conn,
+                                    sql_statement = "SELECT temp.*
+                                                        FROM @schema.@temp_table_name temp
+                                                        LEFT JOIN @schema.registry_number_log log
+                                                        ON LOWER(log.raw_concept) = LOWER(temp.raw_concept)
+                                                                AND LOWER(log.processed_concept) = LOWER(temp.processed_concept)
+                                                                AND LOWER(log.response_received) = LOWER(temp.response_received)
+                                    WHERE log.rnl_datetime IS NULL")
+
+
+                pg13::dropTable(conn = conn,
+                                schema = schema,
+                                tableName = temp_table_name)
+
+                pg13::appendTable(conn = conn,
+                                  schema = schema,
+                                  tableName = "registry_number_log",
+                                  new_errors_to_rnl)
+        }
+
+
+
+
 
 #' @title
 #' Search ChemiDPlus and Store Results
