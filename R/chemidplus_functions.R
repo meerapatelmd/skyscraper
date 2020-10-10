@@ -2224,6 +2224,8 @@ searchChemiDPlus <-
                 }
 
 
+                closeAllConnections()
+
                 return(status_df)
 
 
