@@ -1448,7 +1448,7 @@ is404 <-
 #' @importFrom tibble as_tibble_col as_tibble tribble
 #' @importFrom rubix filter_at_grepl rm_multibyte_chars normalize_all_to_na
 #' @importFrom tidyr extract
-#' @importFrom dplyr mutate mutate_all filter_at distinct transmute bind_rows
+#' @importFrom dplyr mutate mutate_all filter_at distinct transmute bind_rows all_vars
 #' @importFrom stringr str_remove_all
 
 isMultipleHits <-
@@ -1484,7 +1484,7 @@ isMultipleHits <-
                                         dplyr::mutate_all(stringr::str_remove_all, "No Structure") %>%
                                         dplyr::filter_at(vars(compound_match,
                                                               rn),
-                                                         all_vars(!is.na(.))))
+                                                         dplyr::all_vars(!is.na(.))))
 
 
                 if (is.null(output_a)) {
@@ -1509,7 +1509,7 @@ isMultipleHits <-
                                 rubix::rm_multibyte_chars() %>%
                                 dplyr::filter_at(vars(compound_match,
                                                       rn),
-                                                 all_vars(!is.na(.))) %>%
+                                                 dplyr::all_vars(!is.na(.))) %>%
                                 dplyr::distinct() %>%
                                 tibble::as_tibble() %>%
                                 rubix::normalize_all_to_na() %>%
@@ -1535,7 +1535,7 @@ isMultipleHits <-
                                 dplyr::mutate_all(stringr::str_remove_all, "No Structure") %>%
                                 dplyr::filter_at(vars(compound_match,
                                                       rn),
-                                                 all_vars(!is.na(.)))
+                                                 dplyr::all_vars(!is.na(.)))
 
                         output <-
                                 dplyr::bind_rows(output_a,
