@@ -1458,9 +1458,7 @@ isMultipleHits <-
                 output <-
                         response %>%
                         rvest::html_nodes(".bodytext") %>%
-                        rvest::html_text() %>%
-                        stringr::str_remove_all("No Structure") %>%
-                        grep(pattern = "^MW[:]{1}[ ]{1}", invert = TRUE, value = TRUE)
+                        rvest::html_text()
 
                 # Concatenate 1 or more {SubstanceName} out of the "{SubstanceName}{RNNumber}" in a pipe-separated string to isolate RN number in output above using regex
                 chem_names <-
@@ -2017,6 +2015,7 @@ log_registry_number <-
 #' @importFrom dplyr mutate
 #' @importFrom stringr str_remove_all
 #' @importFrom pg13 dropTable writeTable query appendTable
+#' @importFrom SqlRender render
 
 
 log_errors <-
@@ -2052,13 +2051,19 @@ log_errors <-
 
                 new_errors_to_rnl <-
                         pg13::query(conn = conn,
-                                    sql_statement = "SELECT temp.*
-                                                        FROM @schema.@temp_table_name temp
-                                                        LEFT JOIN @schema.registry_number_log log
-                                                        ON LOWER(log.raw_concept) = LOWER(temp.raw_concept)
-                                                                AND LOWER(log.processed_concept) = LOWER(temp.processed_concept)
-                                                                AND LOWER(log.response_received) = LOWER(temp.response_received)
-                                    WHERE log.rnl_datetime IS NULL")
+                                    sql_statement =
+                                    SqlRender::render(
+                                    "
+                                    SELECT temp.*
+                                    FROM @schema.@temp_table_name temp
+                                    LEFT JOIN @schema.registry_number_log log
+                                    ON LOWER(log.raw_concept) = LOWER(temp.raw_concept)
+                                    AND LOWER(log.processed_concept) = LOWER(temp.processed_concept)
+                                    ND LOWER(log.response_received) = LOWER(temp.response_received)
+                                    WHERE log.rnl_datetime IS NULL",
+                                    schema = schema,
+                                    temp_table_name = temp_table_name
+                                    ))
 
 
                 pg13::dropTable(conn = conn,
