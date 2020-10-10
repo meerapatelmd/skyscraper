@@ -2059,7 +2059,7 @@ log_errors <-
                                     LEFT JOIN @schema.registry_number_log log
                                     ON LOWER(log.raw_concept) = LOWER(temp.raw_concept)
                                     AND LOWER(log.processed_concept) = LOWER(temp.processed_concept)
-                                    ND LOWER(log.response_received) = LOWER(temp.response_received)
+                                    AND LOWER(log.response_received) = LOWER(temp.response_received)
                                     WHERE log.rnl_datetime IS NULL",
                                     schema = schema,
                                     temp_table_name = temp_table_name
