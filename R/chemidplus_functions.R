@@ -1604,6 +1604,64 @@ isMultipleHits2 <-
 #' }
 #' @seealso
 #'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
+#'  \code{\link[stringr]{str_remove}},\code{\link[stringr]{modifiers}}
+#'  \code{\link[tibble]{tibble}}
+#'  \code{\link[dplyr]{bind}}
+#' @rdname isMultipleHits3
+#' @export
+#' @importFrom rvest html_nodes html_text
+#' @importFrom stringr str_remove_all str_remove fixed
+#' @importFrom tibble tibble
+#' @importFrom dplyr bind_rows mutate_if
+
+
+isMultipleHits3 <-
+        function(response) {
+
+                #response <- xml2::read_html("https://chem.nlm.nih.gov/chemidplus/name/contains/DEPATUXIZUMAB")
+
+                rns <-
+                        response %>%
+                        rvest::html_nodes(".bodytext a") %>%
+                        rvest::html_attr("href") %>%
+                        stringr::str_replace_all("(^javascript[:]{1}loadChemicalIndex[(]{1}['])(.*?)([']{1}.*$)", "\\2") %>%
+                        centipede::no_blank()
+
+                if (length(rns)) {
+
+                        rn_urls <- paste0("https://chem.nlm.nih.gov/chemidplus/rn/", rns)
+
+                        chem_names <-
+                                response %>%
+                                rvest::html_nodes(".chem-name") %>%
+                                rvest::html_text()
+
+                        tibble::tibble(compund_match = chem_names,
+                                       rn = rns,
+                                       rn_url = rn_urls) %>%
+                                dplyr::mutate(rn = trimws(rn, which = "both")) %>%
+                                dplyr::filter(rn != "") %>%
+                                dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
+
+                } else {
+                        tibble::tribble(~compound_match, ~rn, ~rn_url)
+                }
+
+        }
+
+#' @title FUNCTION_TITLE
+#' @description FUNCTION_DESCRIPTION
+#' @param response PARAM_DESCRIPTION
+#' @return OUTPUT_DESCRIPTION
+#' @details DETAILS
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'  #EXAMPLE1
+#'  }
+#' }
+#' @seealso
+#'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
 #'  \code{\link[centipede]{strsplit}},\code{\link[centipede]{no_na}}
 #'  \code{\link[tibble]{as_tibble}},\code{\link[tibble]{tribble}}
 #'  \code{\link[tidyr]{extract}},\code{\link[tidyr]{pivot_wider}}
@@ -1957,11 +2015,17 @@ log_registry_number <-
                                                 tryCatch(isMultipleHits2(response = resp),
                                                          error = function(e) NULL)
 
+                                        multiple_hit_resultset3 <-
+                                                tryCatch(isMultipleHits3(response = resp),
+                                                         error = function(e) NULL)
+
+
                                         results <-
                                                 list(single_hit_resultset1,
                                                      single_hit_resultset2,
                                                      multiple_hit_resultset1,
-                                                     multiple_hit_resultset2) %>%
+                                                     multiple_hit_resultset2,
+                                                     multiple_hit_resultset3) %>%
                                                 purrr::keep(~!is.null(.)) %>%
                                                 dplyr::bind_rows() %>%
                                                 dplyr::mutate(url = url)
