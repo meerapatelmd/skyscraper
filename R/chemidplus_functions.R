@@ -91,7 +91,7 @@ NULL
 #' @importFrom pg13 lsSchema createSchema lsTables query buildQuery appendTable writeTable
 #' @importFrom rvest html_nodes html_text
 #' @importFrom tibble as_tibble_col
-#' @importFrom dplyr transmute distinct mutate bind_rows mutate_at
+#' @importFrom dplyr transmute distinct mutate bind_rows mutate_at mutate_if
 #' @importFrom stringr str_remove_all
 #' @importFrom centipede strsplit
 #' @importFrom purrr map2 set_names map
@@ -298,8 +298,8 @@ get_classification_code <-
 #' @importFrom xml2 read_html
 #' @importFrom pg13 lsSchema createSchema lsTables query buildQuery appendTable writeTable
 #' @importFrom rvest html_nodes html_text
-#' @importFrom tibble as_tibble_col
-#' @importFrom dplyr transmute distinct filter_at
+#' @importFrom tibble as_tibble_col tibble
+#' @importFrom dplyr transmute distinct filter_at mutate_if
 #' @importFrom magrittr %>%
 
 get_classification <-
@@ -478,8 +478,8 @@ get_classification <-
 #' @importFrom pg13 lsSchema createSchema lsTables query buildQuery appendTable writeTable
 #' @importFrom rvest html_nodes html_attrs
 #' @importFrom purrr map
-#' @importFrom tibble as_tibble_row
-#' @importFrom dplyr bind_rows transmute filter_at
+#' @importFrom tibble as_tibble_row tibble
+#' @importFrom dplyr bind_rows transmute filter_at mutate_if
 #' @importFrom magrittr %>%
 
 get_links_to_resources <-
@@ -691,9 +691,9 @@ get_links_to_resources <-
 #' @importFrom rvest html_nodes html_text
 #' @importFrom stringr str_remove_all
 #' @importFrom centipede strsplit
-#' @importFrom dplyr mutate bind_rows transmute mutate_at distinct
+#' @importFrom dplyr mutate bind_rows transmute mutate_at distinct mutate_if
 #' @importFrom purrr map2 set_names map
-#' @importFrom tibble as_tibble_col
+#' @importFrom tibble as_tibble_col tibble
 #' @importFrom magrittr %>%
 
 get_names_and_synonyms <-
@@ -907,9 +907,9 @@ get_names_and_synonyms <-
 #' @importFrom rvest html_nodes html_text
 #' @importFrom stringr str_remove str_remove_all
 #' @importFrom centipede strsplit
-#' @importFrom dplyr mutate bind_rows transmute mutate_at distinct
+#' @importFrom dplyr mutate bind_rows transmute mutate_at distinct mutate_if
 #' @importFrom purrr map2 set_names map
-#' @importFrom tibble as_tibble_col
+#' @importFrom tibble as_tibble_col tibble
 #' @importFrom magrittr %>%
 
 get_registry_numbers <-
@@ -1196,6 +1196,7 @@ get_response <-
 #' @export
 #'
 #' @importFrom pg13 lsSchema createSchema lsTables query buildQuery appendTable writeTable
+#' @importFrom dplyr mutate_if
 #' @importFrom tibble tibble
 #' @importFrom magrittr %>%
 
@@ -1414,7 +1415,7 @@ is404 <-
 #' @importFrom tibble as_tibble_col as_tibble tribble
 #' @importFrom rubix filter_at_grepl rm_multibyte_chars normalize_all_to_na
 #' @importFrom tidyr extract
-#' @importFrom dplyr mutate mutate_all filter_at distinct transmute bind_rows all_vars
+#' @importFrom dplyr mutate mutate_all filter_at distinct transmute bind_rows all_vars mutate_if
 #' @importFrom stringr str_remove_all
 
 isMultipleHits <-
@@ -1547,7 +1548,7 @@ isMultipleHits <-
 #' @importFrom rvest html_nodes html_text
 #' @importFrom stringr str_remove_all str_remove fixed
 #' @importFrom tibble tibble
-#' @importFrom dplyr bind_rows
+#' @importFrom dplyr bind_rows mutate_if
 
 
 isMultipleHits2 <-
@@ -1610,9 +1611,9 @@ isMultipleHits2 <-
 #' @export
 #' @importFrom rvest html_nodes html_text
 #' @importFrom centipede strsplit no_na
-#' @importFrom tibble as_tibble_col tribble
+#' @importFrom tibble as_tibble_col tribble tibble
 #' @importFrom tidyr extract pivot_wider
-#' @importFrom dplyr transmute mutate
+#' @importFrom dplyr transmute mutate mutate_if
 #' @importFrom stringr str_remove_all
 
 isSingleHit2 <-
@@ -1744,9 +1745,9 @@ isNoRecord <-
 #'
 #' @importFrom rvest html_node html_text
 #' @importFrom centipede strsplit
-#' @importFrom tibble as_tibble_col tribble
+#' @importFrom tibble as_tibble_col tribble tibble
 #' @importFrom tidyr extract pivot_wider
-#' @importFrom dplyr transmute mutate
+#' @importFrom dplyr transmute mutate mutate_if
 #' @importFrom stringr str_remove_all
 #' @importFrom magrittr %>%
 
@@ -1827,7 +1828,7 @@ isSingleHit <-
 #' @export
 #'
 #' @importFrom pg13 lsSchema createSchema lsTables query buildQuery appendTable writeTable
-#' @importFrom dplyr filter mutate bind_rows left_join distinct
+#' @importFrom dplyr filter mutate bind_rows left_join distinct mutate_if
 #' @importFrom stringr str_remove_all
 #' @importFrom tibble tibble
 #' @importFrom xml2 read_html
@@ -2061,7 +2062,7 @@ log_registry_number <-
 #' @rdname log_errors
 #' @export
 #' @importFrom tibble tibble
-#' @importFrom dplyr mutate
+#' @importFrom dplyr mutate mutate_if
 #' @importFrom stringr str_remove_all
 #' @importFrom pg13 dropTable writeTable query appendTable
 #' @importFrom SqlRender render
@@ -2141,7 +2142,7 @@ log_errors <-
 #' @rdname searchChemiDPlus
 #' @export
 #' @importFrom pg13 query buildQuery
-#' @importFrom dplyr select bind_rows filter
+#' @importFrom dplyr select bind_rows filter mutate_if
 #' @importFrom centipede no_na
 #' @importFrom tibble tribble tibble
 #' @importFrom police try_catch_error_as_null
