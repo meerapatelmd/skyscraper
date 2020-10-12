@@ -361,22 +361,15 @@ get_classification <-
 
                 if (missing(response)) {
 
-                        response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
                         Sys.sleep(sleep_time)
+
+                        response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
+
 
                 }
 
                 if (!missing(conn)) {
 
-                        connSchemas <-
-                                pg13::lsSchema(conn = conn)
-
-                        if (!(schema %in% connSchemas)) {
-
-                                pg13::createSchema(conn = conn,
-                                                   schema = schema)
-
-                        }
 
                         chemiTables <- pg13::lsTables(conn = conn,
                                                       schema = schema)
@@ -554,15 +547,6 @@ get_links_to_resources <-
 
                 if (!missing(conn)) {
 
-                        connSchemas <-
-                                pg13::lsSchema(conn = conn)
-
-                        if (!(schema %in% connSchemas)) {
-
-                                pg13::createSchema(conn = conn,
-                                                   schema = schema)
-
-                        }
 
                         chemiTables <- pg13::lsTables(conn = conn,
                                                       schema = schema)
@@ -734,15 +718,6 @@ get_names_and_synonyms <-
 
                 if (!missing(conn)) {
 
-                        connSchemas <-
-                                pg13::lsSchema(conn = conn)
-
-                        if (!(schema %in% connSchemas)) {
-
-                                pg13::createSchema(conn = conn,
-                                                   schema = schema)
-
-                        }
 
                         chemiTables <- pg13::lsTables(conn = conn,
                                                       schema = schema)
