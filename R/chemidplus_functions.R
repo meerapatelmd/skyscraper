@@ -241,10 +241,6 @@ get_classification_code <-
                                                        grepl_phrase = "^Substance Name|^Molecular|^Note",
                                                        evaluates_to = FALSE)
 
-
-
-
-
                         if (!missing(conn)) {
 
 
@@ -1864,16 +1860,6 @@ log_registry_number <-
 
                 if (!missing(conn)) {
 
-                        connSchemas <-
-                                pg13::lsSchema(conn = conn)
-
-                        if (!(schema %in% connSchemas)) {
-
-                                pg13::createSchema(conn = conn,
-                                                   schema = schema)
-
-                        }
-
                         chemiTables <- pg13::lsTables(conn = conn,
                                                       schema = schema)
 
@@ -2016,19 +2002,14 @@ log_registry_number <-
                                 suppressWarnings(closeAllConnections())
                         }
 
+                        status_df <-
+                                status_df %>%
+                                dplyr::mutate_at(vars(c(compound_match,rn,rn_urls), ~stringr::str_remove_all(., pattern = "[^ -~]")))
+
 
 
                         if (!missing(conn)) {
 
-                                connSchemas <-
-                                        pg13::lsSchema(conn = conn)
-
-                                if (!(schema %in% connSchemas)) {
-
-                                        pg13::createSchema(conn = conn,
-                                                           schema = schema)
-
-                                }
 
 
                                 chemiTables <-
