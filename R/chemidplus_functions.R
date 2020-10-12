@@ -414,7 +414,8 @@ get_classification <-
                                                  rn_url = rn_url) %>%
                                 dplyr::distinct()   %>%
                                 dplyr::filter_at(vars(concept_classification),
-                                                 any_vars(nchar(.) < 255))
+                                                 any_vars(nchar(.) < 255)) %>%
+                                dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
 
 
 
@@ -619,7 +620,8 @@ get_links_to_resources <-
                                         resource_link = href,
                                         rn_url = rn_url) %>%
                                 dplyr::filter_at(vars(resource_link),
-                                                 any_vars(nchar(.) < 255))
+                                                 any_vars(nchar(.) < 255)) %>%
+                                dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
 
 
 
@@ -810,7 +812,7 @@ get_names_and_synonyms <-
                                             length(synonyms_content4))
 
                                 df <-
-                                        data.frame(index, ending) %>%
+                                        tibble::tibble(index, ending) %>%
                                         dplyr::mutate(starting = index+1)
 
 
@@ -826,15 +828,15 @@ get_names_and_synonyms <-
                                                          concept_synonym_type,
                                                          concept_synonym_name
                                         ) %>%
-                                        dplyr::mutate_at(vars(concept_synonym_name),
-                                                         ~substr(., 1, 254)) %>%
-                                        dplyr::distinct()
+                                        dplyr::distinct() %>%
+                                        dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
                         } else {
                                 synonyms <-
-                                        data.frame(nas_datetime = Sys.time(),
+                                        tibble::tibble(nas_datetime = Sys.time(),
                                                    rn_url = rn_url,
                                                    concept_synonym_type = "NA",
-                                                   concept_synonym_name = synonyms_content4)
+                                                   concept_synonym_name = synonyms_content4) %>%
+                                        dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
 
                         }
 
@@ -1078,7 +1080,7 @@ get_registry_numbers <-
                                             length(registry_numbers_content4))
 
                                 df <-
-                                        data.frame(index, ending) %>%
+                                        tibble::tibble(index, ending) %>%
                                         dplyr::mutate(starting = index+1)
 
 
@@ -1096,13 +1098,15 @@ get_registry_numbers <-
                                         ) %>%
                                         dplyr::mutate_at(vars(concept_registry_number),
                                                          ~substr(., 1, 254)) %>%
-                                        dplyr::distinct()
+                                        dplyr::distinct() %>%
+                                        dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
                         } else {
                                 registry_numbers <-
-                                        data.frame(rn_datetime = Sys.time(),
+                                        tibble::tibble(rn_datetime = Sys.time(),
                                                    rn_url = rn_url,
                                                    concept_registry_number_type = "NA",
-                                                   concept_registry_number = registry_numbers_content4)
+                                                   concept_registry_number = registry_numbers_content4) %>%
+                                        dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
 
                         }
 
@@ -1166,10 +1170,8 @@ get_response <-
         function(rn_url,
                  sleep_time = 3) {
 
-                response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
                 Sys.sleep(sleep_time)
-
-                response
+               xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
         }
 
 
@@ -1267,14 +1269,16 @@ get_rn_url_validity <-
                                         status_df <-
                                                 tibble::tibble(rnuv_datetime = Sys.time(),
                                                                rn_url = rn_url,
-                                                               is_404 = FALSE)
+                                                               is_404 = FALSE) %>%
+                                                dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
 
 
                                 } else {
                                         status_df <-
                                                 tibble::tibble(rnuv_datetime = Sys.time(),
                                                                rn_url = rn_url,
-                                                               is_404 = is404(rn_url = rn_url))
+                                                               is_404 = is404(rn_url = rn_url)) %>%
+                                                dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
                                         Sys.sleep(sleep_time)
                                 }
 
@@ -1283,7 +1287,8 @@ get_rn_url_validity <-
                                 status_df <-
                                         tibble::tibble(rnuv_datetime = Sys.time(),
                                                        rn_url = rn_url,
-                                                       is_404 = is404(rn_url = rn_url))
+                                                       is_404 = is404(rn_url = rn_url)) %>%
+                                        dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
 
                                 Sys.sleep(sleep_time)
                         }
@@ -1295,16 +1300,6 @@ get_rn_url_validity <-
 
 
                         if (!missing(conn)) {
-
-                                connSchemas <-
-                                        pg13::lsSchema(conn = conn)
-
-                                if (!(schema %in% connSchemas)) {
-
-                                        pg13::createSchema(conn = conn,
-                                                           schema = schema)
-
-                                }
 
 
                                 chemiTables <-
@@ -1522,7 +1517,8 @@ isMultipleHits <-
                                                          rn,
                                                          rn_url = ifelse(!is.na(rn),
                                                                          paste0("https://chem.nlm.nih.gov/chemidplus/rn/", rn),
-                                                                         NA))
+                                                                         NA)) %>%
+                                        dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
                         } else {
                                 tibble::tribble(~compound_match, ~rn, ~rn_url)
                         }
@@ -1587,7 +1583,8 @@ isMultipleHits2 <-
 
                 }
 
-                dplyr::bind_rows(multiple_hits_results)
+                dplyr::bind_rows(multiple_hits_results) %>%
+                        dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
         }
 
 
@@ -1651,7 +1648,9 @@ isSingleHit2 <-
                                                 output2 %>%
                                                         dplyr::transmute(compound_match = `Substance Name`,
                                                                          rn = stringr::str_remove_all(ID, "\\s{1,}")) %>%
-                                                        dplyr::mutate(rn_url = paste0("https://chem.nlm.nih.gov/chemidplus/rn/",rn))
+                                                        dplyr::mutate(rn_url = paste0("https://chem.nlm.nih.gov/chemidplus/rn/",rn)) %>%
+                                                        dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
+
                                         }
 
 
@@ -1780,7 +1779,8 @@ isSingleHit <-
                                 output2 %>%
                                 dplyr::transmute(compound_match = `Substance Name`,
                                                  rn = stringr::str_remove_all(RN, "\\s{1,}")) %>%
-                                dplyr::mutate(rn_url = paste0("https://chem.nlm.nih.gov/chemidplus/rn/",rn))
+                                dplyr::mutate(rn_url = paste0("https://chem.nlm.nih.gov/chemidplus/rn/",rn)) %>%
+                                        dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
 
 
                         } else {
@@ -2002,10 +2002,6 @@ log_registry_number <-
                                 suppressWarnings(closeAllConnections())
                         }
 
-                        status_df <-
-                                status_df %>%
-                                dplyr::mutate_at(vars(c(compound_match,rn,rn_urls), ~stringr::str_remove_all(., pattern = "[^ -~]")))
-
 
 
                         if (!missing(conn)) {
@@ -2021,19 +2017,22 @@ log_registry_number <-
                                         pg13::appendTable(conn = conn,
                                                           schema = schema,
                                                           tableName = "REGISTRY_NUMBER_LOG",
-                                                          status_df)
+                                                          status_df %>%
+                                                                  dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]")))
 
                                 } else {
 
                                         pg13::writeTable(conn = conn,
                                                          schema = schema,
                                                          tableName = "REGISTRY_NUMBER_LOG",
-                                                         status_df)
+                                                         status_df %>%
+                                                                 dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]")))
                                 }
 
                         } else {
 
-                                return(status_df)
+                                status_df %>%
+                                        dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
 
                         }
                 }
@@ -2123,7 +2122,8 @@ log_errors <-
                 pg13::appendTable(conn = conn,
                                   schema = schema,
                                   tableName = "registry_number_log",
-                                  new_errors_to_rnl)
+                                  new_errors_to_rnl %>%
+                                          dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]")))
         }
 
 
@@ -2225,7 +2225,8 @@ searchChemiDPlus <-
                                 status_df <-
                                         dplyr::bind_rows(status_df,
                                                          tibble::tibble(rn_url = rn_url,
-                                                                        rn_url_response_status = "Success"))
+                                                                        rn_url_response_status = "Success")) %>%
+                                        dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
 
                                 get_rn_url_validity(conn = conn,
                                                     rn_url = rn_url,
@@ -2257,7 +2258,8 @@ searchChemiDPlus <-
                                 status_df <-
                                         dplyr::bind_rows(status_df,
                                                          tibble::tibble(rn_url = rn_url,
-                                                                        rn_url_response_status = "Fail"))
+                                                                        rn_url_response_status = "Fail")) %>%
+                                        dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
                         }
 
                 }
@@ -2276,7 +2278,7 @@ searchChemiDPlus <-
 
                 closeAllConnections()
 
-                return(status_df)
+                status_df
 
 
         }
