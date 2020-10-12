@@ -1636,7 +1636,7 @@ isMultipleHits3 <-
                                 rvest::html_nodes(".chem-name") %>%
                                 rvest::html_text()
 
-                        tibble::tibble(compund_match = chem_names,
+                        tibble::tibble(compound_match = chem_names,
                                        rn = rns,
                                        rn_url = rn_urls) %>%
                                 dplyr::mutate(rn = trimws(rn, which = "both")) %>%
