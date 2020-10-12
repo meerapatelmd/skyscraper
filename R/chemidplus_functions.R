@@ -1585,6 +1585,8 @@ isMultipleHits2 <-
                 }
 
                 dplyr::bind_rows(multiple_hits_results) %>%
+                        dplyr::mutate(rn = trimws(rn, which = "both")) %>%
+                        dplyr::filter(rn != "") %>%
                         dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
         }
 
