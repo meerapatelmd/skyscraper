@@ -87,13 +87,23 @@ log_drug_count <-
 
                 if ("DRUG_DICTIONARY_LOG" %in% Tables) {
 
-                        drug_dictionary_log_table <-
-                                pg13::readTable(conn = conn,
-                                                schema = "cancergov",
-                                                tableName = "DRUG_DICTIONARY_LOG")
+                        previous_count <-
+                                pg13::query(conn = conn,
+                                            sql_statement =
+                                                        "
+                                                        SELECT ddl.drug_count
+                                                        FROM cancergov.drug_dictionary_log ddl
+                                                        WHERE ddl.ddl_datetime IN (
+                                                                        SELECT MAX(ddl_datetime)
+                                                                        FROM cancergov.drug_dictionary_log
+                                                        )
+                                                        "
+                                                    ) %>%
+                                unlist() %>%
+                                as.integer()
 
 
-                        if (!(nci_dd_count %in% drug_dictionary_log_table$drug_count)) {
+                        if (!(nci_dd_count %in% previous_count)) {
 
                                 pg13::appendTable(conn = conn,
                                                   schema = "cancergov",
