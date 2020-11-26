@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Is the RN URL returning an HTTP error 404? — is404 • skyscraper</title>
+<title>Map a skyscraper Schema to a Data Package Repository — load_schema_map • skyscraper</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Is the RN URL returning an HTTP error 404? — is404" />
-<meta property="og:description" content="This function gets a response from an RN URL and checks for a 404 message in the error output." />
+<meta property="og:title" content="Map a skyscraper Schema to a Data Package Repository — load_schema_map" />
+<meta property="og:description" content="Each Postgres schema governed by this package has a corresponding Data Package, where updates to the Postgres schema are exported as csvs, packaged, and pushed to a GitHub repo." />
 
 
 
@@ -108,36 +108,34 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Is the RN URL returning an HTTP error 404?</h1>
-    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/chemidplus_functions.R'><code>R/chemidplus_functions.R</code></a></small>
-    <div class="hidden name"><code>is404.Rd</code></div>
+    <h1>Map a skyscraper Schema to a Data Package Repository</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/local_maintenance_functions.R'><code>R/local_maintenance_functions.R</code></a></small>
+    <div class="hidden name"><code>load_schema_map.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function gets a response from an RN URL and checks for a 404 message in the error output.</p>
+    <p>Each Postgres schema governed by this package has a corresponding Data Package, where updates to the Postgres schema are exported as csvs, packaged, and pushed to a GitHub repo.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>is404</span><span class='op'>(</span><span class='va'>rn_url</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>load_schema_map</span><span class='op'>(</span>repo_username <span class='op'>=</span> <span class='st'>"meerapatelmd"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>rn_url</th>
-      <td><p>Registry Number URL</p></td>
+      <th>repo_username</th>
+      <td><p>Github username to which the Data Package belongs, Default: 'meerapatelmd'</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>logical vector of length 1</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_xml</a></code></p>
-<p>Other chemidplus parsing: 
-<code><a href='isMultipleHits.html'>isMultipleHits</a>()</code>,
-<code><a href='isNoRecord.html'>isNoRecord</a>()</code>,
-<code><a href='isSingleHit.html'>isSingleHit</a>()</code></p></div>
+    <div class='dont-index'><p><code><a href='https://tibble.tidyverse.org/reference/tribble.html'>tribble</a></code>
+<code><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></code></p>
+<p>Other local maintenance: 
+<code><a href='export_schema_to_data_repo.html'>export_schema_to_data_repo</a>()</code>,
+<code><a href='import_schemas.html'>import_schemas</a>()</code>,
+<code><a href='schema_status.html'>schema_status</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

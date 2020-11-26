@@ -2,7 +2,7 @@
 #' ETL the ChemiDPlus Tables to OMOP Vocabulary Architecture
 #' @seealso
 #'  \code{\link[pg13]{lsTables}},\code{\link[pg13]{readTable}},\code{\link[pg13]{query}},\code{\link[pg13]{appendTable}}
-#'  \code{\link[rubix]{map_names_set}},\code{\link[rubix]{mutate_all_as_char}},\code{\link[rubix]{normalize_all_to_na}},\code{\link[rubix]{make_identifier}}
+#'  \code{\link[rubix]{map_names_set}}, \code{\link[rubix]{normalize_all_to_na}},\code{\link[rubix]{make_identifier}}
 #'  \code{\link[purrr]{map}},\code{\link[purrr]{map2}}
 #'  \code{\link[tibble]{as_tibble}}
 #'  \code{\link[dplyr]{filter}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{select}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{filter_all}},\code{\link[dplyr]{group_by}}
@@ -12,10 +12,10 @@
 #' @rdname chemidplus_tables_to_omop
 #' @export
 #' @importFrom pg13 lsTables readTable query appendTable
-#' @importFrom rubix map_names_set mutate_all_as_char normalize_all_to_na make_identifier
+#' @importFrom rubix map_names_set normalize_all_to_na make_identifier
 #' @importFrom purrr map map2
 #' @importFrom tibble as_tibble
-#' @importFrom dplyr filter mutate select distinct left_join transmute filter_at inner_join group_by ungroup
+#' @importFrom dplyr filter mutate select distinct left_join transmute filter_at inner_join group_by ungroup mutate_all
 #' @importFrom tidyr extract
 #' @importFrom chariot queryAthena filterValid
 #' @importFrom stringr str_remove_all
@@ -91,7 +91,7 @@ chemidplus_tables_to_omop <-
                                                         WHERE rnl.no_record = 'FALSE'") %>%
                 #2.
                         tibble::as_tibble() %>%
-                        rubix::mutate_all_as_char() %>%
+                        dplyr::mutate_all(as.character) %>%
                         rubix::normalize_all_to_na() %>%
                         dplyr::filter(is.na(concept_id)) %>%
                         dplyr::mutate(concept_id = as.integer(concept_id))

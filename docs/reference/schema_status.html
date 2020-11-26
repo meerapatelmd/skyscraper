@@ -109,7 +109,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Get the Status of a Data Package Installation</h1>
-    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/schema_status.R'><code>R/schema_status.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/local_maintenance_functions.R'><code>R/local_maintenance_functions.R</code></a></small>
     <div class="hidden name"><code>schema_status.Rd</code></div>
     </div>
 
@@ -124,7 +124,7 @@
 
     
 
-<p>All the Data Packages in the Schema Map returned by <code><a href='map_schema.html'>map_schema</a></code> are installed if there are changes to the SHA hash. An "updated" field is added to the Schema Map that contain the values of TRUE if a new installation occurred and FALSE otherwise. If an update to the schema is desired after running this function, <code><a href='import_schemas.html'>update_schemas</a></code>, should be run with <code>force_update</code> set to <code>TRUE</code>.</p>
+<p>All the Data Packages in the Schema Map returned by <code><a href='load_schema_map.html'>load_schema_map</a></code> are installed if there are changes to the SHA hash. An "updated" field is added to the Schema Map that contain the values of TRUE if a new installation occurred and FALSE otherwise. If an update to the schema is desired after running this function, <code><a href='import_schemas.html'>update_schemas</a></code>, should be run with <code>force_update</code> set to <code>TRUE</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/rubix/man/filter_for.html'>filter_for</a></code>
@@ -134,7 +134,7 @@
 <p>Other local maintenance: 
 <code><a href='export_schema_to_data_repo.html'>export_schema_to_data_repo</a>()</code>,
 <code><a href='import_schemas.html'>import_schemas</a>()</code>,
-<code><a href='map_schema.html'>map_schema</a>()</code></p></div>
+<code><a href='load_schema_map.html'>load_schema_map</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

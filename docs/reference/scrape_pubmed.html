@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Scrape a PubMed search — scrape_pubmed • skyscraper</title>
+<title>Scrape a PubMed search — scrape_recent_pubmed • skyscraper</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Scrape a PubMed search — scrape_pubmed" />
-<meta property="og:description" content="The search is constrained to return results in the order of descending publication date." />
+<meta property="og:title" content="Scrape a PubMed search — scrape_recent_pubmed" />
+<meta property="og:description" content="The search is constrained to return results in the order of descending publication date.
+The search is constrained to return results in the order of descending publication date." />
 
 
 
@@ -109,20 +110,28 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Scrape a PubMed search</h1>
-    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/scrape_pubmed.R'><code>R/scrape_pubmed.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/pubmed_functions.R'><code>R/pubmed_functions.R</code></a></small>
     <div class="hidden name"><code>scrape_pubmed.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>The search is constrained to return results in the order of descending publication date.</p>
+<p>The search is constrained to return results in the order of descending publication date.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>scrape_pubmed</span><span class='op'>(</span><span class='va'>conn</span>, <span class='va'>search_term</span>, max_return_size <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>scrape_recent_pubmed</span><span class='op'>(</span><span class='va'>conn</span>, <span class='va'>search_term</span>, schema <span class='op'>=</span> <span class='st'>"patelm9"</span><span class='op'>)</span>
+
+<span class='fu'>scrape_earliest_pubmed</span><span class='op'>(</span><span class='va'>conn</span>, <span class='va'>search_term</span>, schema <span class='op'>=</span> <span class='st'>"patelm9"</span><span class='op'>)</span></pre>
 
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></code>
+<code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_xml</a></code>
+<code><a href='https://rvest.tidyverse.org/reference/html_nodes.html'>html_nodes</a></code>,<code><a href='https://rvest.tidyverse.org/reference/html_text.html'>html_text</a></code>
+<code><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></code>
+<code><a href='https://meerapatelmd.github.io/pg13/reference/lsSchema.html'>lsSchema</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/createSchema.html'>createSchema</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/lsTables.html'>lsTables</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/appendTable.html'>appendTable</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/writeTable.html'>writeTable</a></code></p>
+<p><code><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></code>
 <code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_xml</a></code>
 <code><a href='https://rvest.tidyverse.org/reference/html_nodes.html'>html_nodes</a></code>,<code><a href='https://rvest.tidyverse.org/reference/html_text.html'>html_text</a></code>
 <code><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></code>

@@ -109,7 +109,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Process the Links found in the Drug Link Table for Synonyms</h1>
-    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/cancergov_functions.R'><code>R/cancergov_functions.R</code></a>, <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/process_drug_link_synonym.R'><code>R/process_drug_link_synonym.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/cancergov_functions.R'><code>R/cancergov_functions.R</code></a></small>
     <div class="hidden name"><code>process_drug_link_synonym.Rd</code></div>
     </div>
 
@@ -117,9 +117,7 @@
     <p>These functions scrape and parse the NCI Drug Dictionary found at CancerGov.org.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>process_drug_link_synonym</span><span class='op'>(</span><span class='va'>conn</span>, sleep_time <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>
-
-<span class='fu'>process_drug_link_synonym</span><span class='op'>(</span><span class='va'>conn</span>, sleep_time <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>process_drug_link_synonym</span><span class='op'>(</span><span class='va'>conn</span>, sleep_time <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,13 +137,9 @@
     
 
 <p>The NCI Drug Dictionary has 2 data sources that run in parallel. The first source is the Drug Dictionary itself at <a href='https://www.cancer.gov/publications/dictionaries/cancer-drug'>https://www.cancer.gov/publications/dictionaries/cancer-drug</a>. The other source are the individual drug pages, called Drug Detail Links in skyscraper, that contain tables of synonyms, including investigational names.</p>
-
-<p>The NCI Drug Dictionary has 2 data sources that run in parallel. The first source is the Drug Dictionary itself at <a href='https://www.cancer.gov/publications/dictionaries/cancer-drug'>https://www.cancer.gov/publications/dictionaries/cancer-drug</a>. The other source are the individual drug pages, called Drug Detail Links in skyscraper, that contain tables of synonyms, including investigational names.</p>
     <h2 class="hasAnchor" id="drug-detail-links"><a class="anchor" href="#drug-detail-links"></a>Drug Detail Links</h2>
 
     
-
-<p>The links to Drug Pages are scraped from the Data Dictionary URL over the maximum page number and are saved to a Drug Link Table in the <code>cancergov</code> schema. The URLs in the Drug Link Table are then scraped for any HTML Tables of synonyms and the results are written to a Drug Link Synonym Table. The links to active clinical trials and NCIt mappings are also derived and stored in their respective tables.</p>
 
 <p>The links to Drug Pages are scraped from the Data Dictionary URL over the maximum page number and are saved to a Drug Link Table in the <code>cancergov</code> schema. The URLs in the Drug Link Table are then scraped for any HTML Tables of synonyms and the results are written to a Drug Link Synonym Table. The links to active clinical trials and NCIt mappings are also derived and stored in their respective tables.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -156,21 +150,6 @@
 <code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_xml</a></code>,<code><a href='http://xml2.r-lib.org/reference/xml_find_all.html'>xml_find_all</a></code>,<code><a href='http://xml2.r-lib.org/reference/xml_replace.html'>xml_replace</a></code>
 <code><a href='https://rvest.tidyverse.org/reference/html_nodes.html'>html_nodes</a></code>,<code><a href='https://rvest.tidyverse.org/reference/html_table.html'>html_table</a></code>
 <code><a href='https://tidyr.tidyverse.org/reference/separate_rows.html'>separate_rows</a></code></p>
-<p><code><a href='https://meerapatelmd.github.io/pg13/reference/lsTables.html'>lsTables</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/query.html'>query</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/buildQuery.html'>buildQuery</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/readTable.html'>readTable</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/appendTable.html'>appendTable</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/writeTable.html'>writeTable</a></code>
-<code><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>mutate-joins</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/filter_all.html'>filter_all</a></code>
-<code><a href='https://rdrr.io/pkg/police/man/try_catch_error_as_null.html'>try_catch_error_as_null</a></code>
-<code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_xml</a></code>,<code><a href='http://xml2.r-lib.org/reference/xml_find_all.html'>xml_find_all</a></code>,<code><a href='http://xml2.r-lib.org/reference/xml_replace.html'>xml_replace</a></code>
-<code><a href='https://rvest.tidyverse.org/reference/html_nodes.html'>html_nodes</a></code>,<code><a href='https://rvest.tidyverse.org/reference/html_table.html'>html_table</a></code>
-<code><a href='https://tidyr.tidyverse.org/reference/separate_rows.html'>separate_rows</a></code></p>
-<p>Other cancergov: 
-<code><a href='get_dictionary_and_links.html'>get_dictionary_and_links</a>()</code>,
-<code><a href='get_drug_detail_links.html'>get_drug_detail_links</a>()</code>,
-<code><a href='get_drug_dictionary.html'>get_drug_dictionary</a>()</code>,
-<code><a href='get_drug_link_synonym.html'>get_drug_link_synonym</a>()</code>,
-<code><a href='get_drug_link_url.html'>get_drug_link_url</a>()</code>,
-<code><a href='log_drug_count.html'>log_drug_count</a>()</code>,
-<code><a href='process_drug_link_ncit.html'>process_drug_link_ncit</a>()</code>,
-<code><a href='process_drug_link_url.html'>process_drug_link_url</a>()</code></p>
 <p>Other cancergov: 
 <code><a href='get_dictionary_and_links.html'>get_dictionary_and_links</a>()</code>,
 <code><a href='get_drug_detail_links.html'>get_drug_detail_links</a>()</code>,
