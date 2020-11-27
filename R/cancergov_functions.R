@@ -86,11 +86,6 @@ log_drug_count <-
                          verbose = verbose,
                          render_sql = render_sql)
 
-
-                Tables <- list_cg_tables(conn = conn,
-                                         verbose = verbose,
-                                         render_sql = render_sql)
-
                 nci_dd_count <- nci_count()
 
                 previous_count <-
@@ -112,94 +107,11 @@ log_drug_count <-
                 pg13::appendTable(conn = conn,
                                   schema = "cancergov",
                                   tableName = "DRUG_DICTIONARY_LOG",
-                                  tibble::tibble(ddl_datetime = Sys.time(),
+                                  data = tibble::tibble(ddl_datetime = Sys.time(),
                                                  drug_count = nci_dd_count))
 
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param conn PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
-#' @details
-#' This function must be run before a log entry is made using the log_drug_count function.
-#' @examples
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
-#' }
-#' @seealso
-#'  \code{\link[pg13]{lsTables}},\code{\link[pg13]{query}}
-#'  \code{\link[skyscraper]{nci_count}}
-#' @rdname has_new_drug_count
-#' @export
-#' @importFrom pg13 lsTables query
-
-
-has_new_drug_count <-
-        function(conn) {
-
-
-                Tables <- pg13::lsTables(conn = conn,
-                                         schema = "cancergov")
-
-                nci_dd_count <- nci_count()
-
-                if ("DRUG_DICTIONARY_LOG" %in% Tables) {
-
-                        most_recent_drug_count <-
-                                pg13::query(conn = conn,
-                                            sql_statement =
-                                                    "
-                                                SELECT drug_count
-                                                        FROM cancergov.DRUG_DICTIONARY_LOG
-                                                WHERE ddl_datetime = (
-                                                        SELECT MAX(ddl_datetime)
-                                                        FROM cancergov.DRUG_DICTIONARY_LOG
-                                                )
-                                                ;
-                                                "
-                                ) %>%
-                                unlist() %>%
-                                as.integer()
-
-
-                        if (nci_dd_count != most_recent_drug_count) {
-
-                                TRUE
-
-                        } else {
-
-                                FALSE
-                        }
-
-                } else {
-
-                        TRUE
-
-                }
-        }
-
-
-
 
 
 #' @title
@@ -244,37 +156,35 @@ get_dictionary_and_links <-
         function(conn,
                  max_page = 50,
                  sleep_time = 3,
-                 progress_bar = TRUE) {
+                 verbose = TRUE,
+                 render_sql = TRUE) {
+
+                pg13::brake_closed_conn(conn = conn)
 
                 drug_dictionary <- list()
                 drug_link <- list()
 
-                if (progress_bar) {
 
-                        pb <- progress::progress_bar$new(format = "[:bar] :current/:total :elapsedfull",
-                                                         total = max_page)
-
-                        pb$tick(0)
-                        Sys.sleep(0.2)
-
-
+                if (verbose) {
+                        cli::rule(left = "Scraping")
                 }
-
 
                 for (i in 1:max_page) {
 
+                        page_url <- sprintf("https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=%s", i)
 
-                        page_scrape <- xml2::read_html(paste0("https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=", i))
+                        if (verbose) {
 
-                        if (progress_bar) {
-
-                                pb$tick()
+                                secretary::typewrite_progress(iteration = i,
+                                                              total = max_page)
 
 
                         }
 
-
                         Sys.sleep(sleep_time)
+
+                        page_scrape <- xml2::read_html(page_url)
+
 
                         no_data_message <-
                                 page_scrape %>%
@@ -333,32 +243,27 @@ get_dictionary_and_links <-
                         dplyr::distinct()
 
 
+                if (verbose) {
+                        cli::rule(left = "Writing Changes to DATA_DICTIONARY")
+                }
 
-                cgTables <- pg13::lsTables(conn = conn,
-                                           schema = "cancergov")
-
-
-                if ("DRUG_DICTIONARY" %in% cgTables) {
-
-                        pg13::dropTable(conn = conn,
-                                        schema = "cancergov",
-                                        tableName = "new_drug_dictionary")
-
-                        pg13::writeTable(conn = conn,
-                                         schema = "cancergov",
-                                         tableName = "new_drug_dictionary",
-                                         drug_dictionary_table)
+                        write_cg_staging_tbl(conn = conn,
+                                             tableName = "drug_dictionary_staging",
+                                             data = drug_dictionary_table,
+                                             verbose = verbose,
+                                             render_sql = render_sql)
 
 
                         add_to_drug_dictionary <-
                                 pg13::query(conn = conn,
                                             sql_statement =
                                                     "SELECT ndd.drug, ndd.definition
-                                                FROM cancergov.new_drug_dictionary ndd
+                                                FROM cancergov.drug_dictionary_staging ndd
                                                 LEFT JOIN cancergov.drug_dictionary dd
                                                 ON dd.drug = ndd.drug
                                                         AND dd.definition = ndd.definition
-                                                WHERE dd_datetime IS NULL;") %>%
+                                                WHERE dd_datetime IS NULL;",
+                                            warn_no_rows = TRUE) %>%
                                 dplyr::transmute(dd_datetime = Sys.time(),
                                                  drug,
                                                  definition) %>%
@@ -368,37 +273,18 @@ get_dictionary_and_links <-
                         pg13::appendTable(conn = conn,
                                           schema = "cancergov",
                                           tableName = "drug_dictionary",
-                                          add_to_drug_dictionary)
-
-                        pg13::dropTable(conn = conn,
-                                        schema = "cancergov",
-                                        tableName = "new_drug_dictionary")
-
-                } else {
-
-                        pg13::writeTable(conn = conn,
-                                         schema = "cancergov",
-                                         tableName = "drug_dictionary",
-                                         drug_dictionary_table %>%
-                                                 dplyr::transmute(dd_datetime = Sys.time(),
-                                                                  drug,
-                                                                  definition) %>%
-                                                 dplyr::distinct())
-                }
+                                          data = add_to_drug_dictionary)
 
 
+                        if (verbose) {
+                                cli::rule(left = "Writing Changes to DRUG_LINK")
+                        }
 
-                if ("DRUG_LINK" %in% cgTables) {
-
-                        pg13::dropTable(conn = conn,
-                                        schema = "cancergov",
-                                        tableName = "new_drug_link")
-
-                        pg13::writeTable(conn = conn,
-                                         schema = "cancergov",
-                                         tableName = "new_drug_link",
-                                         drug_link_table)
-
+                        write_cg_staging_tbl(conn = conn,
+                                             tableName = "new_drug_link",
+                                             data = drug_link_table,
+                                             verbose = verbose,
+                                             render_sql = render_sql)
 
                         add_to_drug_link <-
                                 pg13::query(conn = conn,
@@ -408,7 +294,8 @@ get_dictionary_and_links <-
                                                 LEFT JOIN cancergov.drug_link dl
                                                 ON dl.drug = ndl.drug
                                                         AND dl.drug_link = ndl.drug_link
-                                                WHERE dl_datetime IS NULL;") %>%
+                                                WHERE dl_datetime IS NULL;",
+                                            warn_no_rows = TRUE) %>%
                                 dplyr::transmute(dl_datetime = Sys.time(),
                                                  drug,
                                                  drug_link) %>%
@@ -417,23 +304,8 @@ get_dictionary_and_links <-
                         pg13::appendTable(conn = conn,
                                           schema = "cancergov",
                                           tableName = "drug_link",
-                                          add_to_drug_link)
+                                          data = add_to_drug_link)
 
-                        pg13::dropTable(conn = conn,
-                                        schema = "cancergov",
-                                        tableName = "new_drug_link")
-
-
-                } else {
-                        pg13::writeTable(conn = conn,
-                                         schema = "cancergov",
-                                         tableName = "drug_link",
-                                         drug_link_table %>%
-                                                 dplyr::transmute(dl_datetime = Sys.time(),
-                                                                  drug,
-                                                                  drug_link) %>%
-                                                 dplyr::distinct())
-                }
 
         }
 
@@ -472,36 +344,33 @@ get_drug_link_synonym <-
         function(conn,
                  drug_link,
                  response,
-                 sleep_time = 5) {
+                 sleep_time = 5,
+                 expiration_days = 30,
+                 verbose = TRUE,
+                 render_sql = TRUE) {
 
+                # drug_link <- "https://www.cancer.gov/publications/dictionaries/cancer-drug/def/bispecific-antibody-mdx-h210"
 
+                sql_statement <-
+                        SqlRender::render(
+                                "
+                                SELECT *
+                                        FROM cancergov.drug_link_synonym dls
+                                WHERE dls.drug_link = '@drug_link'
+                                        AND (DATE_PART('day', LOCALTIMESTAMP(0)-dls_datetime)::integer < @expiration_days)
+                                ;
+                                ",
+                                drug_link = drug_link,
+                                expiration_days = expiration_days)
 
-                cgTables <- pg13::lsTables(conn = conn,
-                                           schema = "cancergov")
+                current_entry <-
+                pg13::query(conn = conn,
+                            sql_statement = sql_statement,
+                            verbose = verbose,
+                            render_sql = render_sql)
 
+                proceed <- nrow(current_entry) == 0
 
-                if ("DRUG_LINK_SYNONYM" %in% cgTables) {
-
-                        current_entry <-
-                                pg13::query(conn = conn,
-                                            sql_statement =
-                                                    SqlRender::render(
-                                                            "
-                                                        SELECT *
-                                                        FROM cancergov.drug_link_synonym dls
-                                                        WHERE dls.drug_link = '@drug_link'
-                                                        ;
-                                                        ",
-                                                            drug_link = drug_link))
-
-
-                        proceed <- nrow(current_entry) == 0
-
-
-                } else {
-
-                        proceed <- TRUE
-                }
 
                 if (proceed) {
 
@@ -564,24 +433,12 @@ get_drug_link_synonym <-
                                                                  ~nchar(.) < 255)
 
 
-
-                                        cgTables <- pg13::lsTables(conn = conn,
-                                                                   schema = "cancergov")
-
-                                        if ("DRUG_LINK_SYNONYM" %in% cgTables) {
-
                                                 pg13::appendTable(conn = conn,
                                                                   schema = "cancergov",
                                                                   tableName = "drug_link_synonym",
-                                                                  output)
+                                                                  data = output)
 
 
-                                        } else {
-                                                pg13::writeTable(conn = conn,
-                                                                 schema = "cancergov",
-                                                                 tableName = "drug_link_synonym",
-                                                                 output)
-                                        }
 
 
                                 } else {
@@ -591,150 +448,16 @@ get_drug_link_synonym <-
                                                            drug_synonym_type = NA,
                                                            drug_synonym = NA)
 
-                                        cgTables <- pg13::lsTables(conn = conn,
-                                                                   schema = "cancergov")
-
-                                        if ("DRUG_LINK_SYNONYM" %in% cgTables) {
-
                                                 pg13::appendTable(conn = conn,
                                                                   schema = "cancergov",
                                                                   tableName = "drug_link_synonym",
                                                                   output)
 
-
-                                        } else {
-                                                pg13::writeTable(conn = conn,
-                                                                 schema = "cancergov",
-                                                                 tableName = "drug_link_synonym",
-                                                                 output)
-                                        }
                                 }
 
                         }
 
                 }
-        }
-
-
-
-
-#' @title
-#' Get the URLS of all the Drug Pages in the Drug Dictionary
-#'
-#' @inherit cancergov_functions description
-#' @inheritSection cancergov_functions Web Source Types
-#' @inheritSection cancergov_functions Drug Detail Links
-#' @inheritParams cancergov_functions
-#'
-#' @seealso
-#'  \code{\link[xml2]{read_xml}}
-#'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
-#'  \code{\link[tibble]{tibble}}
-#'  \code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{filter}}
-#'  \code{\link[pg13]{lsTables}},\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
-#'
-#' @rdname get_drug_detail_links
-#'
-#' @family cancergov
-#'
-#' @export
-#'
-#' @importFrom xml2 read_html
-#' @importFrom rvest html_nodes html_text html_children html_attr
-#' @importFrom tibble tibble
-#' @importFrom dplyr bind_rows mutate transmute distinct left_join filter
-#' @importFrom pg13 lsTables query buildQuery appendTable writeTable
-#' @importFrom magrittr %>%
-
-get_drug_detail_links  <-
-        function(conn,
-                 max_page = 50,
-                 sleep_time = 3) {
-
-
-                .Deprecated()
-
-                output <- list()
-
-                for (i in 1:max_page) {
-
-                        drug_def_scrape <- xml2::read_html(paste0("https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=", i))
-
-                        Sys.sleep(sleep_time)
-
-                        # Stop if there is no more information
-                        no_data_message <-
-                                drug_def_scrape %>%
-                                rvest::html_nodes("#ctl36_ctl00_resultListView_ctrl0_lblNoDataMessage") %>%
-                                rvest::html_text()
-
-
-                        if (length(no_data_message) == 0) {
-
-
-                                drug_def_link <-
-                                        drug_def_scrape %>%
-                                        rvest::html_nodes("dfn") %>%
-                                        rvest::html_children() %>%
-                                        rvest::html_attr(name = "href")
-
-                                drug_names <-
-                                        drug_def_scrape %>%
-                                        rvest::html_nodes("dfn") %>%
-                                        rvest::html_text() %>%
-                                        trimws()
-
-                                output[[i]] <- tibble::tibble(DRUG = drug_names,
-                                                              DRUG_DEF_LINK = drug_def_link)
-                                names(output)[i] <- as.character(i)
-
-                        }
-
-                }
-
-                drug_link_table <- dplyr::bind_rows(output) %>%
-                        dplyr::mutate(DRUG_DEF_LINK = paste0("https://www.cancer.gov", DRUG_DEF_LINK)) %>%
-                        dplyr::transmute(drug = DRUG,
-                                         drug_link = DRUG_DEF_LINK) %>%
-                        dplyr::distinct()
-
-
-
-                cgTables <- pg13::lsTables(conn = conn,
-                                           schema = "cancergov")
-
-
-                if ("DRUG_LINK" %in% cgTables) {
-                        current_drug_link_table <-
-                                pg13::query(conn = conn,
-                                            pg13::buildQuery(distinct = TRUE,
-                                                             schema = "cancergov",
-                                                             tableName = "drug_link"))
-                        output <-
-                                dplyr::left_join(drug_link_table,
-                                                 current_drug_link_table) %>%
-                                dplyr::filter(is.na(dl_datetime)) %>%
-                                dplyr::transmute(dl_datetime = Sys.time(),
-                                                 drug,
-                                                 drug_link)
-
-
-                        pg13::appendTable(conn = conn,
-                                          schema = "cancergov",
-                                          tableName = "drug_link",
-                                          output)
-
-
-                } else {
-                        pg13::writeTable(conn = conn,
-                                         schema = "cancergov",
-                                         tableName = "drug_link",
-                                         drug_link_table %>%
-                                                 dplyr::transmute(dl_datetime = Sys.time(),
-                                                                  drug,
-                                                                  drug_link))
-                }
-
         }
 
 
@@ -770,40 +493,30 @@ get_drug_link_url <-
         function(conn,
                  drug_link,
                  response,
-                 sleep_time = 5) {
+                 sleep_time = 5,
+                 expiration_days = 30,
+                 verbose = TRUE,
+                 render_sql = TRUE) {
 
-                #conn <- chariot::connectAthena()
+                sql_statement <-
+                        SqlRender::render(
+                                "
+                                SELECT *
+                                        FROM cancergov.drug_link_url dlu
+                                WHERE dlu.drug_link = '@drug_link'
+                                        AND (DATE_PART('day', LOCALTIMESTAMP(0)-dlu_datetime)::integer < @expiration_days)
+                                ;
+                                ",
+                                drug_link = drug_link,
+                                expiration_days = expiration_days)
 
-                # drug_link <- "https://www.cancer.gov/publications/dictionaries/cancer-drug/def/cd105-yb-1-sox2-cdh3-mdm2-polypeptide-plasmid-dna-vaccine"
+                current_entry <-
+                        pg13::query(conn = conn,
+                                    sql_statement = sql_statement,
+                                    verbose = verbose,
+                                    render_sql = render_sql)
 
-                cgTables <- pg13::lsTables(conn = conn,
-                                           schema = "cancergov")
-
-
-                if ("DRUG_LINK_URL" %in% cgTables) {
-
-                        current_entry <-
-                                pg13::query(conn = conn,
-                                            sql_statement =
-                                                    SqlRender::render(
-                                                            "
-                                                        SELECT *
-                                                        FROM cancergov.drug_link_url dlu
-                                                        WHERE dlu.drug_link = '@drug_link'
-                                                        ;
-                                                        ",
-                                                            drug_link = drug_link))
-
-
-                        proceed <- nrow(current_entry) == 0
-
-
-                } else {
-
-                        proceed <- TRUE
-
-                }
-
+                proceed <- nrow(current_entry) == 0
 
                 if (proceed) {
 
@@ -853,24 +566,11 @@ get_drug_link_url <-
                                                                drug_link_url = results)
 
 
-
-                                        cgTables <- pg13::lsTables(conn = conn,
-                                                                   schema = "cancergov")
-
-                                        if ("DRUG_LINK_URL" %in% cgTables) {
-
                                                 pg13::appendTable(conn = conn,
                                                                   schema = "cancergov",
                                                                   tableName = "DRUG_LINK_URL",
-                                                                  output)
+                                                                  data = output)
 
-
-                                        } else {
-                                                pg13::writeTable(conn = conn,
-                                                                 schema = "cancergov",
-                                                                 tableName = "DRUG_LINK_URL",
-                                                                 output)
-                                        }
 
 
                                         process_drug_link_ncit(conn = conn)
@@ -883,23 +583,11 @@ get_drug_link_url <-
                                                                drug_link = drug_link,
                                                                drug_link_url = NA)
 
-                                        cgTables <- pg13::lsTables(conn = conn,
-                                                                   schema = "cancergov")
-
-                                        if ("DRUG_LINK_URL" %in% cgTables) {
-
                                                 pg13::appendTable(conn = conn,
                                                                   schema = "cancergov",
                                                                   tableName = "DRUG_LINK_URL",
-                                                                  output)
+                                                                  data = output)
 
-
-                                        } else {
-                                                pg13::writeTable(conn = conn,
-                                                                 schema = "cancergov",
-                                                                 tableName = "DRUG_LINK_URL",
-                                                                 output)
-                                        }
                                 }
 
                         }
@@ -1205,139 +893,6 @@ process_drug_link_ncit <-
                 }
 
         }
-
-
-
-#' @title
-#' Scrape the NCI Drug Dictionary
-#'
-#' @inherit cancergov_functions description
-#' @inheritSection cancergov_functions Web Source Types
-#' @inheritSection cancergov_functions Drug Dictionary
-#' @inheritParams cancergov_functions
-#'
-#' @return
-#' A Drug Dictionary Table in a `cancergov` schema if a Drug Dictionary Table didn't already exist. Otherwise, the new drugs are appended to the existing table.
-#'
-#' @seealso
-#'  \code{\link[tibble]{tibble}}
-#'  \code{\link[secretary]{typewrite}}
-#'  \code{\link[xml2]{read_xml}}
-#'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
-#'  \code{\link[purrr]{map}},\code{\link[purrr]{keep}},\code{\link[purrr]{transpose}}
-#'  \code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate_all}}
-#'  \code{\link[stringr]{str_replace}}
-#'
-#' @export
-#' @rdname get_drug_dictionary
-#' @family cancergov
-#'
-#' @importFrom tibble tibble
-#' @importFrom secretary typewrite
-#' @importFrom xml2 read_html
-#' @importFrom rvest html_nodes html_text
-#' @importFrom purrr map keep transpose
-#' @importFrom dplyr bind_rows mutate_all
-#' @importFrom stringr str_replace_all
-#' @importFrom magrittr %>%
-
-
-
-get_drug_dictionary <-
-        function(conn,
-                 max_page = 50,
-                 sleep_time = 3) {
-
-                .Deprecated()
-
-                output <- list()
-
-                for (i in 1:max_page) {
-
-
-                        page_scrape <- xml2::read_html(paste0("https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=", i))
-
-                        Sys.sleep(sleep_time)
-
-
-                        no_data_message <-
-                                page_scrape %>%
-                                rvest::html_nodes("#ctl36_ctl00_resultListView_ctrl0_lblNoDataMessage") %>%
-                                rvest::html_text()
-
-                        if (length(no_data_message) == 0) {
-
-                                drugs <-
-                                        page_scrape %>%
-                                        rvest::html_nodes(".dictionary-list a")  %>%
-                                        rvest::html_text() %>%
-                                        grep(pattern = "[\r\n]",
-                                             invert = FALSE,
-                                             value = TRUE) %>%
-                                        trimws(which = "both")
-
-                                definitions <-
-                                        page_scrape %>%
-                                        rvest::html_nodes(".dictionary-list .definition")  %>%
-                                        rvest::html_text() %>%
-                                        trimws(which = "both")
-
-
-                                output[[i]] <-
-                                        data.frame(drug = drugs,
-                                                   definition = definitions)
-
-
-
-                        }
-                }
-
-                output <- dplyr::bind_rows(output) %>%
-                        dplyr::distinct()
-
-
-                cgTables <- pg13::lsTables(conn = conn,
-                                           schema = "cancergov")
-
-
-                if ("DRUG_DICTIONARY" %in% cgTables) {
-
-                        current_drug_dictionary <- pg13::readTable(conn = conn,
-                                                                   schema = "cancergov",
-                                                                   tableName = "drug_dictionary")
-
-
-                        new_drug_dictionary <-
-                                dplyr::left_join(output,
-                                                 current_drug_dictionary,
-                                                 by = c("drug", "definition")) %>%
-                                dplyr::filter(is.na(dd_datetime)) %>%
-                                dplyr::transmute(dd_datetime = Sys.time(),
-                                                 drug,
-                                                 definition) %>%
-                                dplyr::distinct()
-
-
-                        pg13::appendTable(conn = conn,
-                                          schema = "cancergov",
-                                          tableName = "drug_dictionary",
-                                          new_drug_dictionary )
-
-
-
-                } else {
-
-                        pg13::writeTable(conn = conn,
-                                         schema = "cancergov",
-                                         tableName = "drug_dictionary",
-                                         output %>%
-                                                 dplyr::transmute(dd_datetime = Sys.time(),
-                                                                  drug,
-                                                                  definition))
-                }
-
-        }
-
 
 
 #' @title

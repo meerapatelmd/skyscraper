@@ -4,7 +4,15 @@
 \alias{get_drug_link_synonym}
 \title{Get the Synonyms found at a given Drug Link}
 \usage{
-get_drug_link_synonym(conn, drug_link, response, sleep_time = 5)
+get_drug_link_synonym(
+  conn,
+  drug_link,
+  response,
+  sleep_time = 5,
+  expiration_days = 30,
+  verbose = TRUE,
+  render_sql = TRUE
+)
 }
 \arguments{
 \item{conn}{Postgres connection object}
@@ -38,8 +46,6 @@ The links to Drug Pages are scraped from the Data Dictionary URL over the maximu
 
 Other cancergov: 
 \code{\link{get_dictionary_and_links}()},
-\code{\link{get_drug_detail_links}()},
-\code{\link{get_drug_dictionary}()},
 \code{\link{get_drug_link_url}()},
 \code{\link{log_drug_count}()},
 \code{\link{process_drug_link_ncit}()},

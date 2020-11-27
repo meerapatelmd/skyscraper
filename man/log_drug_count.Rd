@@ -4,7 +4,7 @@
 \alias{log_drug_count}
 \title{FUNCTION_TITLE}
 \usage{
-log_drug_count(conn)
+log_drug_count(conn, verbose = TRUE, render_sql = TRUE)
 }
 \arguments{
 \item{conn}{PARAM_DESCRIPTION}
@@ -32,8 +32,6 @@ if(interactive()){
 
 Other cancergov: 
 \code{\link{get_dictionary_and_links}()},
-\code{\link{get_drug_detail_links}()},
-\code{\link{get_drug_dictionary}()},
 \code{\link{get_drug_link_synonym}()},
 \code{\link{get_drug_link_url}()},
 \code{\link{process_drug_link_ncit}()},

@@ -8,7 +8,8 @@ get_dictionary_and_links(
   conn,
   max_page = 50,
   sleep_time = 3,
-  progress_bar = TRUE
+  verbose = TRUE,
+  render_sql = TRUE
 )
 }
 \arguments{
@@ -47,8 +48,6 @@ The listed drug names and their definitions are scraped from the Drug Dictionary
 \code{\link[stringr]{str_replace}}
 
 Other cancergov: 
-\code{\link{get_drug_detail_links}()},
-\code{\link{get_drug_dictionary}()},
 \code{\link{get_drug_link_synonym}()},
 \code{\link{get_drug_link_url}()},
 \code{\link{log_drug_count}()},

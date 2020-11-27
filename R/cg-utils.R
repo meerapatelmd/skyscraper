@@ -93,3 +93,34 @@ list_cg_tables <-
                                verbose = verbose,
                                render_sql = render_sql)
         }
+
+
+
+
+write_cg_staging_tbl <-
+        function(conn,
+                 tableName,
+                 data,
+                 verbose = TRUE,
+                 render_sql = TRUE) {
+
+
+                pg13::writeTable(conn = conn,
+                                        schema = "cancergov",
+                                        tableName = tableName,
+                                        data = data,
+                                        drop_existing = TRUE,
+                                 verbose = verbose,
+                                 render_sql = render_sql)
+
+
+                do.call(on.exit,
+                        args = list(substitute(pg13::dropTable(conn = conn,
+                                                          schema = "cancergov",
+                                                          tableName = tableName,
+                                                          verbose = verbose,
+                                                          render_sql = render_sql)),
+                                add = TRUE,
+                                after = FALSE),
+                        envir = parent.frame())
+        }

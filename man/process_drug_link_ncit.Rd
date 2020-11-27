@@ -33,8 +33,6 @@ The links to Drug Pages are scraped from the Data Dictionary URL over the maximu
 
 Other cancergov: 
 \code{\link{get_dictionary_and_links}()},
-\code{\link{get_drug_detail_links}()},
-\code{\link{get_drug_dictionary}()},
 \code{\link{get_drug_link_synonym}()},
 \code{\link{get_drug_link_url}()},
 \code{\link{log_drug_count}()},
