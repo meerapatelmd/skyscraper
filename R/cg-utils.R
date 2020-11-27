@@ -94,7 +94,11 @@ list_cg_tables <-
                                render_sql = render_sql)
         }
 
-
+#' @title
+#' Write Staging Tables to Cancergov Schema
+#'
+#' @importFrom pg13 writeTable dropTable
+#' @export
 
 
 write_cg_staging_tbl <-
