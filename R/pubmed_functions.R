@@ -10,7 +10,7 @@
 #'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
 #'  \code{\link[tibble]{tibble}}
 #'  \code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
-#' @rdname scrape_earliest_pm
+#' @rdname get_pm
 #' @family pubmed
 #' @export
 #' @importFrom stringr str_remove_all
@@ -20,9 +20,11 @@
 #' @importFrom pg13 lsSchema createSchema lsTables appendTable writeTable
 
 
-get_pm_earliest <-
+get_pm <-
         function(conn,
                  conn_fun,
+                 earliest = TRUE,
+                 latest = !earliest,
                  search_term,
                  verbose = TRUE,
                  render_sql = TRUE) {
@@ -35,7 +37,6 @@ get_pm_earliest <-
 
                 }
 
-
                 # search_term <- "Meera"
                 # verbose <- TRUE
                 # render_sql <- TRUE
@@ -47,8 +48,22 @@ get_pm_earliest <-
 
 
                 processed_search_term <- urltools::url_encode(search_term)
-                URL <- paste0("https://pubmed.ncbi.nlm.nih.gov/?term=", processed_search_term, "&filter=dates.1900%2F1%2F1-3000%2F12%2F12&sort=date&sort_order=asc")
 
+                if (earliest) {
+
+                        URL <- paste0("https://pubmed.ncbi.nlm.nih.gov/?term=", processed_search_term, "&filter=dates.1900%2F1%2F1-3000%2F12%2F12&sort=date&sort_order=asc")
+
+                } else {
+
+                        URL <- URL <- paste0("https://pubmed.ncbi.nlm.nih.gov/?term=", processed_search_term, "&sort=date")
+
+                }
+
+                if (earliest) {
+                        search_type <- "earliest"
+                } else {
+                        search_type <- "latest"
+                }
 
                 current_results_log <-
                         pg13::query(conn = conn,
@@ -56,8 +71,9 @@ get_pm_earliest <-
                                             SqlRender::render("SELECT DISTINCT *
                                                                 FROM patelm9.pm_log log
                                                                 WHERE url IN ('@url')
-                                                                        AND search_type = 'earliest';",
-                                                              url = URL),
+                                                                        AND search_type = '@search_type';",
+                                                              url = URL,
+                                                              search_type = search_type),
                                     verbose = verbose,
                                     render_sql = render_sql)
 
@@ -80,7 +96,7 @@ get_pm_earliest <-
 
                                 results_log <-
                                         tibble::tibble(rl_datetime = Sys.time(),
-                                                       search_type = "earliest",
+                                                       search_type = search_type,
                                                        search_term = search_term,
                                                        processed_search_term = processed_search_term,
                                                        url = URL,
@@ -109,7 +125,7 @@ get_pm_earliest <-
 
                                 results_log <-
                                         tibble::tibble(rl_datetime = rl_datetime,
-                                                       search_type = "earliest",
+                                                       search_type = search_type,
                                                        search_term = search_term,
                                                        processed_search_term = processed_search_term,
                                                        url = URL,
@@ -167,12 +183,112 @@ get_pm_earliest <-
                                           data = results_log)
 
 
-                        pg13::appendTable(conn = conn,
-                                          schema = "patelm9",
-                                          tableName = "PM_EARLIEST",
-                                          data = results)
+                        if (earliest) {
+                                pg13::appendTable(conn = conn,
+                                                  schema = "patelm9",
+                                                  tableName = "PM_EARLIEST",
+                                                  data = results)
+                        } else {
+                                pg13::appendTable(conn = conn,
+                                                  schema = "patelm9",
+                                                  tableName = "PM_LATEST",
+                                                  data = results)
+                        }
                 }
         }
+
+
+#' @export
+
+get_pm_earliest <-
+        function(conn,
+                 conn_fun,
+                 search_term,
+                 verbose = TRUE,
+                 render_sql = TRUE) {
+
+                get_pm(conn = conn,
+                       conn_fun = conn_fun,
+                       earliest = TRUE,
+                       search_term = search_term,
+                       verbose = verbose,
+                       render_sql = render_sql)
+        }
+
+#' @export
+
+get_pm_latest <-
+        function(conn,
+                 conn_fun,
+                 search_term,
+                 verbose = TRUE,
+                 render_sql = TRUE) {
+
+                get_pm(conn = conn,
+                       conn_fun = conn_fun,
+                       earliest = FALSE,
+                       latest = TRUE,
+                       search_term = search_term,
+                       verbose = verbose,
+                       render_sql = render_sql)
+        }
+
+#' @export
+#' @importFrom pg13 send
+
+process_pm <-
+        function(conn,
+                 conn_fun,
+                 search_term,
+                 verbose = TRUE,
+                 render_sql = TRUE) {
+
+                get_pm_earliest(conn = conn,
+                                conn_fun = conn_fun,
+                                search_term = search_term,
+                                verbose = verbose,
+                                render_sql = render_sql)
+
+                get_pm_latest(
+                        conn = conn,
+                        conn_fun = conn_fun,
+                        search_term = search_term,
+                        verbose = verbose,
+                        render_sql = render_sql)
+
+
+                pg13::send(
+                        conn = conn,
+                        sql_statement =
+                                "DROP TABLE IF EXISTS patelm9.pm_results;
+                                CREATE TABLE IF NOT EXISTS patelm9.pm_results (
+                                                    r_datetime timestamp without time zone,
+                                                            search_term character varying(255),
+                                                            url text,
+                                                            title text,
+                                                            citation text,
+                                                            snippet text,
+                                                            citation_date_string character varying(25),
+                                                            citation_date date,
+                                                            search_type text
+                                        );
+
+                                WITH both_tables AS (
+                                        SELECT e.*, 'earliest' AS search_type
+                                        FROM patelm9.pm_earliest e
+                                        UNION
+                                         SELECT l.*, 'latest' AS search_type
+                                        FROM patelm9.pm_latest l
+                                )
+
+                                INSERT INTO patelm9.pm_results SELECT * FROM both_tables
+                                ;
+                        ",
+                        verbose = verbose,
+                        render_sql = render_sql
+                )
+        }
+
 
 #' @title FUNCTION_TITLE
 #' @description FUNCTION_DESCRIPTION
@@ -214,6 +330,9 @@ scrape_latest_pubmed <-
         function(conn,
                  search_term,
                  schema = "patelm9") {
+
+
+                .Deprecated()
 
                 processed_search_term <- stringr::str_remove_all(search_term, pattern = " ")
                 URL <- paste0("https://pubmed.ncbi.nlm.nih.gov/?term=", processed_search_term, "&sort=date")

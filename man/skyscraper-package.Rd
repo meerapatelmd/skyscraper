@@ -6,8 +6,8 @@
 \alias{skyscraper-package}
 \title{skyscraper: Scrape Clinical Drug Data}
 \description{
-Scrape, store, and maintain clinical drug
-    data across various disparate web and data sources, including the
+Scrape, store, and maintain clinical drug data
+    across various disparate web and data sources, including the
     ChemiDPlus, NCI Drug Dictionary, and the ClinicalTrials.gov AACT
     Database.
 }
@@ -32,6 +32,7 @@ ClinicalTrials.gov
 Useful links:
 \itemize{
   \item \url{https://github.com/meerapatelmd/skyscraper}
+  \item \url{https://meerapatelmd.github.io/skyscraper}
   \item Report bugs at \url{https://github.com/meerapatelmd/skyscraper/issues}
 }
 
