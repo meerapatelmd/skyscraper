@@ -1,6 +1,6 @@
 Package: skyscraper
 Title: Scrape Clinical Drug Data
-Version: 0.1.0
+Version: 0.1.0.9000
 Authors@R: 
     person(given = "Meera",
            family = "Patel, MD",
@@ -14,7 +14,33 @@ Description: Scrape, store, and maintain clinical drug
 License: Apache License 2.0
 URL: https://github.com/meerapatelmd/skyscraper
 BugReports: https://github.com/meerapatelmd/skyscraper/issues
-Imports:     SqlRender,    broca,    cave,    centipede,    chariot,    curl,    devtools,    dplyr,    glitter,    httr,    lubridate,    magrittr,    pg13,    police,    purrr,    readr,    rlang,    rubix,    rvest,    secretary,    sinew,    stringr,    tibble,    tidyr,    utils,    xml2
+Imports: 
+    SqlRender,
+    broca,
+    cave,
+    centipede,
+    chariot,
+    curl,
+    devtools,
+    dplyr,
+    glitter,
+    httr,
+    lubridate,
+    magrittr,
+    pg13,
+    police,
+    purrr,
+    readr,
+    rlang,
+    rubix,
+    rvest,
+    secretary,
+    sinew,
+    stringr,
+    tibble,
+    tidyr,
+    utils,
+    xml2
 Remotes:
     meerapatelmd/broca,
     meerapatelmd/cave,
