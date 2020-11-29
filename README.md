@@ -5,7 +5,6 @@ Skyscraper is an R package that scrapes and stores drug data from the Cancer.gov
 The data scraped from these resources are updated periodically to the following repos that can be installed as packages:  
 
 * [cancergovData](https://github.com/meerapatelmd/cancergovData)   
-
 * [chemidplusData](https://github.com/meerapatelmd/chemidplusData)  
 
 
