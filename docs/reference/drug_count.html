@@ -6,8 +6,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>FUNCTION_TITLE — lookup_ncit_synonym • skyscraper</title>
+<title>Get the Drug Count in the Drug Dictionary — drug_count • skyscraper</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -39,8 +46,9 @@
 
 
 
-<meta property="og:title" content="FUNCTION_TITLE — lookup_ncit_synonym" />
-<meta property="og:description" content="FUNCTION_DESCRIPTION" />
+<meta property="og:title" content="Get the Drug Count in the Drug Dictionary — drug_count" />
+<meta property="og:description" content="This is an internal function to the _run* function, which is part of the family of functions that scrape, parse, and store the NCI Drug Dictionary found at CancerGov.org and any correlates to the NCI Thesaurus in a Postgres Database. Use cg_run to run the full sequence. See details for more info." />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -72,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">skyscraper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -108,44 +116,28 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>FUNCTION_TITLE</h1>
-    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/cancergov_functions.R'><code>R/cancergov_functions.R</code></a></small>
-    <div class="hidden name"><code>lookup_ncit_synonym.Rd</code></div>
+    <h1>Get the Drug Count in the Drug Dictionary</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/cg-internals.R'><code>R/cg-internals.R</code></a></small>
+    <div class="hidden name"><code>drug_count.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>FUNCTION_DESCRIPTION</p>
+    <p>This is an internal function to the <code>_run*</code> function, which is part of the family of functions that scrape, parse, and store the NCI Drug Dictionary found at CancerGov.org and any correlates to the NCI Thesaurus in a Postgres Database. Use <code><a href='cg_run.html'>cg_run</a></code> to run the full sequence. See details for more info.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>lookup_ncit_synonym</span><span class='op'>(</span><span class='va'>ncit_code</span>, <span class='va'>conn</span>, sleep_time <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>drug_count</span><span class='op'>(</span><span class='op'>)</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>conn</th>
-      <td><p>PARAM_DESCRIPTION</p></td>
-    </tr>
-    <tr>
-      <th>sleep_time</th>
-      <td><p>PARAM_DESCRIPTION, Default: 5</p></td>
-    </tr>
-    </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>OUTPUT_DESCRIPTION</p>
+    <p>An integer in the '<em>X</em> results found for: ALL' phrase displayed at <a href='https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&amp;page=1'>https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&amp;page=1</a></p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>DETAILS</p>
+    <p>Retrieve the total number of drugs in the NCI Drug Dictionary in real-time.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://meerapatelmd.github.io/pg13/reference/lsTables.html'>lsTables</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/query.html'>query</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/readTable.html'>readTable</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/appendTable.html'>appendTable</a></code>
-<code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_xml</a></code>
-<code><a href='https://rvest.tidyverse.org/reference/html_nodes.html'>html_nodes</a></code>,<code><a href='https://rvest.tidyverse.org/reference/html_table.html'>html_table</a></code>
-<code><a href='https://purrr.tidyverse.org/reference/keep.html'>keep</a></code>
-<code><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/select_all.html'>select_all</a></code>
-<code><a href='https://meerapatelmd.github.io/rubix/reference/format_colnames.html'>format_colnames</a></code></p></div>
+    <div class='dont-index'><p><code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_xml</a></code>
+<code><a href='https://rvest.tidyverse.org/reference/html_nodes.html'>html_nodes</a></code>,<code><a href='https://rvest.tidyverse.org/reference/html_text.html'>html_text</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

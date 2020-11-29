@@ -6,8 +6,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>FUNCTION_TITLE — get_ncit_synonym • skyscraper</title>
+<title>Scrape the NCI Thesaurus — get_ncit_synonym • skyscraper</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -39,8 +46,9 @@
 
 
 
-<meta property="og:title" content="FUNCTION_TITLE — get_ncit_synonym" />
-<meta property="og:description" content="FUNCTION_DESCRIPTION" />
+<meta property="og:title" content="Scrape the NCI Thesaurus — get_ncit_synonym" />
+<meta property="og:description" content="All NCIt Codes that have not been scraped or were scraped in the expiration period are scraped in the NCIt Thesaurus at the &quot;https://ncithesaurus.nci.nih.gov/ncitbrowser/pages/concept_details.jsf?dictionary=NCI_Thesaurus&amp;amp;code=%s&amp;amp;ns=ncit&amp;amp;type=synonym&amp;amp;key=null&amp;amp;b=1&amp;amp;n=0&amp;amp;vse=null# path." />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -72,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">skyscraper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -108,52 +116,56 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>FUNCTION_TITLE</h1>
-    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/cancergov_functions.R'><code>R/cancergov_functions.R</code></a></small>
+    <h1>Scrape the NCI Thesaurus</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/cg-internals.R'><code>R/cg-internals.R</code></a></small>
     <div class="hidden name"><code>get_ncit_synonym.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>FUNCTION_DESCRIPTION</p>
+    <p>All NCIt Codes that have not been scraped or were scraped in the expiration period are scraped in the NCIt Thesaurus at the <a href='"https://ncithesaurus.nci.nih.gov/ncitbrowser/pages/concept_details.jsf?dictionary=NCI_Thesaurus&amp;code=%s&amp;ns=ncit&amp;type=synonym&amp;key=null&amp;b=1&amp;n=0&amp;vse=null#'>"https://ncithesaurus.nci.nih.gov/ncitbrowser/pages/concept_details.jsf?dictionary=NCI_Thesaurus&amp;code=%s&amp;ns=ncit&amp;type=synonym&amp;key=null&amp;b=1&amp;n=0&amp;vse=null#</a> path.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_ncit_synonym</span><span class='op'>(</span><span class='va'>conn</span>, sleep_time <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>get_ncit_synonym</span><span class='op'>(</span>
+  <span class='va'>conn</span>,
+  sleep_time <span class='op'>=</span> <span class='fl'>5</span>,
+  expiration_days <span class='op'>=</span> <span class='fl'>30</span>,
+  verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  render_sql <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>conn</th>
-      <td><p>PARAM_DESCRIPTION</p></td>
+      <td><p>Postgres connection object.</p></td>
     </tr>
     <tr>
       <th>sleep_time</th>
-      <td><p>PARAM_DESCRIPTION, Default: 5</p></td>
+      <td><p>Time in seconds for the system to sleep before each scrape with <code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_html</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>verbose</th>
+      <td><p>When reading from a slow connection, this prints some
+output on every iteration so you know its working.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <h2 class="hasAnchor" id="drug-detail-links"><a class="anchor" href="#drug-detail-links"></a>Drug Detail Links</h2>
 
-    <p>OUTPUT_DESCRIPTION</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    
 
-    <p>DETAILS</p>
+<p>The links to Drug Pages are scraped from the Data Dictionary URL over the maximum page number and are saved to a Drug Link Table in the <code>cancergov</code> schema. The URLs in the Drug Link Table are then scraped for any HTML Tables of synonyms and the results are written to a Drug Link Synonym Table. The links to active clinical trials and NCIt mappings are also derived and stored in their respective tables.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://meerapatelmd.github.io/pg13/reference/lsTables.html'>lsTables</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/query.html'>query</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/readTable.html'>readTable</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/appendTable.html'>appendTable</a></code>
-<code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_xml</a></code>
+    <div class='dont-index'><p><code><a href='https://meerapatelmd.github.io/pg13/reference/query.html'>query</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/appendTable.html'>appendTable</a></code>
+<code><a href='https://ohdsi.github.io/SqlRender/reference/render.html'>render</a></code>
+<code><a href='https://meerapatelmd.github.io/secretary/reference/typewrite_progress.html'>typewrite_progress</a></code>,<code><a href='https://rdrr.io/r/base/c.html'>c("typewrite", "typewrite")</a></code>,<code><a href='https://rdrr.io/r/base/character.html'>character(0)</a></code>
 <code><a href='https://rvest.tidyverse.org/reference/html_nodes.html'>html_nodes</a></code>,<code><a href='https://rvest.tidyverse.org/reference/html_table.html'>html_table</a></code>
 <code><a href='https://purrr.tidyverse.org/reference/keep.html'>keep</a></code>
 <code><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/select_all.html'>select_all</a></code>
 <code><a href='https://meerapatelmd.github.io/rubix/reference/format_colnames.html'>format_colnames</a></code></p></div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
- <span class='co'>#EXAMPLE1</span>
- <span class='op'>}</span>
-<span class='op'>}</span>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

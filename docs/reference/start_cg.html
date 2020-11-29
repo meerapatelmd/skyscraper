@@ -6,8 +6,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Scrape the NCI Drug Dictionary — get_drug_dictionary • skyscraper</title>
+<title>Creates CancerGov Schema — start_cg • skyscraper</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -39,8 +46,9 @@
 
 
 
-<meta property="og:title" content="Scrape the NCI Drug Dictionary — get_drug_dictionary" />
-<meta property="og:description" content="These functions scrape and parse the NCI Drug Dictionary found at CancerGov.org." />
+<meta property="og:title" content="Creates CancerGov Schema — start_cg" />
+<meta property="og:description" content="Creates CancerGov Schema" />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -72,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">skyscraper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -108,62 +116,18 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Scrape the NCI Drug Dictionary</h1>
-    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/cancergov_functions.R'><code>R/cancergov_functions.R</code></a></small>
-    <div class="hidden name"><code>get_drug_dictionary.Rd</code></div>
+    <h1>Creates CancerGov Schema</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/cg-utils.R'><code>R/cg-utils.R</code></a></small>
+    <div class="hidden name"><code>start_cg.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>These functions scrape and parse the NCI Drug Dictionary found at CancerGov.org.</p>
+    <p>Creates CancerGov Schema</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_drug_dictionary</span><span class='op'>(</span><span class='va'>conn</span>, max_page <span class='op'>=</span> <span class='fl'>50</span>, sleep_time <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>start_cg</span><span class='op'>(</span><span class='va'>conn</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>, render_sql <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>conn</th>
-      <td><p>Postgres connection object</p></td>
-    </tr>
-    <tr>
-      <th>max_page</th>
-      <td><p>maximum page number to iterate the scrape over in the "https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&amp;page=" path, Default: 50</p>
-<p>.</p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A Drug Dictionary Table in a <code>cancergov</code> schema if a Drug Dictionary Table didn't already exist. Otherwise, the new drugs are appended to the existing table.</p>
-    <h2 class="hasAnchor" id="web-source-types"><a class="anchor" href="#web-source-types"></a>Web Source Types</h2>
-
-    
-
-<p>The NCI Drug Dictionary has 2 data sources that run in parallel. The first source is the Drug Dictionary itself at <a href='https://www.cancer.gov/publications/dictionaries/cancer-drug'>https://www.cancer.gov/publications/dictionaries/cancer-drug</a>. The other source are the individual drug pages, called Drug Detail Links in skyscraper, that contain tables of synonyms, including investigational names.</p>
-    <h2 class="hasAnchor" id="drug-dictionary"><a class="anchor" href="#drug-dictionary"></a>Drug Dictionary</h2>
-
-    
-
-<p>The listed drug names and their definitions are scraped from the Drug Dictionary HTML and updated to a Drug Dictionary Table in a <code>cancergov</code> schema.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></code>
-<code><a href='https://meerapatelmd.github.io/secretary/reference/typewrite.html'>typewrite</a></code>
-<code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_xml</a></code>
-<code><a href='https://rvest.tidyverse.org/reference/html_nodes.html'>html_nodes</a></code>,<code><a href='https://rvest.tidyverse.org/reference/html_text.html'>html_text</a></code>
-<code><a href='https://purrr.tidyverse.org/reference/map.html'>map</a></code>,<code><a href='https://purrr.tidyverse.org/reference/keep.html'>keep</a></code>,<code><a href='https://purrr.tidyverse.org/reference/transpose.html'>transpose</a></code>
-<code><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/mutate_all.html'>mutate_all</a></code>
-<code><a href='https://stringr.tidyverse.org/reference/str_replace.html'>str_replace</a></code></p>
-<p>Other cancergov: 
-<code><a href='get_dictionary_and_links.html'>get_dictionary_and_links</a>()</code>,
-<code><a href='get_drug_detail_links.html'>get_drug_detail_links</a>()</code>,
-<code><a href='get_drug_link_synonym.html'>get_drug_link_synonym</a>()</code>,
-<code><a href='get_drug_link_url.html'>get_drug_link_url</a>()</code>,
-<code><a href='log_drug_count.html'>log_drug_count</a>()</code>,
-<code><a href='process_drug_link_ncit.html'>process_drug_link_ncit</a>()</code>,
-<code><a href='process_drug_link_synonym.html'>process_drug_link_synonym</a>()</code>,
-<code><a href='process_drug_link_url.html'>process_drug_link_url</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

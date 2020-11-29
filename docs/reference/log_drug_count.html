@@ -6,8 +6,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>FUNCTION_TITLE — log_drug_count • skyscraper</title>
+<title>Log the Drug Count in the Drug Dictionary — log_drug_count • skyscraper</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -39,8 +46,9 @@
 
 
 
-<meta property="og:title" content="FUNCTION_TITLE — log_drug_count" />
-<meta property="og:description" content="FUNCTION_DESCRIPTION" />
+<meta property="og:title" content="Log the Drug Count in the Drug Dictionary — log_drug_count" />
+<meta property="og:description" content="Log the drug count scraped by drug_count with a timestamp to the Drug Dictionary Log Table and also receive a time difference and count comparison between the most recent count and the current count in the R console." />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -72,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">skyscraper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -108,54 +116,37 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>FUNCTION_TITLE</h1>
-    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/cancergov_functions.R'><code>R/cancergov_functions.R</code></a></small>
+    <h1>Log the Drug Count in the Drug Dictionary</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/cg-internals.R'><code>R/cg-internals.R</code></a></small>
     <div class="hidden name"><code>log_drug_count.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>FUNCTION_DESCRIPTION</p>
+    <p>Log the drug count scraped by <code><a href='drug_count.html'>drug_count</a></code> with a timestamp to the Drug Dictionary Log Table and also receive a time difference and count comparison between the most recent count and the current count in the R console.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>log_drug_count</span><span class='op'>(</span><span class='va'>conn</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>log_drug_count</span><span class='op'>(</span><span class='va'>conn</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>, render_sql <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>conn</th>
-      <td><p>PARAM_DESCRIPTION</p></td>
+      <td><p>Postgres connection object.</p></td>
+    </tr>
+    <tr>
+      <th>verbose</th>
+      <td><p>When reading from a slow connection, this prints some
+output on every iteration so you know its working.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>OUTPUT_DESCRIPTION</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>DETAILS</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://meerapatelmd.github.io/pg13/reference/lsTables.html'>lsTables</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/readTable.html'>readTable</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/appendTable.html'>appendTable</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/writeTable.html'>writeTable</a></code>
-<code><a href='nci_count.html'>nci_count</a></code>
-<code><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></code></p>
-<p>Other cancergov: 
-<code><a href='get_dictionary_and_links.html'>get_dictionary_and_links</a>()</code>,
-<code><a href='get_drug_detail_links.html'>get_drug_detail_links</a>()</code>,
-<code><a href='get_drug_dictionary.html'>get_drug_dictionary</a>()</code>,
-<code><a href='get_drug_link_synonym.html'>get_drug_link_synonym</a>()</code>,
-<code><a href='get_drug_link_url.html'>get_drug_link_url</a>()</code>,
-<code><a href='process_drug_link_ncit.html'>process_drug_link_ncit</a>()</code>,
-<code><a href='process_drug_link_synonym.html'>process_drug_link_synonym</a>()</code>,
-<code><a href='process_drug_link_url.html'>process_drug_link_url</a>()</code></p></div>
+    <div class='dont-index'><p><code><a href='https://meerapatelmd.github.io/pg13/reference/query.html'>query</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/appendTable.html'>appendTable</a></code>
+<code><a href='https://meerapatelmd.github.io/secretary/reference/typewrite.html'>typewrite</a></code>
+<code><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></code></p></div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
- <span class='co'>#EXAMPLE1</span>
- <span class='op'>}</span>
-<span class='op'>}</span>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

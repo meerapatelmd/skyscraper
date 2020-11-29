@@ -8,6 +8,13 @@
 
 <title>Function reference • skyscraper</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -40,6 +47,7 @@
 
 
 <meta property="og:title" content="Function reference" />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -71,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">skyscraper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -133,9 +141,15 @@
       <tr>
         
         <td>
-          <p><code><a href="cancergov_functions.html">cancergov_functions</a></code> </p>
+          <p><code><a href="cancergov_internal.html">cancergov_internal</a></code> </p>
         </td>
-        <td><p>CancerGov Functions</p></td>
+        <td><p>CancerGov Internal Functions</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="cg_run.html">cg_run()</a></code> </p>
+        </td>
+        <td><p>Run CancerGov Scrape and Store</p></td>
       </tr><tr>
         
         <td>
@@ -163,6 +177,12 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="drug_count.html">drug_count()</a></code> </p>
+        </td>
+        <td><p>Get the Drug Count in the Drug Dictionary</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="export_schema_to_data_repo.html">export_schema_to_data_repo()</a></code> <code><a href="export_schema_to_data_repo.html">export_schema()</a></code> </p>
         </td>
         <td><p>Export and Push a skyscraper Schema to its Data Package Repository</p></td>
@@ -184,18 +204,6 @@
           <p><code><a href="get_dictionary_and_links.html">get_dictionary_and_links()</a></code> </p>
         </td>
         <td><p>Scrape the Drug Definitions and Links from the NCI Drug Dictionary</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_drug_detail_links.html">get_drug_detail_links()</a></code> </p>
-        </td>
-        <td><p>Get the URLS of all the Drug Pages in the Drug Dictionary</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_drug_dictionary.html">get_drug_dictionary()</a></code> </p>
-        </td>
-        <td><p>Scrape the NCI Drug Dictionary</p></td>
       </tr><tr>
         
         <td>
@@ -225,7 +233,13 @@
         <td>
           <p><code><a href="get_ncit_synonym.html">get_ncit_synonym()</a></code> </p>
         </td>
-        <td><p>FUNCTION_TITLE</p></td>
+        <td><p>Scrape the NCI Thesaurus</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_pm.html">get_pm()</a></code> </p>
+        </td>
+        <td><p>Scrape Earliest PubMed Publications</p></td>
       </tr><tr>
         
         <td>
@@ -244,12 +258,6 @@
           <p><code><a href="get_rn_url_validity.html">get_rn_url_validity()</a></code> </p>
         </td>
         <td><p>Check that the Registry Number URL is Valid</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="has_new_drug_count.html">has_new_drug_count()</a></code> </p>
-        </td>
-        <td><p>FUNCTION_TITLE</p></td>
       </tr><tr>
         
         <td>
@@ -301,6 +309,12 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="list_cg_tables.html">list_cg_tables()</a></code> </p>
+        </td>
+        <td><p>List CancerGov Tables</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="load_mrconso.html">load_all_mth()</a></code> <code><a href="load_mrconso.html">load_mrconso()</a></code> </p>
         </td>
         <td><p>FUNCTION_TITLE</p></td>
@@ -327,7 +341,7 @@
         <td>
           <p><code><a href="log_drug_count.html">log_drug_count()</a></code> </p>
         </td>
-        <td><p>FUNCTION_TITLE</p></td>
+        <td><p>Log the Drug Count in the Drug Dictionary</p></td>
       </tr><tr>
         
         <td>
@@ -349,15 +363,9 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="lookup_ncit_synonym.html">lookup_ncit_synonym()</a></code> </p>
+          <p><code><a href="lookup_ncit_code.html">lookup_ncit_code()</a></code> </p>
         </td>
-        <td><p>FUNCTION_TITLE</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="nci_count.html">nci_count()</a></code> </p>
-        </td>
-        <td><p>Get the NCI Drug Dictionary Count</p></td>
+        <td><p>Lookup an NCIt Code</p></td>
       </tr><tr>
         
         <td>
@@ -385,15 +393,15 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="scrape_latest_pubmed.html">scrape_latest_pubmed()</a></code> </p>
+          <p><code><a href="scrape.html">scrape()</a></code> </p>
         </td>
-        <td><p>FUNCTION_TITLE</p></td>
+        <td><p>Scrape</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="scrape_pubmed.html">scrape_recent_pubmed()</a></code> <code><a href="scrape_pubmed.html">scrape_earliest_pubmed()</a></code> </p>
+          <p><code><a href="scrape_latest_pubmed.html">scrape_latest_pubmed()</a></code> </p>
         </td>
-        <td><p>Scrape a PubMed search</p></td>
+        <td><p>FUNCTION_TITLE</p></td>
       </tr><tr>
         
         <td>
@@ -403,15 +411,33 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="start_cg.html">start_cg()</a></code> </p>
+        </td>
+        <td><p>Creates CancerGov Schema</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="update_aact_db.html">update_aact_db()</a></code> </p>
         </td>
         <td><p>Update ClinicalTrial.gov <code>aact</code> Postgres Database</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="update_cancergov_drugs.html">update_cancergov_drugs()</a></code> </p>
+        </td>
+        <td><p>Update the Cancergov Drugs Table</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="update_schemas.html">import_schemas()</a></code> <code><a href="update_schemas.html">update_schemas()</a></code> </p>
         </td>
         <td><p>Update Schemas with a Data Package</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="write_cg_staging_tbl.html">write_cg_staging_tbl()</a></code> </p>
+        </td>
+        <td><p>Write Staging Tables to Cancergov Schema</p></td>
       </tr>
     </tbody>
     </table>
