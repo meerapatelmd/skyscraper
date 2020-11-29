@@ -1,4 +1,4 @@
-# skyscraper     
+# skyscraper <img src="man/figures/logo.png" align="right" alt="" width="120" />     
 
 Skyscraper is an R package that scrapes and stores drug data from the Cancer.gov Drug Dictionary and the ChemiDPlus Databases. It was spearheaded to aggregate drug names for Oncology drugs to extend the OMOP Vocabulary normalization capabilities.   
 
