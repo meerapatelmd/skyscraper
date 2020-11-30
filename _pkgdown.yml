@@ -4,6 +4,7 @@ reference:
       Run the complete scrape based on resource.
     contents:
       - cg_run
+      - pm_run
   - title: Scrape Cancer.gov Drug Dictionary
     desc: >
       Scrape and store the parsed data from the Cancer.gov Drug Dictionary
@@ -20,7 +21,7 @@ reference:
       - update_cancergov_drugs
   - title: Scrape ChemiDPlus
     desc: >
-      Scrape and store ChemiDPlus
+      Scrape and store the parsed data from ChemiDPlus search results
     contents:
       - get_registry_numbers
       - log_registry_number
@@ -29,3 +30,8 @@ reference:
       - get_classification
       - get_links_to_resources
       - get_names_and_synonyms
+  - title: Scrape PubMed
+    desc: >
+      Scrape and store the parsed data from PubMed search results
+    contents:
+      - contains("_pm")
