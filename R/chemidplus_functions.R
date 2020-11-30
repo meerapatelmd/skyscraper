@@ -309,58 +309,11 @@ get_classification <-
                  schema = "chemidplus",
                  sleep_time = 3) {
 
-                # https://chem.nlm.nih.gov/chemidplus/rn/83-38-5
-                # https://chem.nlm.nih.gov/chemidplus/rn/97232-34-3
-                # https://chem.nlm.nih.gov/chemidplus/rn/499313-74-3
-                # https://chem.nlm.nih.gov/chemidplus/rn/90106-68-6
-                # https://chem.nlm.nih.gov/chemidplus/rn/225234-03-7
-                # https://chem.nlm.nih.gov/chemidplus/rn/57197-43-0
-                # https://chem.nlm.nih.gov/chemidplus/rn/95-30-7
-                # https://chem.nlm.nih.gov/chemidplus/rn/3819-76-9
-                # https://chem.nlm.nih.gov/chemidplus/rn/58911-04-9
-                # https://chem.nlm.nih.gov/chemidplus/rn/135669-44-2
-                # https://chem.nlm.nih.gov/chemidplus/rn/142192-09-4
-                # https://chem.nlm.nih.gov/chemidplus/rn/995-32-4
-                # https://chem.nlm.nih.gov/chemidplus/rn/1660-95-3
-                # https://chem.nlm.nih.gov/chemidplus/rn/2666-14-0
-                # https://chem.nlm.nih.gov/chemidplus/rn/2809-20-3
-                # https://chem.nlm.nih.gov/chemidplus/rn/816143-80-9
-                # https://chem.nlm.nih.gov/chemidplus/rn/37357-69-0
-                # https://chem.nlm.nih.gov/chemidplus/rn/518-20-7
-                # https://chem.nlm.nih.gov/chemidplus/rn/5117216-75-8
-                # https://chem.nlm.nih.gov/chemidplus/rn/105026-49-1
-                # https://chem.nlm.nih.gov/chemidplus/rn/105026-50-4
-                # https://chem.nlm.nih.gov/chemidplus/rn/5105026-51-5
-                # https://chem.nlm.nih.gov/chemidplus/rn/ [INN:NF]127-58-2
-                # https://chem.nlm.nih.gov/chemidplus/rn/50-21-5
-                # https://chem.nlm.nih.gov/chemidplus/rn/621-42-1
-                # https://chem.nlm.nih.gov/chemidplus/rn/50-33-9
-                # https://chem.nlm.nih.gov/chemidplus/rn/934016-19-0
-                # https://chem.nlm.nih.gov/chemidplus/rn/56-81-5
-                # https://chem.nlm.nih.gov/chemidplus/rn/57-91-0
-                # https://chem.nlm.nih.gov/chemidplus/rn/1939126-74-5
-                # https://chem.nlm.nih.gov/chemidplus/rn/1208255-63-3
-                # https://chem.nlm.nih.gov/chemidplus/rn/131740-09-5
-                # https://chem.nlm.nih.gov/chemidplus/rn/59-01-8
-                # https://chem.nlm.nih.gov/chemidplus/rn/570406-98-3
-                # https://chem.nlm.nih.gov/chemidplus/rn/677007-74-8
-                # https://chem.nlm.nih.gov/chemidplus/rn/699313-73-2
-                # https://chem.nlm.nih.gov/chemidplus/rn/143491-54-7
-                # https://chem.nlm.nih.gov/chemidplus/rn/25174336-60-0
-                # https://chem.nlm.nih.gov/chemidplus/rn/145199-73-1
-                # https://chem.nlm.nih.gov/chemidplus/rn/17795-21-0
-                # https://chem.nlm.nih.gov/chemidplus/rn/155775-04-5
-                # https://chem.nlm.nih.gov/chemidplus/rn/12674-15-6
-
-                # conn <- chariot::connectAthena()
-                # rn_url <- "https://chem.nlm.nih.gov/chemidplus/rn/12674-15-6"
 
                 if (missing(response)) {
 
-                        Sys.sleep(sleep_time)
-
-                        response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
-
+                        response <- scrape_cdp(x = rn_url,
+                                               sleep_time = sleep_time)
 
                 }
 
