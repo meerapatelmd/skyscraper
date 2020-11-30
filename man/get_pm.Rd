@@ -2,7 +2,7 @@
 % Please edit documentation in R/pubmed_functions.R
 \name{get_pm}
 \alias{get_pm}
-\title{Scrape Earliest PubMed Publications}
+\title{Scrape PubMed Publications}
 \usage{
 get_pm(
   conn,
@@ -15,7 +15,7 @@ get_pm(
 )
 }
 \description{
-A PubMed search is performed for a string given as the \code{search_term} argument and the earliest publications are returned in descending order. This is a useful tool for researching investigational drugs and whether or not they are a code name for an existing drug on the market. Note that there is no \code{expiration_days} argument because the earliest dates cannot ever become obsolete.
+A PubMed search is performed for a string given as the \code{search_term} argument and the earliest or the latest publications are returned in descending order. This is a useful tool for researching investigational drugs and whether or not they are a code name for an existing drug on the market. Note that there is no \code{expiration_days} argument because the earliest dates cannot ever become obsolete.
 }
 \seealso{
 \code{\link[stringr]{str_remove}}
@@ -23,5 +23,9 @@ A PubMed search is performed for a string given as the \code{search_term} argume
 \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
 \code{\link[tibble]{tibble}}
 \code{\link[pg13]{lsSchema}},\code{\link[pg13]{createSchema}},\code{\link[pg13]{lsTables}},\code{\link[pg13]{appendTable}},\code{\link[pg13]{writeTable}}
+
+Other pubmed functions: 
+\code{\link{get_pm_earliest}()},
+\code{\link{get_pm_latest}()}
 }
-\concept{pubmed}
+\concept{pubmed functions}
