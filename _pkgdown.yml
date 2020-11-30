@@ -1,0 +1,31 @@
+reference:
+  - title: Run Scrape
+    desc: >
+      Run the complete scrape based on resource.
+    contents:
+      - cg_run
+  - title: Scrape Cancer.gov Drug Dictionary
+    desc: >
+      Scrape and store the parsed data from the Cancer.gov Drug Dictionary
+    contents:
+      - drug_count
+      - log_drug_count
+      - get_dictionary_and_links
+      - get_drug_link_synonym
+      - get_drug_link_url
+      - get_ncit_synonym
+      - process_drug_link_ncit
+      - process_drug_link_synonym
+      - process_drug_link_url
+      - update_cancergov_drugs
+  - title: Scrape ChemiDPlus
+    desc: >
+      Scrape and store ChemiDPlus
+    contents:
+      - get_registry_numbers
+      - log_registry_number
+      - get_rn_url_validity
+      - get_classification_code
+      - get_classification
+      - get_links_to_resources
+      - get_names_and_synonyms

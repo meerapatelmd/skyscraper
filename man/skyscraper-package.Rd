@@ -6,6 +6,8 @@
 \alias{skyscraper-package}
 \title{skyscraper: Scrape Clinical Drug Data}
 \description{
+\if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
+
 Scrape, store, and maintain clinical drug data
     across various disparate web and data sources, including the
     ChemiDPlus, NCI Drug Dictionary, and the ClinicalTrials.gov AACT
