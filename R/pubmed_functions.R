@@ -268,6 +268,10 @@ pm_run <-
                  verbose = TRUE,
                  render_sql = TRUE) {
 
+                start_pm(conn = conn,
+                         verbose = verbose,
+                         render_sql = render_sql)
+
                 get_pm_earliest(conn = conn,
                                 conn_fun = conn_fun,
                                 search_term = search_term,
