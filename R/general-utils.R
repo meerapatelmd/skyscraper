@@ -9,3 +9,12 @@
 #' @importFrom magrittr %>%
 #' @usage lhs \%>\% rhs
 NULL
+
+
+
+#' @noRd
+
+no_na <-
+        function(vector) {
+                vector[!is.na(vector)]
+        }
