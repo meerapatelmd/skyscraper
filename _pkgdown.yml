@@ -35,3 +35,8 @@ reference:
       Scrape and store the parsed data from PubMed search results
     contents:
       - contains("_pm")
+  - title: Methods
+    desc: >
+      Methods that can be used against the scraped data
+    contents:
+      - contains("lookup")
