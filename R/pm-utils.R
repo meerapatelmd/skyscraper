@@ -1,6 +1,11 @@
-
-
-
+#' @title
+#' Create PubMed Tables in Patelm9 Schema
+#'
+#' @description
+#' Create PubMed Tables in the Patelm9 schema if they do not already exist. Tables include: PM_LOG, PM_EARLIEST, PM_LATEST, and PM_RESULTS*. PM_RESULTS is not created by this script. It is written by \code{\link{pm_run}}.
+#'
+#' @importFrom pg13 send
+#' @export
 
 start_pm <-
         function(conn,
