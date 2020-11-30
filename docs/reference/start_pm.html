@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>FUNCTION_TITLE — log_umls_search • skyscraper</title>
+<title>Create PubMed Tables in Patelm9 Schema — start_pm • skyscraper</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="FUNCTION_TITLE — log_umls_search" />
-<meta property="og:description" content="FUNCTION_DESCRIPTION" />
+<meta property="og:title" content="Create PubMed Tables in Patelm9 Schema — start_pm" />
+<meta property="og:description" content="Create PubMed Tables in the Patelm9 schema if they do not already exist. Tables include: PM_LOG, PM_EARLIEST, PM_LATEST, and PM_RESULTS*. PM_RESULTS is not created by this script. It is written by pm_run." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -119,52 +119,19 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>FUNCTION_TITLE</h1>
-    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/log_umls_api.R'><code>R/log_umls_api.R</code></a></small>
-    <div class="hidden name"><code>log_umls_search.Rd</code></div>
+    <h1>Create PubMed Tables in Patelm9 Schema</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/pm-utils.R'><code>R/pm-utils.R</code></a></small>
+    <div class="hidden name"><code>start_pm.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>FUNCTION_DESCRIPTION</p>
+    <p>Create PubMed Tables in the Patelm9 schema if they do not already exist. Tables include: PM_LOG, PM_EARLIEST, PM_LATEST, and PM_RESULTS*. PM_RESULTS is not created by this script. It is written by <code><a href='pm_run.html'>pm_run</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>log_umls_search</span><span class='op'>(</span><span class='va'>conn</span>, <span class='va'>string</span>, schema <span class='op'>=</span> <span class='st'>"omop_drug_to_umls_api"</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>start_pm</span><span class='op'>(</span><span class='va'>conn</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>, render_sql <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>conn</th>
-      <td><p>PARAM_DESCRIPTION</p></td>
-    </tr>
-    <tr>
-      <th>string</th>
-      <td><p>PARAM_DESCRIPTION</p></td>
-    </tr>
-    <tr>
-      <th>schema</th>
-      <td><p>PARAM_DESCRIPTION, Default: 'omop_drug_to_umls_api'</p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>OUTPUT_DESCRIPTION</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>DETAILS</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='https://meerapatelmd.github.io/pg13/reference/lsSchema.html'>lsSchema</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/createSchema.html'>createSchema</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/lsTables.html'>lsTables</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/query.html'>query</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/buildQuery.html'>buildQuery</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/send.html'>send</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/appendTable.html'>appendTable</a></code>
-<code><a href='https://dplyr.tidyverse.org/reference/distinct.html'>distinct</a></code></p></div>
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
- <span class='co'>#EXAMPLE1</span>
- <span class='op'>}</span>
-<span class='op'>}</span>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
