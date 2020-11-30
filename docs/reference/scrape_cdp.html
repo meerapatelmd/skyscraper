@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Search ChemiDPlus and Store Results — searchChemiDPlus • skyscraper</title>
+<title>Scrape ChemiDPlus — scrape_cdp • skyscraper</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Search ChemiDPlus and Store Results — searchChemiDPlus" />
-<meta property="og:description" content="Search ChemiDPlus and Store Results" />
+<meta property="og:title" content="Scrape ChemiDPlus — scrape_cdp" />
+<meta property="og:description" content="The general scrape function is modified to scrape using the special parameters that ChemiDPlus requires to avoid errors." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">skyscraper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -119,33 +119,69 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Search ChemiDPlus and Store Results</h1>
-    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/chemidplus_functions.R'><code>R/chemidplus_functions.R</code></a></small>
-    <div class="hidden name"><code>searchChemiDPlus.Rd</code></div>
+    <h1>Scrape ChemiDPlus</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/cdp-utils.R'><code>R/cdp-utils.R</code></a></small>
+    <div class="hidden name"><code>scrape_cdp.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Search ChemiDPlus and Store Results</p>
+    <p>The general <code><a href='scrape.html'>scrape</a></code> function is modified to scrape using the special parameters that ChemiDPlus requires to avoid errors.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>searchChemiDPlus</span><span class='op'>(</span>
-  <span class='va'>conn</span>,
-  <span class='va'>search_term</span>,
-  type <span class='op'>=</span> <span class='st'>"contains"</span>,
-  sleep_time <span class='op'>=</span> <span class='fl'>5</span>,
-  schema <span class='op'>=</span> <span class='st'>"chemidplus"</span>,
-  export_repo <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  target_dir <span class='op'>=</span> <span class='st'>"~/GitHub/Public-Packages/chemidplusData/"</span>
+    <pre class="usage"><span class='fu'>scrape_cdp</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"RECOVER"</span>, <span class='st'>"NOERROR"</span>, <span class='st'>"NOBLANKS"</span>, <span class='st'>"HUGE"</span><span class='op'>)</span>,
+  sleep_time <span class='op'>=</span> <span class='fl'>3</span>
 <span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>A string, a connection, or a raw vector.</p>
+<p>A string can be either a path, a url or literal xml. Urls will
+be converted into connections either using <code><a href='https://rdrr.io/r/base/connections.html'>base::url</a></code> or, if
+installed, <code><a href='https://jeroen.cran.dev/curl/reference/curl.html'>curl::curl</a></code>. Local paths ending in <code>.gz</code>,
+<code>.bz2</code>, <code>.xz</code>, <code>.zip</code> will be automatically uncompressed.</p>
+<p>If a connection, the complete connection is read into a raw vector before
+being parsed.</p></td>
+    </tr>
+    <tr>
+      <th>options</th>
+      <td><p>Set parsing options for the libxml2 parser. Zero or more of</p><dl>
+  <dt>RECOVER</dt><dd><p>recover on errors</p></dd>
+  <dt>NOENT</dt><dd><p>substitute entities</p></dd>
+  <dt>DTDLOAD</dt><dd><p>load the external subset</p></dd>
+  <dt>DTDATTR</dt><dd><p>default DTD attributes</p></dd>
+  <dt>DTDVALID</dt><dd><p>validate with the DTD</p></dd>
+  <dt>NOERROR</dt><dd><p>suppress error reports</p></dd>
+  <dt>NOWARNING</dt><dd><p>suppress warning reports</p></dd>
+  <dt>PEDANTIC</dt><dd><p>pedantic error reporting</p></dd>
+  <dt>NOBLANKS</dt><dd><p>remove blank nodes</p></dd>
+  <dt>SAX1</dt><dd><p>use the SAX1 interface internally</p></dd>
+  <dt>XINCLUDE</dt><dd><p>Implement XInclude substitition</p></dd>
+  <dt>NONET</dt><dd><p>Forbid network access</p></dd>
+  <dt>NODICT</dt><dd><p>Do not reuse the context dictionary</p></dd>
+  <dt>NSCLEAN</dt><dd><p>remove redundant namespaces declarations</p></dd>
+  <dt>NOCDATA</dt><dd><p>merge CDATA as text nodes</p></dd>
+  <dt>NOXINCNODE</dt><dd><p>do not generate XINCLUDE START/END nodes</p></dd>
+  <dt>COMPACT</dt><dd><p>compact small text nodes; no modification of the tree allowed afterwards (will possibly crash if you try to modify the tree)</p></dd>
+  <dt>OLD10</dt><dd><p>parse using XML-1.0 before update 5</p></dd>
+  <dt>NOBASEFIX</dt><dd><p>do not fixup XINCLUDE xml:base uris</p></dd>
+  <dt>HUGE</dt><dd><p>relax any hardcoded limit from the parser</p></dd>
+  <dt>OLDSAX</dt><dd><p>parse using SAX2 interface before 2.7.0</p></dd>
+  <dt>IGNORE_ENC</dt><dd><p>ignore internal document encoding hint</p></dd>
+  <dt>BIG_LINES</dt><dd><p>Store big lines numbers in text PSVI field</p></dd>
 
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+</dl></td>
+    </tr>
+    <tr>
+      <th>sleep_time</th>
+      <td><p>Time in seconds for the system to sleep before each scrape with <code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_html</a></code>.</p></td>
+    </tr>
+    </table>
 
-    <div class='dont-index'><p><code><a href='https://meerapatelmd.github.io/pg13/reference/query.html'>query</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/buildQuery.html'>buildQuery</a></code>
-<code><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></code>
-<code><a href='https://meerapatelmd.github.io/centipede/reference/no_na.html'>no_na</a></code>
-<code><a href='https://tibble.tidyverse.org/reference/tribble.html'>tribble</a></code>,<code><a href='https://rdrr.io/r/base/c.html'>c("tibble", "tibble")</a></code>
-<code><a href='https://rdrr.io/pkg/police/man/try_catch_error_as_null.html'>try_catch_error_as_null</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
