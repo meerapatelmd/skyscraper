@@ -129,8 +129,8 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
+          <h2 id="section-run-scrape" class="hasAnchor"><a href="#section-run-scrape" class="anchor"></a>Run Scrape</h2>
+          <p class="section-desc"><p>Run the complete scrape based on resource.</p></p>
         </th>
       </tr>
       
@@ -141,40 +141,23 @@
       <tr>
         
         <td>
-          <p><code><a href="cancergov_internal.html">cancergov_internal</a></code> </p>
-        </td>
-        <td><p>CancerGov Internal Functions</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="cg_run.html">cg_run()</a></code> </p>
         </td>
         <td><p>Run CancerGov Scrape and Store</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="chemidplus_parsing_functions.html">chemidplus_parsing_functions</a></code> </p>
-        </td>
-        <td><p>ChemiDPlus Parsing Functions</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="chemidplus_scraping_functions.html">chemidplus_scraping_functions</a></code> </p>
-        </td>
-        <td><p>ChemiDPlus Scraping Functions</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="chemidplus_tables_to_omop.html">chemidplus_tables_to_omop()</a></code> </p>
-        </td>
-        <td><p>ETL the ChemiDPlus Tables to OMOP Vocabulary Architecture</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="clinicaltrialsgov_functions.html">clinicaltrialsgov_functions</a></code> </p>
-        </td>
-        <td><p>ClinicalTrials.gov Functions</p></td>
-      </tr><tr>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-scrape-cancer-gov-drug-dictionary" class="hasAnchor"><a href="#section-scrape-cancer-gov-drug-dictionary" class="anchor"></a>Scrape Cancer.gov Drug Dictionary</h2>
+          <p class="section-desc"><p>Scrape and store the parsed data from the Cancer.gov Drug Dictionary</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
           <p><code><a href="drug_count.html">drug_count()</a></code> </p>
@@ -183,21 +166,9 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="export_schema_to_data_repo.html">export_schema_to_data_repo()</a></code> <code><a href="export_schema_to_data_repo.html">export_schema()</a></code> </p>
+          <p><code><a href="log_drug_count.html">log_drug_count()</a></code> </p>
         </td>
-        <td><p>Export and Push a skyscraper Schema to its Data Package Repository</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_classification.html">get_classification()</a></code> </p>
-        </td>
-        <td><p>Scrape the "Classification" Section at a Registry Number URL</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_classification_code.html">get_classification_code()</a></code> </p>
-        </td>
-        <td><p>Scrape the Classification Code in the Summary Header of the RN URL</p></td>
+        <td><p>Log the Drug Count in the Drug Dictionary</p></td>
       </tr><tr>
         
         <td>
@@ -219,153 +190,9 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="get_links_to_resources.html">get_links_to_resources()</a></code> </p>
-        </td>
-        <td><p>Scrape the "Links to Resources" Section at a Registry Number URL</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_names_and_synonyms.html">get_names_and_synonyms()</a></code> </p>
-        </td>
-        <td><p>Scrape the "Names and Synonyms" Section at a Registry Number URL</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="get_ncit_synonym.html">get_ncit_synonym()</a></code> </p>
         </td>
         <td><p>Scrape the NCI Thesaurus</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_pm.html">get_pm()</a></code> </p>
-        </td>
-        <td><p>Scrape Earliest PubMed Publications</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_registry_numbers.html">get_registry_numbers()</a></code> </p>
-        </td>
-        <td><p>Scrape the "Registry Numbers" Section at a Registry Number URL</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_response.html">get_response()</a></code> </p>
-        </td>
-        <td><p>Get a Response from a RN URL</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_rn_url_validity.html">get_rn_url_validity()</a></code> </p>
-        </td>
-        <td><p>Check that the Registry Number URL is Valid</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="is404.html">is404()</a></code> </p>
-        </td>
-        <td><p>Is the RN URL returning an HTTP error 404?</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="isMultipleHits.html">isMultipleHits()</a></code> </p>
-        </td>
-        <td><p>Get the RNs from a page listing the first 5 matches</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="isMultipleHits2.html">isMultipleHits2()</a></code> </p>
-        </td>
-        <td><p>FUNCTION_TITLE</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="isMultipleHits3.html">isMultipleHits3()</a></code> </p>
-        </td>
-        <td><p>FUNCTION_TITLE</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="isNoRecord.html">isNoRecord()</a></code> </p>
-        </td>
-        <td><p>Does the RN URL indicate that no records were found?</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="isSingleHit.html">isSingleHit()</a></code> </p>
-        </td>
-        <td><p>Parse the RN from a single Substance Page</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="isSingleHit2.html">isSingleHit2()</a></code> </p>
-        </td>
-        <td><p>FUNCTION_TITLE</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="join_chemidplus_omop_synonyms.html">join_chemidplus_omop_synonyms()</a></code> </p>
-        </td>
-        <td><p>Join ChemiDPlus Results to the OMOP Vocabulary by Concept</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="list_cg_tables.html">list_cg_tables()</a></code> </p>
-        </td>
-        <td><p>List CancerGov Tables</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="load_mrconso.html">load_all_mth()</a></code> <code><a href="load_mrconso.html">load_mrconso()</a></code> </p>
-        </td>
-        <td><p>FUNCTION_TITLE</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="load_ncit.html">load_ncit()</a></code> </p>
-        </td>
-        <td><p>FUNCTION_TITLE</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="load_schema_map.html">load_schema_map()</a></code> </p>
-        </td>
-        <td><p>Map a skyscraper Schema to a Data Package Repository</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="local_maintenance_functions.html">local_maintenance_functions</a></code> </p>
-        </td>
-        <td><p>Skyscraper Local Data Maintenance Functions</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="log_drug_count.html">log_drug_count()</a></code> </p>
-        </td>
-        <td><p>Log the Drug Count in the Drug Dictionary</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="log_errors.html">log_errors()</a></code> </p>
-        </td>
-        <td><p>FUNCTION_TITLE</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="log_registry_number.html">log_registry_number()</a></code> </p>
-        </td>
-        <td><p>Log Registry Number Matches for a Search</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="log_umls_search.html">log_umls_search()</a></code> </p>
-        </td>
-        <td><p>FUNCTION_TITLE</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="lookup_ncit_code.html">lookup_ncit_code()</a></code> </p>
-        </td>
-        <td><p>Lookup an NCIt Code</p></td>
       </tr><tr>
         
         <td>
@@ -387,57 +214,64 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="schema_status.html">schema_status()</a></code> </p>
-        </td>
-        <td><p>Get the Status of a Data Package Installation</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="scrape.html">scrape()</a></code> </p>
-        </td>
-        <td><p>Scrape</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="scrape_latest_pubmed.html">scrape_latest_pubmed()</a></code> </p>
-        </td>
-        <td><p>FUNCTION_TITLE</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="searchChemiDPlus.html">searchChemiDPlus()</a></code> </p>
-        </td>
-        <td><p>Search ChemiDPlus and Store Results</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="start_cg.html">start_cg()</a></code> </p>
-        </td>
-        <td><p>Creates CancerGov Schema</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="update_aact_db.html">update_aact_db()</a></code> </p>
-        </td>
-        <td><p>Update ClinicalTrial.gov <code>aact</code> Postgres Database</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="update_cancergov_drugs.html">update_cancergov_drugs()</a></code> </p>
         </td>
         <td><p>Update the Cancergov Drugs Table</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-scrape-chemidplus" class="hasAnchor"><a href="#section-scrape-chemidplus" class="anchor"></a>Scrape ChemiDPlus</h2>
+          <p class="section-desc"><p>Scrape and store ChemiDPlus</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="get_registry_numbers.html">get_registry_numbers()</a></code> </p>
+        </td>
+        <td><p>Scrape the "Registry Numbers" Section at a Registry Number URL</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="update_schemas.html">import_schemas()</a></code> <code><a href="update_schemas.html">update_schemas()</a></code> </p>
+          <p><code><a href="log_registry_number.html">log_registry_number()</a></code> </p>
         </td>
-        <td><p>Update Schemas with a Data Package</p></td>
+        <td><p>Log Registry Number Matches for a Search</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="write_cg_staging_tbl.html">write_cg_staging_tbl()</a></code> </p>
+          <p><code><a href="get_rn_url_validity.html">get_rn_url_validity()</a></code> </p>
         </td>
-        <td><p>Write Staging Tables to Cancergov Schema</p></td>
+        <td><p>Check that the Registry Number URL is Valid</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_classification_code.html">get_classification_code()</a></code> </p>
+        </td>
+        <td><p>Scrape the Classification Code in the Summary Header of the RN URL</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_classification.html">get_classification()</a></code> </p>
+        </td>
+        <td><p>Scrape the "Classification" Section at a Registry Number URL</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_links_to_resources.html">get_links_to_resources()</a></code> </p>
+        </td>
+        <td><p>Scrape the "Links to Resources" Section at a Registry Number URL</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_names_and_synonyms.html">get_names_and_synonyms()</a></code> </p>
+        </td>
+        <td><p>Scrape the "Names and Synonyms" Section at a Registry Number URL</p></td>
       </tr>
     </tbody>
     </table>
