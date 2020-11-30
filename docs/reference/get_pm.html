@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Scrape Earliest PubMed Publications — get_pm • skyscraper</title>
+<title>Scrape PubMed Publications — get_pm • skyscraper</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Scrape Earliest PubMed Publications — get_pm" />
-<meta property="og:description" content="A PubMed search is performed for a string given as the search_term argument and the earliest publications are returned in descending order. This is a useful tool for researching investigational drugs and whether or not they are a code name for an existing drug on the market. Note that there is no expiration_days argument because the earliest dates cannot ever become obsolete." />
+<meta property="og:title" content="Scrape PubMed Publications — get_pm" />
+<meta property="og:description" content="A PubMed search is performed for a string given as the search_term argument and the earliest or the latest publications are returned in descending order. This is a useful tool for researching investigational drugs and whether or not they are a code name for an existing drug on the market. Note that there is no expiration_days argument because the earliest dates cannot ever become obsolete." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -95,6 +95,9 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
@@ -116,13 +119,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Scrape Earliest PubMed Publications</h1>
+    <h1>Scrape PubMed Publications</h1>
     <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/pubmed_functions.R'><code>R/pubmed_functions.R</code></a></small>
     <div class="hidden name"><code>get_pm.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A PubMed search is performed for a string given as the <code>search_term</code> argument and the earliest publications are returned in descending order. This is a useful tool for researching investigational drugs and whether or not they are a code name for an existing drug on the market. Note that there is no <code>expiration_days</code> argument because the earliest dates cannot ever become obsolete.</p>
+    <p>A PubMed search is performed for a string given as the <code>search_term</code> argument and the earliest or the latest publications are returned in descending order. This is a useful tool for researching investigational drugs and whether or not they are a code name for an existing drug on the market. Note that there is no <code>expiration_days</code> argument because the earliest dates cannot ever become obsolete.</p>
     </div>
 
     <pre class="usage"><span class='fu'>get_pm</span><span class='op'>(</span>
@@ -142,7 +145,10 @@
 <code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_xml</a></code>
 <code><a href='https://rvest.tidyverse.org/reference/html_nodes.html'>html_nodes</a></code>,<code><a href='https://rvest.tidyverse.org/reference/html_text.html'>html_text</a></code>
 <code><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></code>
-<code><a href='https://meerapatelmd.github.io/pg13/reference/lsSchema.html'>lsSchema</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/createSchema.html'>createSchema</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/lsTables.html'>lsTables</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/appendTable.html'>appendTable</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/writeTable.html'>writeTable</a></code></p></div>
+<code><a href='https://meerapatelmd.github.io/pg13/reference/lsSchema.html'>lsSchema</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/createSchema.html'>createSchema</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/lsTables.html'>lsTables</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/appendTable.html'>appendTable</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/writeTable.html'>writeTable</a></code></p>
+<p>Other pubmed functions: 
+<code><a href='get_pm_earliest.html'>get_pm_earliest</a>()</code>,
+<code><a href='get_pm_latest.html'>get_pm_latest</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

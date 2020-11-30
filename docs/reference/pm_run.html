@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>FUNCTION_TITLE — scrape_latest_pubmed • skyscraper</title>
+<title>Run the complete PubMed Scrape — pm_run • skyscraper</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="FUNCTION_TITLE — scrape_latest_pubmed" />
-<meta property="og:description" content="FUNCTION_DESCRIPTION" />
+<meta property="og:title" content="Run the complete PubMed Scrape — pm_run" />
+<meta property="og:description" content="Scrape and the store the earliest and latest PubMed Publications for a search term by executing get_pm_earliest in concert with get_pm_latest. This is followed by an indiscriminate union between PM_EARLIEST and PM_LATEST Tables and refreshed as the PM_RESULTS Table." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -95,6 +95,9 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
@@ -116,59 +119,19 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>FUNCTION_TITLE</h1>
+    <h1>Run the complete PubMed Scrape</h1>
     <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/pubmed_functions.R'><code>R/pubmed_functions.R</code></a></small>
-    <div class="hidden name"><code>scrape_latest_pubmed.Rd</code></div>
+    <div class="hidden name"><code>pm_run.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>FUNCTION_DESCRIPTION</p>
+    <p>Scrape and the store the earliest and latest PubMed Publications for a search term by executing <code><a href='get_pm_earliest.html'>get_pm_earliest</a></code> in concert with <code><a href='get_pm_latest.html'>get_pm_latest</a></code>. This is followed by an indiscriminate union between PM_EARLIEST and PM_LATEST Tables and refreshed as the PM_RESULTS Table.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>scrape_latest_pubmed</span><span class='op'>(</span><span class='va'>conn</span>, <span class='va'>search_term</span>, schema <span class='op'>=</span> <span class='st'>"patelm9"</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>pm_run</span><span class='op'>(</span><span class='va'>conn</span>, <span class='va'>conn_fun</span>, <span class='va'>search_term</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>, render_sql <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>conn</th>
-      <td><p>PARAM_DESCRIPTION</p></td>
-    </tr>
-    <tr>
-      <th>search_term</th>
-      <td><p>PARAM_DESCRIPTION</p></td>
-    </tr>
-    <tr>
-      <th>schema</th>
-      <td><p>PARAM_DESCRIPTION, Default: 'patelm9'</p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>OUTPUT_DESCRIPTION</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>DETAILS</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></code>
-<code><a href='https://meerapatelmd.github.io/pg13/reference/lsSchema.html'>lsSchema</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/createSchema.html'>createSchema</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/lsTables.html'>lsTables</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/query.html'>query</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/appendTable.html'>appendTable</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/writeTable.html'>writeTable</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/send.html'>send</a></code>
-<code><a href='https://ohdsi.github.io/SqlRender/reference/render.html'>render</a></code>
-<code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_xml</a></code>
-<code><a href='https://rvest.tidyverse.org/reference/html_nodes.html'>html_nodes</a></code>,<code><a href='https://rvest.tidyverse.org/reference/html_text.html'>html_text</a></code>
-<code><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></code>
-<code><a href='https://tidyr.tidyverse.org/reference/extract.html'>extract</a></code>
-<code><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></code>
-<code><a href='http://lubridate.tidyverse.org/reference/parse_date_time.html'>parse_date_time</a></code></p></div>
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
- <span class='co'>#EXAMPLE1</span>
- <span class='op'>}</span>
-<span class='op'>}</span>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
