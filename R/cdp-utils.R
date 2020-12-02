@@ -13,11 +13,13 @@
 scrape_cdp <-
         function(x,
                  options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"),
-                 sleep_time = 3) {
+                 sleep_time = 3,
+                 verbose = TRUE) {
 
                 scrape(x = x,
                         options = options,
-                       sleep_time = sleep_time
+                       sleep_time = sleep_time,
+                       verbose = verbose
                 )
         }
 

@@ -64,7 +64,7 @@ log_drug_count <-
                  render_sql = TRUE) {
 
 
-                nci_dd_count <- nci_count()
+                nci_dd_count <- drug_count()
 
                 most_recent_count <-
                         pg13::query(conn = conn,

@@ -7,9 +7,10 @@
 cdp_run(
   conn,
   search_term,
-  type = "contains",
+  search_type = "contains",
   sleep_time = 5,
-  schema = "chemidplus"
+  verbose = TRUE,
+  render_sql = TRUE
 )
 }
 \description{

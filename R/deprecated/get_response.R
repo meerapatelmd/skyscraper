@@ -1,6 +1,6 @@
 #' @title
 #' Get a Response from a RN URL
-#' @description FUNCTION_DESCRIPTION
+#' @description (Deprecated) FUNCTION_DESCRIPTION
 #' @param rn_url PARAM_DESCRIPTION
 #' @param sleep_time PARAM_DESCRIPTION, Default: 3
 #' @return OUTPUT_DESCRIPTION
@@ -21,8 +21,8 @@ get_response <-
         function(rn_url,
                  sleep_time = 3) {
 
-                response <- xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
-                Sys.sleep(sleep_time)
+                .Deprecated("scrape_cdp")
 
-                response
+                Sys.sleep(sleep_time)
+                xml2::read_html(rn_url, options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"))
         }
