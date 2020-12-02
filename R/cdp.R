@@ -32,9 +32,22 @@ cdp_run <-
                 # schema <- "chemidplus"
                 # export_repo <- FALSE
 
+
+                if (verbose) {
+                        cli::cat_line()
+                        cli::cat_rule("Creating Tables")
+                }
+
                 start_cdp(conn = conn,
                           verbose = verbose,
                           render_sql = render_sql)
+
+                if ("log_registry_number" %in% steps) {
+
+                        if (verbose) {
+                                cli::cat_line()
+                                cli::cat_rule("Logging search to Registry Number Log")
+                        }
 
                 log_registry_number(conn = conn,
                                     raw_search_term = search_term,
@@ -42,6 +55,7 @@ cdp_run <-
                                     schema = "chemidplus",
                                     sleep_time = sleep_time,
                                     verbose = verbose)
+                }
 
 
                 rn_urls <-
@@ -67,6 +81,14 @@ cdp_run <-
 
                 for (rn_url in rn_urls) {
 
+
+                        if (verbose) {
+                                cli::cat_line()
+                                cli::cat_rule("Scraping")
+                                cli::cli_process_start(sprintf("Scraping %s", secretary::italicize(rn_url)))
+                        }
+
+
                         response <- scrape_cdp(x = rn_url,
                                                sleep_time = sleep_time,
                                                verbose = verbose)
@@ -74,13 +96,24 @@ cdp_run <-
 
                         if (!is.null(response)) {
 
+                                if (verbose) {
+                                        cli::cli_process_done()
+                                }
+
                                 status_df <-
                                         dplyr::bind_rows(status_df,
                                                          tibble::tibble(rn_url = rn_url,
                                                                         rn_url_response_status = "Success")) %>%
                                         dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
 
+
+
                                 if ("get_rn_url_validity" %in% steps) {
+
+                                        if (verbose) {
+                                                cli::cat_line()
+                                                cli::cat_rule("Getting RN URL Validity")
+                                        }
 
                                 get_rn_url_validity(conn = conn,
                                                     rn_url = rn_url,
@@ -90,7 +123,13 @@ cdp_run <-
                                 }
 
 
+
                                 if ("get_classification" %in% steps) {
+
+                                        if (verbose) {
+                                                cli::cat_line()
+                                                cli::cat_rule("Getting Classification")
+                                        }
 
                                 get_classification(conn = conn,
                                                    rn_url = rn_url,
@@ -101,7 +140,13 @@ cdp_run <-
 
 
 
+
                                 if ("get_names_and_synonyms" %in% steps) {
+
+                                        if (verbose) {
+                                                cli::cat_line()
+                                                cli::cat_rule("Getting Names and Synonyms")
+                                        }
 
                                 get_names_and_synonyms(conn = conn,
                                                        rn_url = rn_url,
@@ -113,6 +158,11 @@ cdp_run <-
 
                                 if ("get_registry_numbers" %in% steps) {
 
+                                        if (verbose) {
+                                                cli::cat_line()
+                                                cli::cat_rule("Getting Registry Numbers")
+                                        }
+
                                 get_registry_numbers(conn = conn,
                                                      rn_url = rn_url,
                                                      response = response,
@@ -123,6 +173,12 @@ cdp_run <-
 
                                 if ("get_links_resources" %in% steps) {
 
+                                        if (verbose) {
+                                                cli::cat_line()
+                                                cli::cat_rule("Getting Links to Resources")
+                                        }
+
+
                                 get_links_to_resources(conn = conn,
                                                        rn_url = rn_url,
                                                        response = response,
@@ -131,6 +187,11 @@ cdp_run <-
                                 }
 
                         } else {
+
+                                if (verbose) {
+                                        cli::cli_process_failed()
+                                }
+
                                 status_df <-
                                         dplyr::bind_rows(status_df,
                                                          tibble::tibble(rn_url = rn_url,
@@ -138,10 +199,10 @@ cdp_run <-
                                         dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
                         }
 
+                        closeAllConnections()
+
+
                 }
-
-
-                closeAllConnections()
 
                 status_df
 

@@ -6,6 +6,8 @@
 \usage{
 cdp_run(
   conn,
+  steps = c("log_registry_number", "get_rn_url_validity", "get_classification",
+    "get_names_and_synonyms", "get_registry_numbers", "get_links_to_resources"),
   search_term,
   search_type = "contains",
   sleep_time = 5,
