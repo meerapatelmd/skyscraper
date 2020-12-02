@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Changelog • skyscraper</title>
+<title>Scrape the Classification Code in the Summary Header of the RN URL — get_classification_code • skyscraper</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,8 @@
 
 
 
-<meta property="og:title" content="Changelog" />
+<meta property="og:title" content="Scrape the Classification Code in the Summary Header of the RN URL — get_classification_code" />
+<meta property="og:description" content="FUNCTION_DESCRIPTION" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -66,7 +67,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-news">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -118,47 +119,70 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
+    <h1>Scrape the Classification Code in the Summary Header of the RN URL</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/devel-cdp.R'><code>R/devel-cdp.R</code></a></small>
+    <div class="hidden name"><code>get_classification_code.Rd</code></div>
     </div>
 
-    <div id="skyscraper-1-3-0" class="section level1">
-<h1 class="page-header" data-toc-text="1.3.0">
-<a href="#skyscraper-1-3-0" class="anchor"></a>skyscraper 1.3.0</h1>
-<ul>
-<li>Change ChemiDPlus Postgres field names:
-<ul>
-<li>“concept_” to “substance_” for all results and “search_term_” for all inputs<br>
-</li>
-<li>“type” in REGISTRY_NUMBER_LOG Table to “search_type”<br>
-</li>
-</ul>
-</li>
-<li>Optimize ChemiDPlus functions</li>
-</ul>
-</div>
-    <div id="skyscraper-0-3-0" class="section level1">
-<h1 class="page-header" data-toc-text="0.3.0">
-<a href="#skyscraper-0-3-0" class="anchor"></a>skyscraper 0.3.0</h1>
-<ul>
-<li>Modify ChemiDPlus (<code>_cdp*</code>) functions</li>
-</ul>
-</div>
-    <div id="skyscraper-0-2-0" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.0">
-<a href="#skyscraper-0-2-0" class="anchor"></a>skyscraper 0.2.0</h1>
-<ul>
-<li>Added PubMed (<code>_pm*</code>) functions</li>
-</ul>
-</div>
-  </div>
+    <div class="ref-description">
+    <p>FUNCTION_DESCRIPTION</p>
+    </div>
 
+    <pre class="usage"><span class='fu'>get_classification_code</span><span class='op'>(</span>
+  <span class='va'>conn</span>,
+  <span class='va'>rn_url</span>,
+  <span class='va'>response</span>,
+  schema <span class='op'>=</span> <span class='st'>"chemidplus"</span>,
+  sleep_time <span class='op'>=</span> <span class='fl'>3</span>
+<span class='op'>)</span></pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>conn</th>
+      <td><p>PARAM_DESCRIPTION</p></td>
+    </tr>
+    <tr>
+      <th>rn_url</th>
+      <td><p>PARAM_DESCRIPTION</p></td>
+    </tr>
+    <tr>
+      <th>sleep_time</th>
+      <td><p>PARAM_DESCRIPTION, Default: 3</p></td>
+    </tr>
+    </table>
+
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>OUTPUT_DESCRIPTION</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>DETAILS</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_xml</a></code>
+<code><a href='https://meerapatelmd.github.io/pg13/reference/lsSchema.html'>lsSchema</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/createSchema.html'>createSchema</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/lsTables.html'>lsTables</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/query.html'>query</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/buildQuery.html'>buildQuery</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/appendTable.html'>appendTable</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/writeTable.html'>writeTable</a></code>
+<code><a href='https://rvest.tidyverse.org/reference/html_nodes.html'>html_nodes</a></code>,<code><a href='https://rvest.tidyverse.org/reference/html_text.html'>html_text</a></code>
+<code><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></code>
+<code><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/distinct.html'>distinct</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/mutate_all.html'>mutate_all</a></code>
+<code><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></code>
+<code><a href='https://meerapatelmd.github.io/centipede/reference/strsplit.html'>strsplit</a></code>
+<code><a href='https://purrr.tidyverse.org/reference/map2.html'>map2</a></code>,<code><a href='https://purrr.tidyverse.org/reference/set_names.html'>set_names</a></code>,<code><a href='https://purrr.tidyverse.org/reference/map.html'>map</a></code></p></div>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
+ <span class='co'>#EXAMPLE1</span>
+ <span class='op'>}</span>
+<span class='op'>}</span>
+</div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
-
 </div>
 
 

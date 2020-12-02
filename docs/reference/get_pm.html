@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Changelog • skyscraper</title>
+<title>Scrape PubMed Publications — get_pm • skyscraper</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,8 @@
 
 
 
-<meta property="og:title" content="Changelog" />
+<meta property="og:title" content="Scrape PubMed Publications — get_pm" />
+<meta property="og:description" content="A PubMed search is performed for a string given as the search_term argument and the earliest or the latest publications are returned in descending order. This is a useful tool for researching investigational drugs and whether or not they are a code name for an existing drug on the market. Note that there is no expiration_days argument because the earliest dates cannot ever become obsolete." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -66,7 +67,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-news">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -118,47 +119,43 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
+    <h1>Scrape PubMed Publications</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/pm-internals.R'><code>R/pm-internals.R</code></a></small>
+    <div class="hidden name"><code>get_pm.Rd</code></div>
     </div>
 
-    <div id="skyscraper-1-3-0" class="section level1">
-<h1 class="page-header" data-toc-text="1.3.0">
-<a href="#skyscraper-1-3-0" class="anchor"></a>skyscraper 1.3.0</h1>
-<ul>
-<li>Change ChemiDPlus Postgres field names:
-<ul>
-<li>“concept_” to “substance_” for all results and “search_term_” for all inputs<br>
-</li>
-<li>“type” in REGISTRY_NUMBER_LOG Table to “search_type”<br>
-</li>
-</ul>
-</li>
-<li>Optimize ChemiDPlus functions</li>
-</ul>
-</div>
-    <div id="skyscraper-0-3-0" class="section level1">
-<h1 class="page-header" data-toc-text="0.3.0">
-<a href="#skyscraper-0-3-0" class="anchor"></a>skyscraper 0.3.0</h1>
-<ul>
-<li>Modify ChemiDPlus (<code>_cdp*</code>) functions</li>
-</ul>
-</div>
-    <div id="skyscraper-0-2-0" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.0">
-<a href="#skyscraper-0-2-0" class="anchor"></a>skyscraper 0.2.0</h1>
-<ul>
-<li>Added PubMed (<code>_pm*</code>) functions</li>
-</ul>
-</div>
-  </div>
+    <div class="ref-description">
+    <p>A PubMed search is performed for a string given as the <code>search_term</code> argument and the earliest or the latest publications are returned in descending order. This is a useful tool for researching investigational drugs and whether or not they are a code name for an existing drug on the market. Note that there is no <code>expiration_days</code> argument because the earliest dates cannot ever become obsolete.</p>
+    </div>
 
+    <pre class="usage"><span class='fu'>get_pm</span><span class='op'>(</span>
+  <span class='va'>conn</span>,
+  <span class='va'>conn_fun</span>,
+  earliest <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  latest <span class='op'>=</span> <span class='op'>!</span><span class='va'>earliest</span>,
+  <span class='va'>search_term</span>,
+  verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  render_sql <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
+
+
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></code>
+<code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_xml</a></code>
+<code><a href='https://rvest.tidyverse.org/reference/html_nodes.html'>html_nodes</a></code>,<code><a href='https://rvest.tidyverse.org/reference/html_text.html'>html_text</a></code>
+<code><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></code>
+<code><a href='https://meerapatelmd.github.io/pg13/reference/lsSchema.html'>lsSchema</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/createSchema.html'>createSchema</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/lsTables.html'>lsTables</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/appendTable.html'>appendTable</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/writeTable.html'>writeTable</a></code></p>
+<p>Other pubmed functions: 
+<code><a href='get_pm_earliest.html'>get_pm_earliest</a>()</code>,
+<code><a href='get_pm_latest.html'>get_pm_latest</a>()</code></p></div>
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
-
 </div>
 
 

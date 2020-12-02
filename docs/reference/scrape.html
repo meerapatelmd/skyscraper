@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Changelog • skyscraper</title>
+<title>Scrape — scrape • skyscraper</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,8 @@
 
 
 
-<meta property="og:title" content="Changelog" />
+<meta property="og:title" content="Scrape — scrape" />
+<meta property="og:description" content="Read html with a crawl delay set with the sleep_time argument. In addition, if the initial response returns NULL, the url is read again. A NULL will be returned if the second try also results in an error. All connections are closed before the response is returned." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -66,7 +67,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-news">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -118,47 +119,95 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
+    <h1>Scrape</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/scrape-utils.R'><code>R/scrape-utils.R</code></a></small>
+    <div class="hidden name"><code>scrape.Rd</code></div>
     </div>
 
-    <div id="skyscraper-1-3-0" class="section level1">
-<h1 class="page-header" data-toc-text="1.3.0">
-<a href="#skyscraper-1-3-0" class="anchor"></a>skyscraper 1.3.0</h1>
-<ul>
-<li>Change ChemiDPlus Postgres field names:
-<ul>
-<li>“concept_” to “substance_” for all results and “search_term_” for all inputs<br>
-</li>
-<li>“type” in REGISTRY_NUMBER_LOG Table to “search_type”<br>
-</li>
-</ul>
-</li>
-<li>Optimize ChemiDPlus functions</li>
-</ul>
-</div>
-    <div id="skyscraper-0-3-0" class="section level1">
-<h1 class="page-header" data-toc-text="0.3.0">
-<a href="#skyscraper-0-3-0" class="anchor"></a>skyscraper 0.3.0</h1>
-<ul>
-<li>Modify ChemiDPlus (<code>_cdp*</code>) functions</li>
-</ul>
-</div>
-    <div id="skyscraper-0-2-0" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.0">
-<a href="#skyscraper-0-2-0" class="anchor"></a>skyscraper 0.2.0</h1>
-<ul>
-<li>Added PubMed (<code>_pm*</code>) functions</li>
-</ul>
-</div>
-  </div>
+    <div class="ref-description">
+    <p>Read html with a crawl delay set with the <code>sleep_time</code> argument. In addition, if the initial response returns NULL, the url is read again. A NULL will be returned if the second try also results in an error. All connections are closed before the response is returned.</p>
+    </div>
 
+    <pre class="usage"><span class='fu'>scrape</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  encoding <span class='op'>=</span> <span class='st'>""</span>,
+  <span class='va'>...</span>,
+  options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"RECOVER"</span>, <span class='st'>"NOERROR"</span>, <span class='st'>"NOBLANKS"</span><span class='op'>)</span>,
+  sleep_time <span class='op'>=</span> <span class='fl'>3</span>,
+  verbose <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>A string, a connection, or a raw vector.</p>
+<p>A string can be either a path, a url or literal xml. Urls will
+be converted into connections either using <code><a href='https://rdrr.io/r/base/connections.html'>base::url</a></code> or, if
+installed, <code><a href='https://jeroen.cran.dev/curl/reference/curl.html'>curl::curl</a></code>. Local paths ending in <code>.gz</code>,
+<code>.bz2</code>, <code>.xz</code>, <code>.zip</code> will be automatically uncompressed.</p>
+<p>If a connection, the complete connection is read into a raw vector before
+being parsed.</p></td>
+    </tr>
+    <tr>
+      <th>encoding</th>
+      <td><p>Specify a default encoding for the document. Unless
+otherwise specified XML documents are assumed to be in UTF-8 or
+UTF-16. If the document is not UTF-8/16, and lacks an explicit
+encoding directive, this allows you to supply a default.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Additional arguments passed on to methods.</p></td>
+    </tr>
+    <tr>
+      <th>options</th>
+      <td><p>Set parsing options for the libxml2 parser. Zero or more of</p><dl>
+  <dt>RECOVER</dt><dd><p>recover on errors</p></dd>
+  <dt>NOENT</dt><dd><p>substitute entities</p></dd>
+  <dt>DTDLOAD</dt><dd><p>load the external subset</p></dd>
+  <dt>DTDATTR</dt><dd><p>default DTD attributes</p></dd>
+  <dt>DTDVALID</dt><dd><p>validate with the DTD</p></dd>
+  <dt>NOERROR</dt><dd><p>suppress error reports</p></dd>
+  <dt>NOWARNING</dt><dd><p>suppress warning reports</p></dd>
+  <dt>PEDANTIC</dt><dd><p>pedantic error reporting</p></dd>
+  <dt>NOBLANKS</dt><dd><p>remove blank nodes</p></dd>
+  <dt>SAX1</dt><dd><p>use the SAX1 interface internally</p></dd>
+  <dt>XINCLUDE</dt><dd><p>Implement XInclude substitition</p></dd>
+  <dt>NONET</dt><dd><p>Forbid network access</p></dd>
+  <dt>NODICT</dt><dd><p>Do not reuse the context dictionary</p></dd>
+  <dt>NSCLEAN</dt><dd><p>remove redundant namespaces declarations</p></dd>
+  <dt>NOCDATA</dt><dd><p>merge CDATA as text nodes</p></dd>
+  <dt>NOXINCNODE</dt><dd><p>do not generate XINCLUDE START/END nodes</p></dd>
+  <dt>COMPACT</dt><dd><p>compact small text nodes; no modification of the tree allowed afterwards (will possibly crash if you try to modify the tree)</p></dd>
+  <dt>OLD10</dt><dd><p>parse using XML-1.0 before update 5</p></dd>
+  <dt>NOBASEFIX</dt><dd><p>do not fixup XINCLUDE xml:base uris</p></dd>
+  <dt>HUGE</dt><dd><p>relax any hardcoded limit from the parser</p></dd>
+  <dt>OLDSAX</dt><dd><p>parse using SAX2 interface before 2.7.0</p></dd>
+  <dt>IGNORE_ENC</dt><dd><p>ignore internal document encoding hint</p></dd>
+  <dt>BIG_LINES</dt><dd><p>Store big lines numbers in text PSVI field</p></dd>
+
+</dl></td>
+    </tr>
+    <tr>
+      <th>sleep_time</th>
+      <td><p>Time in seconds for the system to sleep before each scrape with <code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_html</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>verbose</th>
+      <td><p>When reading from a slow connection, this prints some
+output on every iteration so you know its working.</p></td>
+    </tr>
+    </table>
+
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
-
 </div>
 
 

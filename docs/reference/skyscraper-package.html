@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Changelog • skyscraper</title>
+<title>skyscraper: Scrape Clinical Drug Data — skyscraper-package • skyscraper</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,12 @@
 
 
 
-<meta property="og:title" content="Changelog" />
+<meta property="og:title" content="skyscraper: Scrape Clinical Drug Data — skyscraper-package" />
+<meta property="og:description" content="
+Scrape, store, and maintain clinical drug data
+    across various disparate web and data sources, including the
+    ChemiDPlus, NCI Drug Dictionary, and the ClinicalTrials.gov AACT
+    Database." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -66,7 +71,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-news">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -118,47 +123,54 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
+    <h1>skyscraper: Scrape Clinical Drug Data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/skyscraper-package.R'><code>R/skyscraper-package.R</code></a></small>
+    <div class="hidden name"><code>skyscraper-package.Rd</code></div>
     </div>
 
-    <div id="skyscraper-1-3-0" class="section level1">
-<h1 class="page-header" data-toc-text="1.3.0">
-<a href="#skyscraper-1-3-0" class="anchor"></a>skyscraper 1.3.0</h1>
-<ul>
-<li>Change ChemiDPlus Postgres field names:
-<ul>
-<li>“concept_” to “substance_” for all results and “search_term_” for all inputs<br>
-</li>
-<li>“type” in REGISTRY_NUMBER_LOG Table to “search_type”<br>
-</li>
-</ul>
-</li>
-<li>Optimize ChemiDPlus functions</li>
-</ul>
-</div>
-    <div id="skyscraper-0-3-0" class="section level1">
-<h1 class="page-header" data-toc-text="0.3.0">
-<a href="#skyscraper-0-3-0" class="anchor"></a>skyscraper 0.3.0</h1>
-<ul>
-<li>Modify ChemiDPlus (<code>_cdp*</code>) functions</li>
-</ul>
-</div>
-    <div id="skyscraper-0-2-0" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.0">
-<a href="#skyscraper-0-2-0" class="anchor"></a>skyscraper 0.2.0</h1>
-<ul>
-<li>Added PubMed (<code>_pm*</code>) functions</li>
-</ul>
-</div>
-  </div>
+    <div class="ref-description">
+    <p><img src='figures/logo.png' align='right' alt='logo' width='120' /></p>
+<p>Scrape, store, and maintain clinical drug data
+    across various disparate web and data sources, including the
+    ChemiDPlus, NCI Drug Dictionary, and the ClinicalTrials.gov AACT
+    Database.</p>
+    </div>
 
+
+
+    <h2 class="hasAnchor" id="web-sources"><a class="anchor" href="#web-sources"></a>Web Sources</h2>
+
+    
+
+
+<p>ChemiDPlus: <a href='https://chem.nlm.nih.gov/chemidplus/'>https://chem.nlm.nih.gov/chemidplus/</a></p>
+<p>NCI Drug Dictionary: <a href='https://www.cancer.gov/publications/dictionaries/'>https://www.cancer.gov/publications/dictionaries/</a></p>
+<p>UpToDate</p>
+<p>PubMed Search Results</p>
+    <h2 class="hasAnchor" id="data-sources"><a class="anchor" href="#data-sources"></a>Data Sources</h2>
+
+    
+
+<p>ClinicalTrials.gov</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Useful links:</p><ul>
+<li><p><a href='https://github.com/meerapatelmd/skyscraper'>https://github.com/meerapatelmd/skyscraper</a></p></li>
+<li><p><a href='https://meerapatelmd.github.io/skyscraper'>https://meerapatelmd.github.io/skyscraper</a></p></li>
+<li><p>Report bugs at <a href='https://github.com/meerapatelmd/skyscraper/issues'>https://github.com/meerapatelmd/skyscraper/issues</a></p></li>
+</ul>
+
+</div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p><strong>Maintainer</strong>: Meera Patel, MD <a href='mailto:patelmeeray@gmail.com'>patelmeeray@gmail.com</a> (<a href='https://orcid.org/0000-0002-3401-3948'>ORCID</a>)</p>
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
-
 </div>
 
 

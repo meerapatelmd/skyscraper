@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Changelog • skyscraper</title>
+<title>Creates CancerGov Schema — start_cg • skyscraper</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,8 @@
 
 
 
-<meta property="og:title" content="Changelog" />
+<meta property="og:title" content="Creates CancerGov Schema — start_cg" />
+<meta property="og:description" content="Creates CancerGov Schema" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -66,7 +67,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-news">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -118,47 +119,25 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
+    <h1>Creates CancerGov Schema</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/cg-utils.R'><code>R/cg-utils.R</code></a></small>
+    <div class="hidden name"><code>start_cg.Rd</code></div>
     </div>
 
-    <div id="skyscraper-1-3-0" class="section level1">
-<h1 class="page-header" data-toc-text="1.3.0">
-<a href="#skyscraper-1-3-0" class="anchor"></a>skyscraper 1.3.0</h1>
-<ul>
-<li>Change ChemiDPlus Postgres field names:
-<ul>
-<li>“concept_” to “substance_” for all results and “search_term_” for all inputs<br>
-</li>
-<li>“type” in REGISTRY_NUMBER_LOG Table to “search_type”<br>
-</li>
-</ul>
-</li>
-<li>Optimize ChemiDPlus functions</li>
-</ul>
-</div>
-    <div id="skyscraper-0-3-0" class="section level1">
-<h1 class="page-header" data-toc-text="0.3.0">
-<a href="#skyscraper-0-3-0" class="anchor"></a>skyscraper 0.3.0</h1>
-<ul>
-<li>Modify ChemiDPlus (<code>_cdp*</code>) functions</li>
-</ul>
-</div>
-    <div id="skyscraper-0-2-0" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.0">
-<a href="#skyscraper-0-2-0" class="anchor"></a>skyscraper 0.2.0</h1>
-<ul>
-<li>Added PubMed (<code>_pm*</code>) functions</li>
-</ul>
-</div>
-  </div>
+    <div class="ref-description">
+    <p>Creates CancerGov Schema</p>
+    </div>
 
+    <pre class="usage"><span class='fu'>start_cg</span><span class='op'>(</span><span class='va'>conn</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>, render_sql <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+
+
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
-
 </div>
 
 

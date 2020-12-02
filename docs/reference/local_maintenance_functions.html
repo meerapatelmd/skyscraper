@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Changelog • skyscraper</title>
+<title>Skyscraper Local Data Maintenance Functions — local_maintenance_functions • skyscraper</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,8 @@
 
 
 
-<meta property="og:title" content="Changelog" />
+<meta property="og:title" content="Skyscraper Local Data Maintenance Functions — local_maintenance_functions" />
+<meta property="og:description" content="Local maintenance functions are meant to be used to export and instantiate/update a local skyscraper schema with the Data Package Repo. This is important for keeping data updated on one machine when there have been additions made to the Remote Data Package Repository." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -66,7 +67,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-news">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -118,47 +119,39 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
+    <h1>Skyscraper Local Data Maintenance Functions</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/local_maintenance_functions.R'><code>R/local_maintenance_functions.R</code></a></small>
+    <div class="hidden name"><code>local_maintenance_functions.Rd</code></div>
     </div>
 
-    <div id="skyscraper-1-3-0" class="section level1">
-<h1 class="page-header" data-toc-text="1.3.0">
-<a href="#skyscraper-1-3-0" class="anchor"></a>skyscraper 1.3.0</h1>
-<ul>
-<li>Change ChemiDPlus Postgres field names:
-<ul>
-<li>“concept_” to “substance_” for all results and “search_term_” for all inputs<br>
-</li>
-<li>“type” in REGISTRY_NUMBER_LOG Table to “search_type”<br>
-</li>
-</ul>
-</li>
-<li>Optimize ChemiDPlus functions</li>
-</ul>
-</div>
-    <div id="skyscraper-0-3-0" class="section level1">
-<h1 class="page-header" data-toc-text="0.3.0">
-<a href="#skyscraper-0-3-0" class="anchor"></a>skyscraper 0.3.0</h1>
-<ul>
-<li>Modify ChemiDPlus (<code>_cdp*</code>) functions</li>
-</ul>
-</div>
-    <div id="skyscraper-0-2-0" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.0">
-<a href="#skyscraper-0-2-0" class="anchor"></a>skyscraper 0.2.0</h1>
-<ul>
-<li>Added PubMed (<code>_pm*</code>) functions</li>
-</ul>
-</div>
-  </div>
+    <div class="ref-description">
+    <p>Local maintenance functions are meant to be used to export and instantiate/update a local skyscraper schema with the Data Package Repo. This is important for keeping data updated on one machine when there have been additions made to the Remote Data Package Repository.</p>
+    </div>
 
+
+
+    <h2 class="hasAnchor" id="check-schema-status"><a class="anchor" href="#check-schema-status"></a>Check Schema Status</h2>
+
+    
+
+<p>All the Data Packages in the Schema Map returned by <code><a href='load_schema_map.html'>load_schema_map</a></code> are installed if there are changes to the SHA hash. An "updated" field is added to the Schema Map that contain the values of TRUE if a new installation occurred and FALSE otherwise. If an update to the schema is desired after running this function, <code><a href='import_schemas.html'>update_schemas</a></code>, should be run with <code>force_update</code> set to <code>TRUE</code>.</p>
+    <h2 class="hasAnchor" id="update-schemas"><a class="anchor" href="#update-schemas"></a>Update Schemas</h2>
+
+    
+
+<p>Checking Schema Status is not a required prerequisite to update skyscraper schemas. However, if the status is checked before running an update, the update needs to be run with force_update set to <code>TRUE</code> since the execution of the update occurs on the condition of requiring a new installation, which the <code><a href='schema_status.html'>schema_status</a></code> would have already executed.</p>
+    <h2 class="hasAnchor" id="exporting-schemas"><a class="anchor" href="#exporting-schemas"></a>Exporting Schemas</h2>
+
+    
+
+<p>Exporting schemas requires having a local clone of its Data Package Repository. The tables for the given schema are written to csvs in the "data-raw/", along with a refresh of DATASET.R where the usethis::use_raw_data() function is called. The R/data.R is also rewritten with updates on the dataframe dimensions. The updated local repo is then repackaged and pushed to the remote.</p>
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
-
 </div>
 
 
