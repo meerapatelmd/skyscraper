@@ -13,6 +13,7 @@
 
 cdp_run <-
         function(conn,
+                 conn_fun,
                  steps = c("log_registry_number",
                            "get_rn_url_validity",
                            "get_classification",
@@ -24,6 +25,12 @@ cdp_run <-
                  sleep_time = 5,
                 verbose = TRUE,
                  render_sql = TRUE) {
+
+
+                if (!missing(conn_fun)) {
+                        conn <- eval(rlang::parse_expr(conn_fun))
+                        on.exit(pg13::dc(conn = conn, verbose = verbose))
+                }
 
                 # conn <- chariot::connectAthena()
                 # search_term <- "BI 836858"

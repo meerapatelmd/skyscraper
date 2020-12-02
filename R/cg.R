@@ -49,6 +49,9 @@ cg_run <-
                         on.exit(pg13::dc(conn = conn, verbose = verbose))
                 }
 
+                cli::cat_line()
+                cli::cat_rule("Creating Tables")
+
                 start_cg(conn = conn,
                          verbose = verbose,
                          render_sql = render_sql)
