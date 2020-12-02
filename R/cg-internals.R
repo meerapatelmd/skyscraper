@@ -326,10 +326,26 @@ get_drug_link_synonym <-
                 sql_statement <-
                         SqlRender::render(
                                 "
+                                with new AS (
+                                        SELECT *
+                                                FROM cancergov.drug_link_synonym dls
+                                        WHERE dls.drug_link = '@drug_link'
+                                                AND dls.dls_datetime IS NULL
+                                        ORDER BY RANDOM()
+                                ),
+                                expired AS (
                                 SELECT *
                                         FROM cancergov.drug_link_synonym dls
                                 WHERE dls.drug_link = '@drug_link'
                                         AND (DATE_PART('day', LOCALTIMESTAMP(0)-dls_datetime)::integer < @expiration_days)
+                                ORDER BY RANDOM()
+                                )
+
+                                SELECT *
+                                FROM new
+                                UNION
+                                SELECT *
+                                FROM expired
                                 ;
                                 ",
                                 drug_link = drug_link,
@@ -572,21 +588,40 @@ process_drug_link_synonym <-
                  encoding = "",
                  options = c("RECOVER", "NOERROR", "NOBLANKS")) {
 
-                        drug_link_table <-
-                                pg13::query(conn = conn,
-                                            sql_statement =
-
-                                                    SqlRender::render(
-                                                    "
-                                        SELECT DISTINCT
+                sql_statement <-
+                        SqlRender::render(
+                                "
+                                with new AS (
+                                        SELECT
                                                 dl.drug, dl.drug_link
                                         FROM cancergov.drug_link dl
                                         LEFT JOIN cancergov.drug_link_synonym dls
                                         ON dls.drug_link  = dl.drug_link
-                                        WHERE dls.dls_datetime IS NULL OR
-                                                DATE_PART('day', dls.dls_datetime - LOCALTIMESTAMP(0))::integer >= @expiration_days
-                                        ",
-                                                    expiration_days = expiration_days),
+                                        WHERE dls.dls_datetime IS NULL
+                                        ORDER BY RANDOM()
+                                ),
+                                expired AS (
+                                SELECT
+                                                dl.drug, dl.drug_link
+                                        FROM cancergov.drug_link dl
+                                        LEFT JOIN cancergov.drug_link_synonym dls
+                                        ON dls.drug_link  = dl.drug_link
+                                        WHERE DATE_PART('day', dls.dls_datetime - LOCALTIMESTAMP(0))::integer >= @expiration_days
+                                        ORDER BY RANDOM()
+                                )
+
+                                SELECT *
+                                FROM new
+                                UNION
+                                SELECT *
+                                FROM expired
+                                ;
+                                ",
+                                expiration_days = expiration_days)
+
+                        drug_link_table <-
+                                pg13::query(conn = conn,
+                                            sql_statement = sql_statement,
                                             verbose = verbose,
                                             render_sql = render_sql)
 
@@ -712,18 +747,39 @@ process_drug_link_ncit <-
                  expiration_days = 30) {
 
 
+                sql_statement <-
+                SqlRender::render(
+                        "WITH new AS (
+                                SELECT dl.*
+                                FROM cancergov.drug_link dl
+                                LEFT JOIN cancergov.drug_link_ncit dln
+                                ON dln.drug_link = dl.drug_link
+                                WHERE dln.dln_datetime IS NULL
+                                ORDER BY RANDOM()
+                        ),
+                        expired AS (
+                                SELECT dl.*
+                                FROM cancergov.drug_link dl
+                                LEFT JOIN cancergov.drug_link_ncit dln
+                                ON dln.drug_link = dl.drug_link
+                                WHERE DATE_PART('day', LOCALTIMESTAMP(0)-dln.dln_datetime)::integer >= @expiration_days
+                                ORDER BY RANDOM()
+                        )
+
+                        SELECT *
+                        FROM new
+                        UNION
+                        SELECT *
+                        FROM expired
+                        ",
+                        expiration_days = expiration_days)
+
                         drug_link_table <-
                                 pg13::query(
                                         conn = conn,
-                        SqlRender::render(
-                        "SELECT dl.*
-                        FROM cancergov.drug_link dl
-                        LEFT JOIN cancergov.drug_link_ncit dln
-                        ON dln.drug_link = dl.drug_link
-                        WHERE dln.dln_datetime IS NULL OR DATE_PART('day', LOCALTIMESTAMP(0)-dln.dln_datetime)::integer >= @expiration_days",
-                        expiration_days = expiration_days),
-                        verbose = verbose,
-                        render_sql = render_sql)
+                                        sql_statement = sql_statement,
+                                        verbose = verbose,
+                                        render_sql = render_sql)
 
 
 
@@ -798,19 +854,41 @@ process_drug_link_url <-
                  verbose = TRUE,
                  render_sql = TRUE) {
 
+                        sql_statement <-
+                                SqlRender::render(
+                                        "
+                                        WITH new AS (
+                                                SELECT
+                                                        dl.drug, dl.drug_link
+                                                FROM cancergov.drug_link dl
+                                                LEFT JOIN cancergov.drug_link_url dlu
+                                                ON dlu.drug_link  = dl.drug_link
+                                                WHERE dlu_datetime IS NULL
+                                                ORDER BY RANDOM()
+                                        ),
+                                        expired AS (
+                                                SELECT
+                                                        dl.drug, dl.drug_link
+                                                FROM cancergov.drug_link dl
+                                                LEFT JOIN cancergov.drug_link_url dlu
+                                                ON dlu.drug_link  = dl.drug_link
+                                                WHERE DATE_PART('day', LOCALTIMESTAMP(0)-dlu.dlu_datetime)::integer >= @expiration_days
+                                                ORDER BY RANDOM()
+                                        )
+
+                                        SELECT *
+                                        FROM new
+                                        UNION
+                                        SELECT *
+                                        FROM expired
+                                        ",
+                                        expiration_days = expiration_days)
+
                         drug_link_table <-
                                 pg13::query(conn = conn,
-                                            sql_statement =
-                                                    SqlRender::render(
-                                                        "
-                                                        SELECT DISTINCT
-                                                                dl.drug, dl.drug_link
-                                                        FROM cancergov.drug_link dl
-                                                        LEFT JOIN cancergov.drug_link_url dlu
-                                                        ON dlu.drug_link  = dl.drug_link
-                                                        WHERE dlu_datetime IS NULL
-                                                                OR DATE_PART('day', LOCALTIMESTAMP(0)-dlu.dlu_datetime)::integer >= @expiration_days",
-                                                        expiration_days = expiration_days))
+                                            sql_statement = sql_statement,
+                                            verbose = verbose,
+                                            render_sql = render_sql)
 
 
 
