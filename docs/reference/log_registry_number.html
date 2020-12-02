@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">skyscraper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -120,7 +120,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Log Registry Number Matches for a Search</h1>
-    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/chemidplus_functions.R'><code>R/chemidplus_functions.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/cdp-internals.R'><code>R/cdp-internals.R</code></a></small>
     <div class="hidden name"><code>log_registry_number.Rd</code></div>
     </div>
 
@@ -130,10 +130,11 @@
 
     <pre class="usage"><span class='fu'>log_registry_number</span><span class='op'>(</span>
   <span class='va'>conn</span>,
-  <span class='va'>raw_concept</span>,
-  type <span class='op'>=</span> <span class='st'>"contains"</span>,
+  <span class='va'>raw_search_term</span>,
+  search_type <span class='op'>=</span> <span class='st'>"contains"</span>,
   sleep_time <span class='op'>=</span> <span class='fl'>3</span>,
-  schema <span class='op'>=</span> <span class='st'>"chemidplus"</span>
+  schema <span class='op'>=</span> <span class='st'>"chemidplus"</span>,
+  verbose <span class='op'>=</span> <span class='cn'>TRUE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -144,12 +145,8 @@
       <td><p>Postgres connection object</p></td>
     </tr>
     <tr>
-      <th>raw_concept</th>
+      <th>raw_search_term</th>
       <td><p>Character string of length 1 to be searched in ChemiDPlus</p></td>
-    </tr>
-    <tr>
-      <th>type</th>
-      <td><p>Type of search available at <a href='https://chem.nlm.nih.gov/chemidplus/'>ChemiDPlus</a>, Default: "contains"</p></td>
     </tr>
     <tr>
       <th>sleep_time</th>
@@ -158,6 +155,10 @@
     <tr>
       <th>schema</th>
       <td><p>Schema that the returned data is written to, Default: 'chemidplus'</p></td>
+    </tr>
+    <tr>
+      <th>type</th>
+      <td><p>Type of search available at <a href='https://chem.nlm.nih.gov/chemidplus/'>ChemiDPlus</a>, Default: "contains"</p></td>
     </tr>
     </table>
 
