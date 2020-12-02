@@ -7,7 +7,8 @@
 scrape_cdp(
   x,
   options = c("RECOVER", "NOERROR", "NOBLANKS", "HUGE"),
-  sleep_time = 3
+  sleep_time = 3,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -49,6 +50,9 @@ being parsed.}
 }}
 
 \item{sleep_time}{Time in seconds for the system to sleep before each scrape with \code{\link[xml2]{read_html}}.}
+
+\item{verbose}{When reading from a slow connection, this prints some
+output on every iteration so you know its working.}
 }
 \description{
 The general \code{\link{scrape}} function is modified to scrape using the special parameters that ChemiDPlus requires to avoid errors.

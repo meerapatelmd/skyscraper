@@ -1,3 +1,11 @@
+# skyscraper 1.3.0
+
+* Change ChemiDPlus Postgres field names:  
+    - "concept_" to "substance_" for all results and "search_term_" for all inputs  
+    - "type" in REGISTRY_NUMBER_LOG Table to "search_type"  
+* Optimize ChemiDPlus functions  
+
+
 # skyscraper 0.3.0
 
 * Modify ChemiDPlus (`_cdp*`) functions  
