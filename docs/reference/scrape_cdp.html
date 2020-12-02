@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">skyscraper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -131,7 +131,8 @@
     <pre class="usage"><span class='fu'>scrape_cdp</span><span class='op'>(</span>
   <span class='va'>x</span>,
   options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"RECOVER"</span>, <span class='st'>"NOERROR"</span>, <span class='st'>"NOBLANKS"</span>, <span class='st'>"HUGE"</span><span class='op'>)</span>,
-  sleep_time <span class='op'>=</span> <span class='fl'>3</span>
+  sleep_time <span class='op'>=</span> <span class='fl'>3</span>,
+  verbose <span class='op'>=</span> <span class='cn'>TRUE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -179,6 +180,11 @@ being parsed.</p></td>
     <tr>
       <th>sleep_time</th>
       <td><p>Time in seconds for the system to sleep before each scrape with <code><a href='http://xml2.r-lib.org/reference/read_xml.html'>read_html</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>verbose</th>
+      <td><p>When reading from a slow connection, this prints some
+output on every iteration so you know its working.</p></td>
     </tr>
     </table>
 
