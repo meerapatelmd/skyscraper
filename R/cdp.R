@@ -13,10 +13,18 @@
 
 cdp_run <-
         function(conn,
+                 steps = c("log_registry_number",
+                           "get_rn_url_validity",
+                           "get_classification",
+                           "get_names_and_synonyms",
+                           "get_registry_numbers",
+                           "get_links_to_resources"),
                  search_term,
                  type = "contains",
                  sleep_time = 5,
-                 schema = "chemidplus") {
+                 schema = "chemidplus",
+                 verbose = TRUE,
+                 render_sql = TRUE) {
 
                 # conn <- chariot::connectAthena()
                 # search_term <- "BI 836858"
@@ -25,15 +33,16 @@ cdp_run <-
                 # schema <- "chemidplus"
                 # export_repo <- FALSE
 
-                log_registry_number(conn = conn,
-                                    raw_concept = search_term,
-                                    type = type,
-                                    schema = schema,
-                                    sleep_time = sleep_time)
-                #
-                #                 log_registry_number(raw_concept = search_term,
-                #                                     type = type,
-                #                                     schema = schema)
+                if ("log_registry_number" %in% steps) {
+
+                        log_registry_number(conn = conn,
+                                            raw_concept = search_term,
+                                            type = type,
+                                            schema = schema,
+                                            sleep_time = sleep_time)
+
+                }
+
 
                 registry_number_log <-
                         pg13::query(conn = conn,
@@ -70,31 +79,55 @@ cdp_run <-
                                                                         rn_url_response_status = "Success")) %>%
                                         dplyr::mutate_if(is.character, ~stringr::str_remove_all(., "[^ -~]"))
 
+                                if ("get_rn_url_validity" %in% steps) {
+
                                 get_rn_url_validity(conn = conn,
                                                     rn_url = rn_url,
                                                     response = response,
                                                     schema = schema)
+
+                                }
+
+
+                                if ("get_classification" %in% steps) {
 
                                 get_classification(conn = conn,
                                                    rn_url = rn_url,
                                                    response = response,
                                                    schema = schema)
 
+                                }
+
+
+
+                                if ("get_names_and_synonyms" %in% steps) {
 
                                 get_names_and_synonyms(conn = conn,
                                                        rn_url = rn_url,
                                                        response = response,
                                                        schema = schema)
 
+                                }
+
+
+                                if ("get_registry_numbers" %in% steps) {
+
                                 get_registry_numbers(conn = conn,
                                                      rn_url = rn_url,
                                                      response = response,
                                                      schema = schema)
 
+                                }
+
+
+                                if ("get_links_resources" %in% steps) {
+
                                 get_links_to_resources(conn = conn,
                                                        rn_url = rn_url,
                                                        response = response,
                                                        schema = schema)
+
+                                }
 
                         } else {
                                 status_df <-
