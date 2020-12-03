@@ -606,8 +606,9 @@ process_drug_link_synonym <-
                                         FROM cancergov.drug_link dl
                                         LEFT JOIN cancergov.drug_link_synonym dls
                                         ON dls.drug_link  = dl.drug_link
-                                        WHERE DATE_PART('day', dls.dls_datetime - LOCALTIMESTAMP(0))::integer >= @expiration_days
-                                        ORDER BY RANDOM()
+                                        GROUP BY dl.drug, dl.drug_link
+                                        HAVING DATE_PART('day', LOCALTIMESTAMP(0)-MAX(dls.dls_datetime))::integer >= @expiration_days
+                                                ORDER BY RANDOM()
                                 )
 
                                 SELECT *
@@ -762,7 +763,8 @@ process_drug_link_ncit <-
                                 FROM cancergov.drug_link dl
                                 LEFT JOIN cancergov.drug_link_ncit dln
                                 ON dln.drug_link = dl.drug_link
-                                WHERE DATE_PART('day', LOCALTIMESTAMP(0)-dln.dln_datetime)::integer >= @expiration_days
+                                GROUP BY dl.drug, dl.drug_link
+                                HAVING DATE_PART('day', LOCALTIMESTAMP(0)-MAX(dls.dls_datetime))::integer >= @expiration_days
                                 ORDER BY RANDOM()
                         )
 
@@ -872,9 +874,11 @@ process_drug_link_url <-
                                                 FROM cancergov.drug_link dl
                                                 LEFT JOIN cancergov.drug_link_url dlu
                                                 ON dlu.drug_link  = dl.drug_link
-                                                WHERE DATE_PART('day', LOCALTIMESTAMP(0)-dlu.dlu_datetime)::integer >= @expiration_days
+                                                GROUP BY dl.drug, dl.drug_link
+                                                HAVING DATE_PART('day', LOCALTIMESTAMP(0)-MAX(dlu.dlu_datetime))::integer >= @expiration_days
                                                 ORDER BY RANDOM()
                                         )
+
 
                                         SELECT *
                                         FROM new

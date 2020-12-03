@@ -1,3 +1,8 @@
+# skyscraper 1.3.2  
+  
+* Fix bugs  
+
+
 # skyscraper 1.3.0
 
 * Change ChemiDPlus Postgres field names:  
