@@ -5,13 +5,13 @@
 #'  \code{\link[dplyr]{select}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{filter}}
 #'  \code{\link[tibble]{tribble}},\code{\link[tibble]{c("tibble", "tibble")}}
 #'  \code{\link[police]{try_catch_error_as_null}}
-#' @rdname cdp_run
+#' @rdname cdp_search
 #' @export
 #' @importFrom pg13 query buildQuery
 #' @importFrom dplyr select bind_rows filter mutate_if
 #' @importFrom tibble tribble tibble
 
-cdp_run <-
+cdp_search <-
         function(conn,
                  conn_fun,
                  steps = c("log_registry_number",
@@ -21,6 +21,7 @@ cdp_run <-
                            "get_registry_numbers",
                            "get_links_to_resources"),
                  search_term,
+                 expiration_days = 30,
                  search_type = "contains",
                  sleep_time = 5,
                 verbose = TRUE,
@@ -65,22 +66,41 @@ cdp_run <-
                 }
 
 
-                rn_urls <-
+                rn_url <-
                         pg13::query(conn = conn,
                                     sql_statement =
                                             SqlRender::render(
                                             "
-                                            SELECT DISTINCT rn_url
+                                            SELECT DISTINCT rnl_datetime, rn_url
                                             FROM chemidplus.registry_number_log rnl
                                             WHERE rnl.raw_search_term IN ('@search_term');
                                             ",
                                             search_term = search_term),
                                     verbose = verbose,
-                                    render_sql = render_sql) %>%
-                                                unlist() %>%
-                                                unname() %>%
-                                                unique() %>%
-                                                no_na()
+                                    render_sql = render_sql)
+
+
+                if (nrow(rn_url) > 0) {
+
+                        rn_urls <-
+                                rn_url %>%
+                                dplyr::group_by(rn_url) %>%
+                                dplyr::summarize(recent_rnl_datetime = max(rnl_datetime, na.rm = TRUE)) %>%
+                                dplyr::mutate(days_diff = as.integer(difftime(recent_rnl_datetime,
+                                                                              Sys.time(),
+                                                                              units = "days"))) %>%
+                                dplyr::mutate(expiration_days = expiration_days) %>%
+                                dplyr::filter(days_diff > expiration_days) %>%
+                                dplyr::select(rn_url) %>%
+                                unlist() %>%
+                                unname() %>%
+                                unique() %>%
+                                no_na()
+
+                } else {
+
+                        rn_urls <- vector()
+                }
 
 
                 status_df <-
@@ -212,6 +232,67 @@ cdp_run <-
                 }
 
                 status_df
+
+
+        }
+
+
+
+#' @export
+
+
+cdp_search_ho <-
+        function(conn,
+                 conn_fun,
+                 vocab_schema,
+                 steps = c("log_registry_number",
+                           "get_rn_url_validity",
+                           "get_classification",
+                           "get_names_and_synonyms",
+                           "get_registry_numbers",
+                           "get_links_to_resources"),
+                 search_type = "contains",
+                 sleep_time = 5,
+                 verbose = TRUE,
+                 render_sql = TRUE) {
+
+
+
+                sql_statement <-
+                SqlRender::render(
+                        "
+                        SELECT cs.concept_synonym_name
+                        FROM @vocab_schema.concept c
+                        LEFT JOIN @vocab_schema.concept_synonym cs
+                        ON cs.concept_id = c.concept_id
+                        WHERE c.invalid_reason IS NULL
+                                AND c.vocabulary_id = 'HemOnc'
+                                AND c.domain_id = 'Drug'
+                        ORDER BY RANDOM();",
+                        vocab_schema = vocab_schema)
+
+
+                hemonc_concepts <-
+                pg13::query(conn = conn,
+                            sql_statement = sql_statement,
+                            verbose = verbose,
+                            render_sql = render_sql,
+                            warn_no_rows = TRUE)
+
+
+                for (hemonc_concept in hemonc_concepts) {
+
+                        cdp_search(conn = conn,
+                                   conn_fun = conn_fun,
+                                   steps = steps,
+                                   search_term = hemonc_concept,
+                                   search_type = search_type,
+                                   sleep_time = sleep_time,
+                                   verbose = verbose,
+                                   render_sql = render_sql)
+
+                }
+
 
 
         }
