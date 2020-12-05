@@ -238,10 +238,17 @@ cdp_search <-
 
 
 
+#' @title
+#' Run ChemiDPlus on all HemOnc Drugs
+#'
+#' @description
+#' Unlike \code{\link{cg_run}}, which runs the on the entire NCI Drug Dictionary, the constraints on the ChemiDPlus feature is the names of all HemOnc Drugs.
+#'
+#' @rdname cdp_run
 #' @export
 
 
-cdp_search_ho <-
+cdp_run <-
         function(conn,
                  conn_fun,
                  vocab_schema,
