@@ -67,3 +67,51 @@ start_cdp <-
                 render_sql = render_sql)
 
         }
+
+
+#' @export
+
+list_cdp_tables <-
+        function(conn,
+                 verbose = TRUE,
+                 render_sql = TRUE) {
+
+                pg13::lsTables(conn = conn,
+                               schema = "chemidplus",
+                               verbose = verbose,
+                               render_sql = render_sql)
+        }
+
+
+#' @export
+
+read_cdp_tables <-
+        function(conn,
+                 verbose = TRUE,
+                 render_sql = TRUE) {
+
+                list_cdp_tables(conn = conn,
+                                verbose = verbose,
+                                render_sql = render_sql) %>%
+                rubix::map_names_set(function(x)
+                                        pg13::readTable(conn = conn,
+                                                        schema = "chemidplus",
+                                                        tableName = x,
+                                                        verbose = verbose,
+                                                        render_sql = render_sql))
+
+        }
+
+
+#' @export
+
+rn_url_to_rn <-
+        function(data,
+                 col = rn_url) {
+
+               data %>%
+                        tidyr::extract(col = {{ col }},
+                                       into = "rn",
+                                       regex = "^.*[/]{1}(.*$)")
+
+        }

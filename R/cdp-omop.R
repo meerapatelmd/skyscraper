@@ -1,18 +1,21 @@
 #' @title
 #' ETL the ChemiDPlus Tables to OMOP Vocabulary Architecture
+#'
+#' @param destination_schema Schema where the new tables will be written to. User must have write privileges for this schema
+#' @param vocab_schema Schema in the connection that houses the OMOP Proper Vocabularies. Cannot be the same as the `destination_schema` because the OMOP Proper Vocabularies would be appended with the ChemiDPlus transformations and it needs to be silo'd until the concepts are vetted.
 #' @seealso
 #'  \code{\link[pg13]{lsTables}},\code{\link[pg13]{readTable}},\code{\link[pg13]{query}},\code{\link[pg13]{appendTable}}
-#'  \code{\link[rubix]{map_names_set}}, \code{\link[rubix]{normalize_all_to_na}},\code{\link[rubix]{make_identifier}}
+#'  \code{\link[rubix]{map_names_set}}, \code{\link[rubix]{normalize_all_to_na}},
 #'  \code{\link[purrr]{map}},\code{\link[purrr]{map2}}
 #'  \code{\link[tibble]{as_tibble}}
 #'  \code{\link[dplyr]{filter}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{select}},\code{\link[dplyr]{distinct}},\code{\link[dplyr]{mutate-joins}},\code{\link[dplyr]{filter_all}},\code{\link[dplyr]{group_by}}
 #'  \code{\link[tidyr]{extract}}
 #'  \code{\link[chariot]{queryAthena}},\code{\link[chariot]{filterValid}}
 #'  \code{\link[stringr]{str_remove}}
-#' @rdname chemidplus_tables_to_omop
+#' @rdname cdp_to_omop
 #' @export
 #' @importFrom pg13 lsTables readTable query appendTable
-#' @importFrom rubix map_names_set normalize_all_to_na make_identifier
+#' @importFrom rubix map_names_set normalize_all_to_na
 #' @importFrom purrr map map2
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr filter mutate select distinct left_join transmute filter_at inner_join group_by ungroup mutate_all
@@ -22,51 +25,76 @@
 #' @importFrom magrittr %>%
 
 
-chemidplus_tables_to_omop <-
+cdp_to_omop <-
         function(conn,
-                 file_report = TRUE,
-                 file_report_to = paste0("chemidplus_tables_to_omop_", Sys.Date(),".txt"),
-                 append_file_report = TRUE) {
+                 destination_schema,
+                 vocab_schema,
+                 verbose = TRUE,
+                 render_sql = TRUE) {
 
-                #conn <- chariot::connectAthena()
+                stopifnot(tolower(destination_schema) != tolower(vocab_schema))
 
                 pg13::send(conn = conn,
-                SqlRender::readSql(sourceFile = pg13::sourceFilePath("sql",
-                                                                     FileName = "chemidplus_omop_ddl.sql",
-                                                                     package = "skyscraper")))
+                           SqlRender::render(
+                           "CREATE TABLE IF NOT EXISTS @destination_schema.concept (
+                            concept_id bigint,
+                            concept_name character varying(255),
+                            domain_id character varying(255),
+                            vocabulary_id character varying(255),
+                            concept_class_id character varying(255),
+                            standard_concept character varying(255),
+                            concept_code character varying(255),
+                            valid_start_date date,
+                            valid_end_date date,
+                            invalid_reason character varying(255)
+                        );
 
-                chemiTables <- pg13::lsTables(conn = conn,
-                                              schema = "chemidplus")
 
-                stopifnot(("CONCEPT" %in% chemiTables),
-                          ("CONCEPT_SYNONYM" %in% chemiTables),
-                          ("CONCEPT_ANCESTOR" %in% chemiTables),
-                          ("CONCEPT_RELATIONSHIP" %in% chemiTables))
+                        CREATE TABLE IF NOT EXISTS @destination_schema.concept_ancestor (
+                            ancestor_concept_id bigint,
+                            descendant_concept_id bigint,
+                            min_levels_of_separation bigint,
+                            max_levels_of_separation bigint
+                        );
+
+                        CREATE TABLE IF NOT EXISTS @destination_schema.concept_relationship (
+                            concept_id_1 bigint,
+                            concept_id_2 bigint,
+                            relationship_id character varying(255),
+                            valid_start_date date,
+                            valid_end_date date,
+                            invalid_reason character varying(255)
+                        );
+
+
+                        CREATE TABLE IF NOT EXISTS @destination_schema.concept_synonym (
+                            concept_id bigint,
+                            concept_synonym_name character varying(255),
+                            language_concept_id bigint
+                        );
+                        ",
+                           destination_schema = destination_schema),
+                           verbose = verbose,
+                           render_sql = render_sql)
 
 
                 chemiTableData <-
-                        chemiTables %>%
-                        rubix::map_names_set(~pg13::readTable(conn = conn,
-                                                              schema ="chemidplus",
-                                                              tableName = .)) %>%
-                        purrr::map(~nrow(.))
+                        read_cdp_tables(conn = conn,
+                                        verbose = verbose,
+                                        render_sql = render_sql)
 
 
 
-                if (file_report) {
-                        report <- paste0("[",as.character(Sys.time()), "]")
+                if (verbose) {
 
-                        report <-
-                              c("#################################",
-                                report,
-                                "#################################",
-                                "ROW_COUNTS[0]",
+                        secretary::typewrite(secretary::enbold("Row Counts "))
+                        table_nms <- names(chemiTableData)
+                        table_rows <-
                                 chemiTableData %>%
-                                        purrr::map2(names(chemiTableData),
-                                                    function(x,y) paste0(y, ": ", x, " rows")) %>%
-                                        unlist(),
-                                "\n"
-                              )
+                                        purrr::map(~ nrow(.)) %>%
+                                        purrr::set_names(table_nms)
+
+                        cat(mapply(sprintf, "\t\t\t\t%s: %s\n", table_nms, table_rows))
                 }
 
 
@@ -83,70 +111,79 @@ chemidplus_tables_to_omop <-
                 #1.
                 registry_number_log_diff <-
                         pg13::query(conn = conn,
-                                    sql_statement = "SELECT c.concept_id, rnl.raw_concept, rnl.type, rnl.rn
-                                                        FROM chemidplus.registry_number_log rnl
-                                                        LEFT JOIN chemidplus.concept c
-                                                        ON c.concept_name = rnl.raw_concept
-                                                                AND c.concept_class_id = rnl.type
-                                                        WHERE rnl.no_record = 'FALSE'") %>%
+                                    sql_statement = SqlRender::render("SELECT DISTINCT
+                                                                                rnl.raw_search_term,
+                                                                                rnl.search_type,
+                                                                                rnl.rn
+                                                                        FROM chemidplus.registry_number_log rnl
+                                                                        LEFT JOIN @destination_schema.concept c
+                                                                        ON c.concept_name = rnl.raw_search_term
+                                                                                AND c.concept_class_id = rnl.search_type
+                                                                         WHERE rnl.no_record = 'FALSE'
+                                                                                AND c.concept_id IS NULL",
+                                                                      destination_schema = destination_schema)) %>%
                 #2.
-                        tibble::as_tibble() %>%
-                        dplyr::mutate_all(as.character) %>%
-                        rubix::normalize_all_to_na() %>%
-                        dplyr::filter(is.na(concept_id)) %>%
-                        dplyr::mutate(concept_id = as.integer(concept_id))
+                        tibble::as_tibble()
 
 
-                if (file_report) {
+                if (verbose) {
 
-                        report <-
-                                c(report,
-                                  paste0(nrow(registry_number_log_diff),
-                                         " new rows found in the Chemidplus Registry Number Log Table.[1]"))
+                        secretary::typewrite(nrow(registry_number_log_diff), "new rows found in the Chemidplus Registry Number Log Table")
 
                 }
 
 
-                if (nrow(registry_number_log_diff)) {
+                if (nrow(registry_number_log_diff) > 0) {
 
                         # 3.
                         registry_number_log_diff <-
                                 registry_number_log_diff %>%
-                                dplyr::select(raw_concept,rn,type) %>%
                                 dplyr::distinct() %>%
                                 dplyr::filter(!is.na(rn))
 
                         # 4. HemOnc + RxNorm Ingredient concept_ids and concept_name
-                        hemonc <-
+                        omop_proper <-
                         pg13::query(conn = conn,
-                                    sql_statement = "SELECT DISTINCT cs.concept_id,cs.concept_synonym_name AS concept_name
-                                                        FROM public.concept c
-                                                        LEFT JOIN public.concept_synonym cs
+                                    sql_statement = SqlRender::render(
+                                                        "
+                                                        WITH hemonc AS (
+                                                        SELECT DISTINCT cs.concept_id,cs.concept_synonym_name AS concept_name
+                                                        FROM @vocab_schema.concept c
+                                                        LEFT JOIN @vocab_schema.concept_synonym cs
                                                         ON cs.concept_id = c.concept_id
                                                         WHERE
                                                                 c.vocabulary_id = 'HemOnc'
                                                                         AND c.invalid_reason IS NULL
-                                                                        AND c.domain_id = 'Drug';")
+                                                                        AND c.domain_id = 'Drug'
+                                                                        AND  cs.language_concept_id = 4180186
+                                                        ),
+                                                        rxnorm AS (
+                                                        SELECT DISTINCT cs.concept_id, cs.concept_synonym_name AS concept_name
+                                                 FROM @vocab_schema.concept_ancestor ca
+                                                 INNER JOIN @vocab_schema.concept c
+                                                 ON c.concept_id = ca.descendant_concept_id
+                                                 LEFT JOIN @vocab_schema.concept_synonym cs
+                                                 ON cs.concept_id = c.concept_id
+                                                 WHERE ca.ancestor_concept_id = 21601386
+                                                 AND c.invalid_reason IS NULL
+                                                 AND c.vocabulary_id IN ('RxNorm', 'RxNorm Extension')
+                                                 AND c.concept_class_id IN ('Ingredient', 'Precise Ingredient')
+                                                 AND cs.language_concept_id = 4180186
+                                                        )
 
-                        rxnorm <-
-                                pg13::query(conn = conn,
-                                            sql_statement = "SELECT DISTINCT cs.concept_id, cs.concept_synonym_name AS concept_name
-                                 FROM public.concept_ancestor ca
-                                 INNER JOIN public.concept c
-                                 ON c.concept_id = ca.descendant_concept_id
-                                 LEFT JOIN public.concept_synonym cs
-                                 ON cs.concept_id = c.concept_id
-                                 WHERE ca.ancestor_concept_id = 21601386
-                                 AND c.invalid_reason IS NULL
-                                 AND c.vocabulary_id IN ('RxNorm', 'RxNorm Extension')
-                                 AND c.concept_class_id IN ('Ingredient', 'Precise Ingredient')
-                                 AND cs.language_concept_id = 4180186")
+                                                        SELECT *
+                                                        FROM hemonc
+                                                        UNION
+                                                        SELECT *
+                                                        FROM rxnorm;
+                                                        ",
+                                                        vocab_schema = vocab_schema))
+
 
                         concept_table_diff <-
-                        dplyr::left_join(registry_number_log_diff,
-                                         dplyr::bind_rows(hemonc,
-                                                          rxnorm),
-                                         by = c("raw_concept" = "concept_name")) %>%
+                        dplyr::inner_join(registry_number_log_diff,
+                                         omop_proper,
+                                         by = c("raw_search_term" = "concept_name")) %>%
                                 dplyr::distinct()
 
 
@@ -155,28 +192,26 @@ chemidplus_tables_to_omop <-
                                 concept_table_diff  %>%
                                 dplyr::transmute(
                                                 concept_id,
-                                                concept_name = raw_concept,
+                                                concept_name = raw_search_term,
                                                 domain_id = "Drug",
                                                 vocabulary_id = "ChemiDPlus",
-                                                concept_class_id = type,
+                                                concept_class_id = search_type,
                                                 standard_concept= "NA",
                                                 concept_code = rn,
                                                 valid_start_date = Sys.Date(),
                                                 valid_end_date = as.Date("2099-12-31"),
                                                 invalid_reason = "NA") %>%
-                                dplyr::filter(!is.na(concept_id))
+                                dplyr::filter(!is.na(concept_id)) %>%
+                                dplyr::distinct()
 
                         # 6.
                         pg13::appendTable(conn = conn,
-                                          schema = "chemidplus",
+                                          schema = destination_schema,
                                           tableName = "concept",
-                                          concept_table_diff)
+                                          data = concept_table_diff)
 
-                        if (file_report) {
-                                report <-
-                                        c(report,
-                                          paste0(nrow(concept_table_diff),
-                                                 " rows added to the ChemiDPlus Concept Table.[2]"))
+                        if (verbose) {
+                                secretary::typewrite(nrow(concept_table_diff), " rows added to the ChemiDPlus Concept Table.")
                         }
 
 
@@ -191,10 +226,10 @@ chemidplus_tables_to_omop <-
 
                         #1.
                         synonyms_table <-
-                                pg13::readTable(conn = conn,
-                                                schema = "chemidplus",
-                                                tableName = "names_and_synonyms") %>%
-                                dplyr::select(rn_url, concept_synonym_name) %>%
+                                pg13::query(conn = conn,
+                                            sql_statement = "SELECT DISTINCT rn_url, substance_synonym FROM chemidplus.names_and_synonyms",
+                                            verbose = verbose,
+                                            render_sql = render_sql) %>%
                                 tidyr::extract(col = rn_url,
                                                into = "rn",
                                                regex = "^.*[/]{1}(.*$)") %>%
@@ -202,7 +237,6 @@ chemidplus_tables_to_omop <-
                                 dplyr::filter(!is.na(rn))
 
                         #2.
-
                         concept_synonym_table <-
                                 dplyr::left_join(concept_table_diff,
                                                  synonyms_table,
@@ -213,7 +247,7 @@ chemidplus_tables_to_omop <-
                         concept_synonym_table <-
                                 concept_synonym_table %>%
                                 dplyr::select(concept_id,
-                                              concept_synonym_name) %>%
+                                              concept_synonym_name = substance_synonym) %>%
                                 dplyr::distinct() %>%
                                 dplyr::filter(!is.na(concept_id)) %>%
                                 dplyr::mutate(language_concept_id = 4180186)
@@ -221,24 +255,20 @@ chemidplus_tables_to_omop <-
                         #4.
                         #
                         pg13::appendTable(conn = conn,
-                                          schema = "chemidplus",
+                                          schema = destination_schema,
                                           tableName = "concept_synonym",
-                                          concept_synonym_table)
+                                          data = concept_synonym_table)
 
-                        if (file_report) {
-                                report <-
-                                        c(report,
-                                          paste0(nrow(concept_synonym_table),
-                                                 " rows added to the ChemiDPlus Concept Synonym Table.[3]"))
+                        if (verbose) {
+                               secretary::typewrite(nrow(concept_synonym_table),
+                                                 " rows added to the ChemiDPlus Concept Synonym Table.")
                         }
 
                 } else {
 
-                        if (file_report) {
-                                report <-
-                                        c(report,
-                                          "0 rows added to the ChemiDPlus Concept Table.[2]",
-                                          "0 rows added to the ChemiDPlus Concept Synonym Table.[3]")
+                        if (verbose) {
+                                secretary::typewrite("0 rows added to the ChemiDPlus Concept Table.")
+                                secretary::typewrite("0 rows added to the ChemiDPlus Concept Synonym Table.")
                         }
 
                 }
@@ -258,54 +288,50 @@ chemidplus_tables_to_omop <-
 
                 #1.
                 classification_table <-
-                        pg13::readTable(conn = conn,
-                                        schema = "chemidplus",
-                                        tableName = "classification") %>%
-                        dplyr::select(concept_classification,
-                                      rn_url) %>%
-                        tidyr::extract(col = rn_url,
-                                       into = "rn",
-                                       regex = "^.*[/]{1}(.*$)")
+                        pg13::query(conn = conn,
+                                    sql_statement = "SELECT DISTINCT rn_url, substance_classification FROM chemidplus.classification;",
+                                    verbose = verbose,
+                                    render_sql = render_sql) %>%
+                        rn_url_to_rn()
 
                 # 2.
                 classification_table_diff <-
                         pg13::query(conn = conn,
                                     sql_statement =
+                                    SqlRender::render(
                                     "
                                     WITH distinct_classes AS (
-                                            SELECT DISTINCT cl.concept_classification, cl.rn_url
+                                            SELECT DISTINCT cl.substance_classification, cl.rn_url
                                             FROM chemidplus.classification cl
                                     ),
                                     concept_classes AS (
                                             SELECT *
-                                            FROM chemidplus.concept
+                                            FROM @vocab_schema.concept
                                             WHERE standard_concept = 'C'
                                     )
 
-                                    SELECT DISTINCT concept_classification, rn_url
-                                    FROM distinct_classes
-                                    LEFT JOIN concept_classes
-                                    ON concept_name = concept_classification
-                                    WHERE concept_id IS NULL
+                                    SELECT DISTINCT d.substance_classification, d.rn_url
+                                    FROM distinct_classes d
+                                    LEFT JOIN concept_classes c
+                                    ON c.concept_name =  d.substance_classification
+                                    WHERE c.concept_id IS NULL
                                     ;
-                                    ") %>%
-                        tidyr::extract(col = rn_url,
-                                       into = "rn",
-                                       regex = "^.*[/]{1}(.*$)")
+                                    ",
+                                    vocab_schema = vocab_schema)) %>%
+                        rn_url_to_rn()
 
 
                 if (nrow(classification_table_diff)) {
 
-
                         #3
                         classification_table_diff$concept_id <-
-                                rubix::make_identifier()+1:nrow(classification_table_diff)
+                                sapply(1:nrow(classification_table_diff), make_identifier)
 
                         concept_table_diff <-
                                 classification_table_diff  %>%
                                 dplyr::transmute(
                                         concept_id,
-                                        concept_name = concept_classification,
+                                        concept_name = substance_classification,
                                         domain_id = "Drug",
                                         vocabulary_id = "ChemiDPlus",
                                         concept_class_id = "NA",
@@ -314,18 +340,19 @@ chemidplus_tables_to_omop <-
                                         valid_start_date = Sys.Date(),
                                         valid_end_date = as.Date("2099-12-31"),
                                         invalid_reason = "NA") %>%
-                                dplyr::filter(!is.na(concept_id))
+                                dplyr::filter(!is.na(concept_id)) %>%
+                                dplyr::distinct()
 
 
                         pg13::appendTable(conn = conn,
-                                          schema = "chemidplus",
+                                          schema = destination_schema,
                                           tableName = "concept",
-                                          concept_table_diff)
-                        if (file_report) {
-                                report <-
-                                        c(report,
-                                          paste0(nrow(concept_table_diff), " new ChemiDPlus Classification Concepts added to the ChemiDPlus Concept Table.[4]")
-                                        )
+                                          data = concept_table_diff)
+
+                        if (verbose) {
+
+                                secretary::typewrite(nrow(concept_table_diff), " new ChemiDPlus Classification Concepts added to the ChemiDPlus Concept Table.")
+
                         }
 
 
@@ -336,13 +363,13 @@ chemidplus_tables_to_omop <-
                                                  concept_table_diff,
                                                  by = "concept_id") %>%
                                 dplyr::transmute(ancestor_concept_id = concept_id,
-                                                 ancestor_concept_name = concept_classification,
+                                                 ancestor_concept_name = substance_classification,
                                                  descendant_concept_code = rn)
 
                         #5.
                         nonclass_concept_table <-
                                 pg13::readTable(conn = conn,
-                                                schema = "chemidplus",
+                                                schema = destination_schema,
                                                 tableName = "concept") %>%
                                 dplyr::filter(standard_concept != "C") %>%
                                 dplyr::select(concept_id, concept_code) %>%
