@@ -2,14 +2,14 @@
 % Please edit documentation in R/cdp.R
 \name{cdp_run}
 \alias{cdp_run}
-\title{Search ChemiDPlus and Store Results}
+\title{Run ChemiDPlus on all HemOnc Drugs}
 \usage{
 cdp_run(
   conn,
   conn_fun,
+  vocab_schema,
   steps = c("log_registry_number", "get_rn_url_validity", "get_classification",
     "get_names_and_synonyms", "get_registry_numbers", "get_links_to_resources"),
-  search_term,
   search_type = "contains",
   sleep_time = 5,
   verbose = TRUE,
@@ -17,11 +17,5 @@ cdp_run(
 )
 }
 \description{
-Search ChemiDPlus and Store Results
-}
-\seealso{
-\code{\link[pg13]{query}},\code{\link[pg13]{buildQuery}}
-\code{\link[dplyr]{select}},\code{\link[dplyr]{bind}},\code{\link[dplyr]{filter}}
-\code{\link[tibble]{tribble}},\code{\link[tibble]{c("tibble", "tibble")}}
-\code{\link[police]{try_catch_error_as_null}}
+Unlike \code{\link{cg_run}}, which runs the on the entire NCI Drug Dictionary, the constraints on the ChemiDPlus feature is the names of all HemOnc Drugs.
 }
