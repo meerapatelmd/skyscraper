@@ -4,18 +4,21 @@
 \alias{drug_count}
 \title{Get the Drug Count in the Drug Dictionary}
 \usage{
-drug_count()
+drug_count(size = 10000, crawl_delay = 5)
+}
+\arguments{
+\item{size}{The number of records to retrieve.}
 }
 \value{
-An integer in the '\emph{X} results found for: ALL' phrase displayed at \url{https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=1}
+Drug count as integer
 }
 \description{
 This is an internal function to the \verb{_run*} function, which is part of the family of functions that scrape, parse, and store the NCI Drug Dictionary found at CancerGov.org and any correlates to the NCI Thesaurus in a Postgres Database. Use \code{\link{cg_run}} to run the full sequence. See details for more info.
 }
 \details{
-Retrieve the total number of drugs in the NCI Drug Dictionary in real-time.
+Retrieve the total number of drugs in the NCI Drug Dictionary from the Drug Dictionary API (\url{https://webapis.cancer.gov/drugdictionary/v1/index.html#/Drugs/Drugs_GetByName})
 }
 \seealso{
-\code{\link[xml2]{read_xml}}
-\code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
+\code{\link[httr]{GET}},\code{\link[httr]{content}}
+\code{\link[jsonlite]{toJSON, fromJSON}}
 }

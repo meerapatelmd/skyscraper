@@ -13,29 +13,35 @@ NULL
 #' @inherit cancergov_internal description
 #'
 #' @details
-#' Retrieve the total number of drugs in the NCI Drug Dictionary in real-time.
+#' Retrieve the total number of drugs in the NCI Drug Dictionary from the Drug Dictionary API (\url{https://webapis.cancer.gov/drugdictionary/v1/index.html#/Drugs/Drugs_GetByName})
 #'
+#' @param size The number of records to retrieve.
 #' @return
-#' An integer in the '\emph{X} results found for: ALL' phrase displayed at \url{https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=1}
+#' Drug count as integer
 #'
 #' @seealso
-#'  \code{\link[xml2]{read_xml}}
-#'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
+#'  \code{\link[httr]{GET}},\code{\link[httr]{content}}
+#'  \code{\link[jsonlite]{toJSON, fromJSON}}
 #' @rdname drug_count
 #' @export
-#' @importFrom xml2 read_html
-#' @importFrom rvest html_nodes html_text
-#' @importFrom magrittr %>%
+#' @importFrom httr GET content
+#' @importFrom jsonlite fromJSON
 
 drug_count <-
-        function() {
-                page_scrape <-
-                        xml2::read_html("https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=1")
+        function(size = 10000,
+                 crawl_delay = 5) {
 
-                page_scrape %>%
-                        rvest::html_nodes("#ctl36_ctl00_lblNumResults") %>%
-                        rvest::html_text() %>%
-                        as.integer()
+                Sys.sleep(5)
+
+                response <- httr::GET(url = "https://webapis.cancer.gov/drugdictionary/v1/Drugs",
+                                      query = list(size = size,
+                                                   includeResourceTypes = "DrugTerm"))
+                parsed <- httr::content(x = response,
+                                        as = "text",
+                                        encoding = "UTF-8")
+                df <- jsonlite::fromJSON(txt = parsed)
+
+                df$meta$totalResults
 
         }
 

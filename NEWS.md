@@ -1,3 +1,8 @@
+# skyscraper 1.3.3   
+
+* Begin transition Cancer.gov (`cg_*`) scraping functions to Drug Dictionary API  
+
+
 # skyscraper 1.3.2  
   
 * Fix bugs  
