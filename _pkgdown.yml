@@ -4,6 +4,7 @@ reference:
       Run the complete scrape based on resource.
     contents:
       - cg_run
+      - cdp_run
       - pm_run
   - title: Scrape Cancer.gov Drug Dictionary
     desc: >
