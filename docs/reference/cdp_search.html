@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ETL the ChemiDPlus Tables to OMOP Vocabulary Architecture — chemidplus_tables_to_omop • skyscraper</title>
+<title>Search ChemiDPlus and Store Results — cdp_search • skyscraper</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="ETL the ChemiDPlus Tables to OMOP Vocabulary Architecture — chemidplus_tables_to_omop" />
-<meta property="og:description" content="ETL the ChemiDPlus Tables to OMOP Vocabulary Architecture" />
+<meta property="og:title" content="Search ChemiDPlus and Store Results — cdp_search" />
+<meta property="og:description" content="Search ChemiDPlus and Store Results" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">skyscraper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
       </span>
     </div>
 
@@ -119,33 +119,35 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>ETL the ChemiDPlus Tables to OMOP Vocabulary Architecture</h1>
-    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/chemidplus_to_omop_functions.R'><code>R/chemidplus_to_omop_functions.R</code></a></small>
-    <div class="hidden name"><code>chemidplus_tables_to_omop.Rd</code></div>
+    <h1>Search ChemiDPlus and Store Results</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/cdp.R'><code>R/cdp.R</code></a></small>
+    <div class="hidden name"><code>cdp_search.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>ETL the ChemiDPlus Tables to OMOP Vocabulary Architecture</p>
+    <p>Search ChemiDPlus and Store Results</p>
     </div>
 
-    <pre class="usage"><span class='fu'>chemidplus_tables_to_omop</span><span class='op'>(</span>
+    <pre class="usage"><span class='fu'>cdp_search</span><span class='op'>(</span>
   <span class='va'>conn</span>,
-  file_report <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  file_report_to <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='st'>"chemidplus_tables_to_omop_"</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>".txt"</span><span class='op'>)</span>,
-  append_file_report <span class='op'>=</span> <span class='cn'>TRUE</span>
+  <span class='va'>conn_fun</span>,
+  steps <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"log_registry_number"</span>, <span class='st'>"get_rn_url_validity"</span>, <span class='st'>"get_classification"</span>,
+    <span class='st'>"get_names_and_synonyms"</span>, <span class='st'>"get_registry_numbers"</span>, <span class='st'>"get_links_to_resources"</span><span class='op'>)</span>,
+  <span class='va'>search_term</span>,
+  expiration_days <span class='op'>=</span> <span class='fl'>30</span>,
+  search_type <span class='op'>=</span> <span class='st'>"contains"</span>,
+  sleep_time <span class='op'>=</span> <span class='fl'>5</span>,
+  verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  render_sql <span class='op'>=</span> <span class='cn'>TRUE</span>
 <span class='op'>)</span></pre>
 
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://meerapatelmd.github.io/pg13/reference/lsTables.html'>lsTables</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/readTable.html'>readTable</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/query.html'>query</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/appendTable.html'>appendTable</a></code>
-<code><a href='https://meerapatelmd.github.io/rubix/reference/map_names_set.html'>map_names_set</a></code>, <code><a href='https://meerapatelmd.github.io/rubix/reference/normalize_all_to_na.html'>normalize_all_to_na</a></code>,<code><a href='https://meerapatelmd.github.io/rubix/reference/make_identifier.html'>make_identifier</a></code>
-<code><a href='https://purrr.tidyverse.org/reference/map.html'>map</a></code>,<code><a href='https://purrr.tidyverse.org/reference/map2.html'>map2</a></code>
-<code><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></code>
-<code><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/distinct.html'>distinct</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>mutate-joins</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/filter_all.html'>filter_all</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></code>
-<code><a href='https://tidyr.tidyverse.org/reference/extract.html'>extract</a></code>
-<code><a href='https://meerapatelmd.github.io/chariot/reference/queryAthena.html'>queryAthena</a></code>,<code><a href='https://meerapatelmd.github.io/chariot/reference/filterValid.html'>filterValid</a></code>
-<code><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></code></p></div>
+    <div class='dont-index'><p><code><a href='https://meerapatelmd.github.io/pg13/reference/query.html'>query</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/buildQuery.html'>buildQuery</a></code>
+<code><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></code>
+<code><a href='https://tibble.tidyverse.org/reference/tribble.html'>tribble</a></code>,<code><a href='https://rdrr.io/r/base/c.html'>c("tibble", "tibble")</a></code>
+<code><a href='https://rdrr.io/pkg/police/man/try_catch_error_as_null.html'>try_catch_error_as_null</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

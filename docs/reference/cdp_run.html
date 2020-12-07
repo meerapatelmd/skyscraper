@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Search ChemiDPlus and Store Results — cdp_run • skyscraper</title>
+<title>Run ChemiDPlus on all HemOnc Drugs — cdp_run • skyscraper</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Search ChemiDPlus and Store Results — cdp_run" />
-<meta property="og:description" content="Search ChemiDPlus and Store Results" />
+<meta property="og:title" content="Run ChemiDPlus on all HemOnc Drugs — cdp_run" />
+<meta property="og:description" content="Unlike cg_run, which runs the on the entire NCI Drug Dictionary, the constraints on the ChemiDPlus feature is the names of all HemOnc Drugs." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">skyscraper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
       </span>
     </div>
 
@@ -119,20 +119,21 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Search ChemiDPlus and Store Results</h1>
+    <h1>Run ChemiDPlus on all HemOnc Drugs</h1>
     <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/cdp.R'><code>R/cdp.R</code></a></small>
     <div class="hidden name"><code>cdp_run.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Search ChemiDPlus and Store Results</p>
+    <p>Unlike <code><a href='cg_run.html'>cg_run</a></code>, which runs the on the entire NCI Drug Dictionary, the constraints on the ChemiDPlus feature is the names of all HemOnc Drugs.</p>
     </div>
 
     <pre class="usage"><span class='fu'>cdp_run</span><span class='op'>(</span>
   <span class='va'>conn</span>,
+  <span class='va'>conn_fun</span>,
+  <span class='va'>vocab_schema</span>,
   steps <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"log_registry_number"</span>, <span class='st'>"get_rn_url_validity"</span>, <span class='st'>"get_classification"</span>,
     <span class='st'>"get_names_and_synonyms"</span>, <span class='st'>"get_registry_numbers"</span>, <span class='st'>"get_links_to_resources"</span><span class='op'>)</span>,
-  <span class='va'>search_term</span>,
   search_type <span class='op'>=</span> <span class='st'>"contains"</span>,
   sleep_time <span class='op'>=</span> <span class='fl'>5</span>,
   verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
@@ -140,12 +141,6 @@
 <span class='op'>)</span></pre>
 
 
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='https://meerapatelmd.github.io/pg13/reference/query.html'>query</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/buildQuery.html'>buildQuery</a></code>
-<code><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></code>
-<code><a href='https://tibble.tidyverse.org/reference/tribble.html'>tribble</a></code>,<code><a href='https://rdrr.io/r/base/c.html'>c("tibble", "tibble")</a></code>
-<code><a href='https://rdrr.io/pkg/police/man/try_catch_error_as_null.html'>try_catch_error_as_null</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

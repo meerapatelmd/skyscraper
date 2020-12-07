@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create ChemiDPlus Schema If Not Exist — start_cdp • skyscraper</title>
+<title>ETL the ChemiDPlus Tables to OMOP Vocabulary Architecture — cdp_to_omop • skyscraper</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Create ChemiDPlus Schema If Not Exist — start_cdp" />
-<meta property="og:description" content="Create ChemiDPlus Schema If Not Exist" />
+<meta property="og:title" content="ETL the ChemiDPlus Tables to OMOP Vocabulary Architecture — cdp_to_omop" />
+<meta property="og:description" content="ETL the ChemiDPlus Tables to OMOP Vocabulary Architecture" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -119,18 +119,46 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create ChemiDPlus Schema If Not Exist</h1>
-    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/cdp-utils2.R'><code>R/cdp-utils2.R</code></a></small>
-    <div class="hidden name"><code>start_cdp.Rd</code></div>
+    <h1>ETL the ChemiDPlus Tables to OMOP Vocabulary Architecture</h1>
+    <small class="dont-index">Source: <a href='https://github.com/meerapatelmd/skyscraper/blob/master/R/devel-cdp-omop.R'><code>R/devel-cdp-omop.R</code></a></small>
+    <div class="hidden name"><code>cdp_to_omop.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Create ChemiDPlus Schema If Not Exist</p>
+    <p>ETL the ChemiDPlus Tables to OMOP Vocabulary Architecture</p>
     </div>
 
-    <pre class="usage"><span class='fu'>start_cdp</span><span class='op'>(</span><span class='va'>conn</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>, render_sql <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>cdp_to_omop</span><span class='op'>(</span>
+  <span class='va'>conn</span>,
+  <span class='va'>destination_schema</span>,
+  <span class='va'>vocab_schema</span>,
+  verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  render_sql <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>destination_schema</th>
+      <td><p>Schema where the new tables will be written to. User must have write privileges for this schema</p></td>
+    </tr>
+    <tr>
+      <th>vocab_schema</th>
+      <td><p>Schema in the connection that houses the OMOP Proper Vocabularies. Cannot be the same as the <code>destination_schema</code> because the OMOP Proper Vocabularies would be appended with the ChemiDPlus transformations and it needs to be silo'd until the concepts are vetted.</p></td>
+    </tr>
+    </table>
 
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='https://meerapatelmd.github.io/pg13/reference/lsTables.html'>lsTables</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/readTable.html'>readTable</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/query.html'>query</a></code>,<code><a href='https://meerapatelmd.github.io/pg13/reference/appendTable.html'>appendTable</a></code>
+<code><a href='https://meerapatelmd.github.io/rubix/reference/map_names_set.html'>map_names_set</a></code>, <code><a href='https://meerapatelmd.github.io/rubix/reference/normalize_all_to_na.html'>normalize_all_to_na</a></code>,
+<code><a href='https://purrr.tidyverse.org/reference/map.html'>map</a></code>,<code><a href='https://purrr.tidyverse.org/reference/map2.html'>map2</a></code>
+<code><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></code>
+<code><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/distinct.html'>distinct</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>mutate-joins</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/filter_all.html'>filter_all</a></code>,<code><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></code>
+<code><a href='https://tidyr.tidyverse.org/reference/extract.html'>extract</a></code>
+<code><a href='https://meerapatelmd.github.io/chariot/reference/queryAthena.html'>queryAthena</a></code>,<code><a href='https://meerapatelmd.github.io/chariot/reference/filterValid.html'>filterValid</a></code>
+<code><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
