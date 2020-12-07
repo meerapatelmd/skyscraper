@@ -4,7 +4,7 @@
 \alias{log_drug_count}
 \title{Log the Drug Count in the Drug Dictionary}
 \usage{
-log_drug_count(conn, verbose = TRUE, render_sql = TRUE)
+log_drug_count(conn, verbose = TRUE, render_sql = TRUE, crawl_delay = 5)
 }
 \arguments{
 \item{conn}{Postgres connection object.}

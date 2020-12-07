@@ -9,7 +9,9 @@ get_dictionary_and_links(
   max_page = 50,
   sleep_time = 3,
   verbose = TRUE,
-  render_sql = TRUE
+  render_sql = TRUE,
+  crawl_delay = 5,
+  size = 10000
 )
 }
 \arguments{

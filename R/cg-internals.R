@@ -16,6 +16,7 @@ NULL
 #' Retrieve the total number of drugs in the NCI Drug Dictionary from the Drug Dictionary API (\url{https://webapis.cancer.gov/drugdictionary/v1/index.html#/Drugs/Drugs_GetByName})
 #'
 #' @param size The number of records to retrieve.
+#' @param crawl_delay Delay in seconds.
 #' @return
 #' Drug count as integer
 #'
@@ -31,7 +32,7 @@ drug_count <-
         function(size = 10000,
                  crawl_delay = 5) {
 
-                Sys.sleep(5)
+                Sys.sleep(crawl_delay)
 
                 response <- httr::GET(url = "https://webapis.cancer.gov/drugdictionary/v1/Drugs",
                                       query = list(size = size,
@@ -67,10 +68,11 @@ drug_count <-
 log_drug_count <-
         function(conn,
                  verbose = TRUE,
-                 render_sql = TRUE) {
+                 render_sql = TRUE,
+                 crawl_delay = 5) {
 
 
-                nci_dd_count <- drug_count()
+                nci_dd_count <- drug_count(crawl_delay = crawl_delay)
 
                 most_recent_count <-
                         pg13::query(conn = conn,
@@ -143,84 +145,116 @@ get_dictionary_and_links <-
                  max_page = 50,
                  sleep_time = 3,
                  verbose = TRUE,
-                 render_sql = TRUE) {
+                 render_sql = TRUE,
+                 crawl_delay = 5,
+                 size = 10000) {
 
                 pg13::brake_closed_conn(conn = conn)
 
-                drug_dictionary <- list()
-                drug_link <- list()
+                Sys.sleep(crawl_delay)
 
-                for (i in 1:max_page) {
+                response <- httr::GET(url = "https://webapis.cancer.gov/drugdictionary/v1/Drugs",
+                                      query = list(size = size))
 
-                        page_url <- sprintf("https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=%s", i)
-
-                        if (verbose) {
-
-                                secretary::typewrite_progress(iteration = i,
-                                                              total = max_page)
-                                secretary::typewrite(secretary::silverTxt("Page:"), i)
+                parsed <- httr::content(x = response,
+                                        as = "text",
+                                        encoding = "UTF-8")
+                df <- jsonlite::fromJSON(txt = parsed)
 
 
-                        }
-
-                        page_scrape <- scrape(page_url)
-
-
-                        no_data_message <-
-                                page_scrape %>%
-                                rvest::html_nodes("#ctl36_ctl00_resultListView_ctrl0_lblNoDataMessage") %>%
-                                rvest::html_text()
-
-                        if (length(no_data_message) == 0) {
-
-                                drugs <-
-                                        page_scrape %>%
-                                        rvest::html_nodes(".dictionary-list a")  %>%
-                                        rvest::html_text() %>%
-                                        grep(pattern = "[\r\n]",
-                                             invert = FALSE,
-                                             value = TRUE) %>%
-                                        trimws(which = "both")
-
-                                definitions <-
-                                        page_scrape %>%
-                                        rvest::html_nodes(".dictionary-list .definition")  %>%
-                                        rvest::html_text() %>%
-                                        trimws(which = "both")
-
-
-
-                                drug_dictionary[[i]] <-
-                                        tibble::tibble(drug = drugs,
-                                                       definition = definitions)
-
-                                drug_def_link <-
-                                        page_scrape %>%
-                                        rvest::html_nodes("dfn") %>%
-                                        rvest::html_children() %>%
-                                        rvest::html_attr(name = "href")
-
-                                drug_names <-
-                                        page_scrape %>%
-                                        rvest::html_nodes("dfn") %>%
-                                        rvest::html_text() %>%
-                                        trimws()
-
-                                drug_link[[i]] <-
-                                        tibble::tibble(drug= drug_names,
-                                                       drug_link = drug_def_link)
-
-
-                        }
-                }
-
+                # Definitions
                 drug_dictionary_table <-
-                        dplyr::bind_rows(drug_dictionary)
+                df$results %>%
+                        dplyr::filter(!is.na(definition)) %>%
+                        dplyr::transmute(drug = name,
+                                         definition = definition$text) %>%
+                        dplyr::distinct()
+
 
                 drug_link_table <-
-                        dplyr::bind_rows(drug_link) %>%
-                        dplyr::mutate(drug_link = paste0("https://www.cancer.gov", drug_link)) %>%
+                        dplyr::bind_rows(
+                                df$results %>%
+                                        dplyr::transmute(drug = name,
+                                                         drug_link = sprintf("https://www.cancer.gov/publications/dictionaries/cancer-drug/def/%s", prettyUrlName)),
+                                df$results %>%
+                                        dplyr::transmute(drug = name,
+                                                         drug_link = sprintf("https://www.cancer.gov/publications/dictionaries/cancer-drug/def/%s", termId))) %>%
                         dplyr::distinct()
+
+                # pg13::appendTable()
+                #
+                # drug_dictionary <- list()
+                # drug_link <- list()
+                #
+                # for (i in 1:max_page) {
+                #
+                #         page_url <- sprintf("https://www.cancer.gov/publications/dictionaries/cancer-drug?expand=ALL&page=%s", i)
+                #
+                #         if (verbose) {
+                #
+                #                 secretary::typewrite_progress(iteration = i,
+                #                                               total = max_page)
+                #                 secretary::typewrite(secretary::silverTxt("Page:"), i)
+                #
+                #
+                #         }
+                #
+                #         page_scrape <- scrape(page_url)
+                #
+                #
+                #         no_data_message <-
+                #                 page_scrape %>%
+                #                 rvest::html_nodes("#ctl36_ctl00_resultListView_ctrl0_lblNoDataMessage") %>%
+                #                 rvest::html_text()
+                #
+                #         if (length(no_data_message) == 0) {
+                #
+                #                 drugs <-
+                #                         page_scrape %>%
+                #                         rvest::html_nodes(".dictionary-list a")  %>%
+                #                         rvest::html_text() %>%
+                #                         grep(pattern = "[\r\n]",
+                #                              invert = FALSE,
+                #                              value = TRUE) %>%
+                #                         trimws(which = "both")
+                #
+                #                 definitions <-
+                #                         page_scrape %>%
+                #                         rvest::html_nodes(".dictionary-list .definition")  %>%
+                #                         rvest::html_text() %>%
+                #                         trimws(which = "both")
+                #
+                #
+                #
+                #                 drug_dictionary[[i]] <-
+                #                         tibble::tibble(drug = drugs,
+                #                                        definition = definitions)
+                #
+                #                 drug_def_link <-
+                #                         page_scrape %>%
+                #                         rvest::html_nodes("dfn") %>%
+                #                         rvest::html_children() %>%
+                #                         rvest::html_attr(name = "href")
+                #
+                #                 drug_names <-
+                #                         page_scrape %>%
+                #                         rvest::html_nodes("dfn") %>%
+                #                         rvest::html_text() %>%
+                #                         trimws()
+                #
+                #                 drug_link[[i]] <-
+                #                         tibble::tibble(drug= drug_names,
+                #                                        drug_link = drug_def_link)
+                #
+                #
+                #         }
+                # }
+                #
+                #
+                # drug_link_table <-
+                #         dplyr::bind_rows(drug_link) %>%
+                #         dplyr::mutate(drug_link = paste0("https://www.cancer.gov", drug_link)) %>%
+                #         dplyr::distinct()
 
 
                 if (verbose) {
@@ -242,7 +276,7 @@ get_dictionary_and_links <-
                                                 LEFT JOIN cancergov.drug_dictionary dd
                                                 ON dd.drug = ndd.drug
                                                         AND dd.definition = ndd.definition
-                                                WHERE dd_datetime IS NULL;",
+                                                WHERE dd.dd_datetime IS NULL;",
                                             warn_no_rows = TRUE) %>%
                                 dplyr::transmute(dd_datetime = Sys.time(),
                                                  drug,
@@ -274,7 +308,7 @@ get_dictionary_and_links <-
                                                 LEFT JOIN cancergov.drug_link dl
                                                 ON dl.drug = ndl.drug
                                                         AND dl.drug_link = ndl.drug_link
-                                                WHERE dl_datetime IS NULL;",
+                                                WHERE dl.dl_datetime IS NULL;",
                                             warn_no_rows = TRUE) %>%
                                 dplyr::transmute(dl_datetime = Sys.time(),
                                                  drug,

@@ -8,6 +8,8 @@ drug_count(size = 10000, crawl_delay = 5)
 }
 \arguments{
 \item{size}{The number of records to retrieve.}
+
+\item{crawl_delay}{Delay in seconds.}
 }
 \value{
 Drug count as integer
