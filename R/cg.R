@@ -143,3 +143,44 @@ cg_run <-
                 }
 
         }
+
+
+
+#' @title
+#' Search Cancer.gov
+#'
+#' @description
+#' Search the NCI Drug Dictionary using the API. Note that the results are not stored in the database in this version in the manner that ChemiDPlus (`cdp_search`) does in this package version.
+#'
+#' @param search_term PARAM_DESCRIPTION
+#' @param size PARAM_DESCRIPTION, Default: 1000
+#' @param matchType PARAM_DESCRIPTION, Default: 'Begins'
+#' @param crawl_delay PARAM_DESCRIPTION, Default: 5
+#' @seealso
+#'  \code{\link[httr]{GET}},\code{\link[httr]{content}}
+#'  \code{\link[jsonlite]{toJSON, fromJSON}}
+#' @rdname cg_search
+#' @export
+#' @importFrom httr GET content
+#' @importFrom jsonlite fromJSON
+
+cg_search <-
+        function(search_term,
+                 size = 1000,
+                 matchType = "Begins",
+                 crawl_delay = 5) {
+
+                Sys.sleep(crawl_delay)
+
+                response <- httr::GET(url = "https://webapis.cancer.gov/drugdictionary/v1/Drugs/search",
+                                      query = list(query = search_term,
+                                                   matchType = matchType,
+                                                   size = size))
+                parsed <- httr::content(x = response,
+                                        as = "text",
+                                        encoding = "UTF-8")
+                df <- jsonlite::fromJSON(txt = parsed)
+
+                df
+
+        }

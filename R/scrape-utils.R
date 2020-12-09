@@ -16,7 +16,7 @@ scrape <-
                  encoding = "",
                  ...,
                  options = c("RECOVER", "NOERROR", "NOBLANKS"),
-                 sleep_time = 3,
+                 sleep_time = 5,
                  verbose = TRUE) {
 
 

@@ -27,18 +27,24 @@ cdp_search <-
                 verbose = TRUE,
                  render_sql = TRUE) {
 
+                # search_term <- "BVD-523"
+                # steps <- c("log_registry_number",
+                #           "get_rn_url_validity",
+                #           "get_classification",
+                #           "get_names_and_synonyms",
+                #           "get_registry_numbers",
+                #           "get_links_to_resources")
+                # expiration_days <- 30
+                # search_type <- "contains"
+                # sleep_time <- 5
+                # verbose <- TRUE
+                # render_sql <- TRUE
+
 
                 if (!missing(conn_fun)) {
                         conn <- eval(rlang::parse_expr(conn_fun))
                         on.exit(pg13::dc(conn = conn, verbose = verbose))
                 }
-
-                # conn <- chariot::connectAthena()
-                # search_term <- "BI 836858"
-                # type <- "contains"
-                # sleep_time <- 5
-                # schema <- "chemidplus"
-                # export_repo <- FALSE
 
 
                 if (verbose) {
