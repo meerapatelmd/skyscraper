@@ -29,41 +29,120 @@ NULL
 #' @importFrom jsonlite fromJSON
 
 get_nci_dd <-
-        function(crawl_delay = 10,
-                 size = 10000) {
+        function(crawl_delay = 5,
+                 size = 10000,
+                 letters,
+                 verbose = TRUE) {
+
+                lttrs <- c(LETTERS, "%23")
+
+                if (!missing(letters)) {
+                        lttrs <- toupper(letters)
+                }
+
+                output <- list()
+                for (i in seq_along(lttrs)) {
+
+                if (verbose) {
+                        secretary::typewrite_progress(iteration = i,
+                                                      total = length(lttrs))
+                        secretary::typewrite(secretary::blueTxt("Letter:"), lttrs[i])
+                }
 
                 ex_crawl_delay(crawl_delay = crawl_delay)
-                response <- httr::GET(url = "https://webapis.cancer.gov/drugdictionary/v1/Drugs",
+                response <- httr::GET(url = sprintf("https://webapis.cancer.gov/drugdictionary/v1/Drugs/expand/%s?", lttrs[i]),
                                       query = list(size = size))
                 parsed <- httr::content(x = response,
                                         as = "text",
                                         encoding = "UTF-8")
                 results <- jsonlite::fromJSON(txt = parsed)
 
-                max_records <- results$meta$totalResults
-                batches <- ceiling(max_records/size)
 
-                indices <-
-                        seq(from = 0,
-                            to = batches*size,
-                            by = size)
-                starting <<- indices[1:batches]
+                output[[i]] <- results
 
-                output <- list()
-                for (i in 1:batches) {
-                        ex_crawl_delay(crawl_delay = crawl_delay)
-                        response <- httr::GET(url = "https://webapis.cancer.gov/drugdictionary/v1/Drugs",
-                                              query = list(size = size,
-                                                           from = starting[i]))
-                        parsed <- httr::content(x = response,
-                                                as = "text",
-                                                encoding = "UTF-8")
-                        output[[i]] <- jsonlite::fromJSON(txt = parsed)
                 }
+
+                names(output) <- lttrs
+
+                # max_records <- results$meta$totalResults
+                # batches <- ceiling(max_records/size)
+                #
+                # indices <-
+                #         seq(from = 0,
+                #             to = batches*size,
+                #             by = size)
+                # starting <<- indices[1:batches]
+                #
+                # output <- list()
+                # for (i in 1:batches) {
+                #         ex_crawl_delay(crawl_delay = crawl_delay)
+                #         response <- httr::GET(url = "https://webapis.cancer.gov/drugdictionary/v1/Drugs",
+                #                               query = list(size = size,
+                #                                            from = starting[i]))
+                #         parsed <- httr::content(x = response,
+                #                                 as = "text",
+                #                                 encoding = "UTF-8")
+                #         output[[i]] <- jsonlite::fromJSON(txt = parsed)
+                # }
 
                 output
 
-        }
+                totalResults <-
+                output %>%
+                        purrr::transpose() %>%
+                        purrr::pluck("meta") %>%
+                        purrr::transpose() %>%
+                        purrr::pluck("totalResults") %>%
+                        purrr::map(~ tibble::as_tibble_col(., column_name = "count")) %>%
+                        dplyr::bind_rows(.id = "letter")
+
+                grandTotal <-
+                        output %>%
+                        purrr::transpose() %>%
+                        purrr::pluck("meta") %>%
+                        purrr::transpose() %>%
+                        purrr::pluck("totalResults") %>%
+                        unlist() %>%
+                        sum()
+
+                results <-
+                        output %>%
+                        purrr::transpose() %>%
+                        purrr::pluck("results") %>%
+                        dplyr::bind_rows(.id = "letter")
+
+                drugInfoSummaryLink <-
+                        results$drugInfoSummaryLink %>%
+                        dplyr::rename(uri_text = text)
+
+                definition <- results$definition %>%
+                        dplyr::rename(html_text = text)
+
+
+                aliases <-
+                        results$aliases %>%
+                        purrr::set_names(1:length(results$aliases)) %>%
+                        purrr::keep(~ !is.null(.)) %>%
+                        dplyr::bind_rows(.id = "rowid") %>%
+                        dplyr::mutate(rowid = as.integer(rowid))
+
+                results <-
+                        results %>%
+                        dplyr::select(-drugInfoSummaryLink,
+                                      -definition,
+                                      -aliases) %>%
+                        dplyr::bind_cols(drugInfoSummaryLink,
+                                      definition) %>%
+                        tibble::rowid_to_column(var = "rowid") %>%
+                        dplyr::left_join(aliases) %>%
+                        dplyr::distinct()
+
+
+                list(meta = list(grandTotal = grandTotal,
+                                 totalResults = totalResults),
+                     results = results)
+
+                }
 
 
 #' @title
