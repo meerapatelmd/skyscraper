@@ -35,7 +35,6 @@ The links to Drug Pages are scraped from the Data Dictionary URL over the maximu
 \seealso{
 \code{\link[SqlRender]{render}}
 \code{\link[pg13]{query}},\code{\link[pg13]{appendTable}}
-\code{\link[police]{try_catch_error_as_null}}
 \code{\link[xml2]{read_xml}},\code{\link[xml2]{xml_find_all}},\code{\link[xml2]{xml_replace}}
 \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_table}}
 \code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{filter_all}}
