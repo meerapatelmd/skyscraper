@@ -101,7 +101,6 @@ is404 <-
 #'
 #' @importFrom rvest html_nodes html_text
 #' @importFrom magrittr %>%
-#' @importFrom police try_catch_error_as_null
 #' @importFrom tibble as_tibble_col as_tibble tribble
 #' @importFrom rubix filter_at_grepl rm_multibyte_chars normalize_all_to_na
 #' @importFrom tidyr extract
@@ -128,7 +127,7 @@ isMultipleHits <-
 
 
                 output_a <-
-                        police::try_catch_error_as_null(
+                        tryCatch(
                                 output  %>%
                                         tibble::as_tibble_col(column_name = "multiple_match") %>%
                                         rubix::filter_at_grepl(multiple_match,
@@ -141,7 +140,8 @@ isMultipleHits <-
                                         dplyr::mutate_all(stringr::str_remove_all, "No Structure") %>%
                                         dplyr::filter_at(vars(compound_match,
                                                               rn),
-                                                         dplyr::all_vars(!is.na(.))))
+                                                         dplyr::all_vars(!is.na(.))),
+                                error = function(e) NULL)
 
 
                 if (is.null(output_a)) {

@@ -16,23 +16,18 @@ URL: https://github.com/meerapatelmd/skyscraper,
     https://meerapatelmd.github.io/skyscraper
 BugReports: https://github.com/meerapatelmd/skyscraper/issues
 Imports: 
-    Imports: 
     SqlRender,
-    broca,
-    cave,
     centipede,
     chariot,
     cli,
     devtools,
     dplyr,
     forcats,
-    glitter,
     httr,
     jsonlite,
     lubridate,
     magrittr,
     pg13,
-    police,
     purrr,
     readr,
     rlang,
@@ -46,13 +41,9 @@ Imports:
     utils,
     xml2
 Remotes:
-    meerapatelmd/broca,
-    meerapatelmd/cave,
     meerapatelmd/centipede,
     meerapatelmd/chariot,
-    meerapatelmd/glitter,
     meerapatelmd/pg13,
-    meerapatelmd/police,
     meerapatelmd/rubix,
     meerapatelmd/secretary
 Encoding: UTF-8

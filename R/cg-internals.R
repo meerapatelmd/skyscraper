@@ -337,7 +337,6 @@ get_dictionary_and_links <-
 #' @seealso
 #'  \code{\link[SqlRender]{render}}
 #'  \code{\link[pg13]{query}},\code{\link[pg13]{appendTable}}
-#'  \code{\link[police]{try_catch_error_as_null}}
 #'  \code{\link[xml2]{read_xml}},\code{\link[xml2]{xml_find_all}},\code{\link[xml2]{xml_replace}}
 #'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_table}}
 #'  \code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{filter_all}}
@@ -346,7 +345,6 @@ get_dictionary_and_links <-
 #' @export
 #' @importFrom SqlRender render
 #' @importFrom pg13 query appendTable
-#' @importFrom police try_catch_error_as_null
 #' @importFrom xml2 read_html xml_find_all xml_add_sibling xml_remove
 #' @importFrom rvest html_nodes html_table
 #' @importFrom dplyr bind_rows transmute filter_at
@@ -406,9 +404,7 @@ get_drug_link_synonym <-
                         if (missing(response)) {
 
                                 response <-
-                                        police::try_catch_error_as_null(
-                                                xml2::read_html(drug_link)
-                                        )
+                                        scrape(drug_link)
 
 
                                 if (is.null(response)) {
@@ -416,9 +412,8 @@ get_drug_link_synonym <-
                                         Sys.sleep(sleep_time)
 
                                         response <-
-                                                police::try_catch_error_as_null(
-                                                        xml2::read_html(drug_link)
-                                                )
+                                                scrape(drug_link)
+
 
 
                                         Sys.sleep(sleep_time)
@@ -440,10 +435,11 @@ get_drug_link_synonym <-
 
 
                                 results <-
-                                        police::try_catch_error_as_null(
+                                       tryCatch(
                                                 response %>%
                                                         rvest::html_nodes("table") %>%
-                                                        rvest::html_table()
+                                                        rvest::html_table(),
+                                                error = function(e) NULL
                                         )
 
 
@@ -499,7 +495,6 @@ get_drug_link_synonym <-
 #' @seealso
 #'  \code{\link[SqlRender]{render}}
 #'  \code{\link[pg13]{query}},\code{\link[pg13]{appendTable}}
-#'  \code{\link[police]{try_catch_error_as_null}}
 #'  \code{\link[xml2]{read_xml}}
 #'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_text}}
 #'  \code{\link[tibble]{tibble}}
