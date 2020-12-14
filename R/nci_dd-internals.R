@@ -85,8 +85,6 @@ get_nci_dd <-
                 #         output[[i]] <- jsonlite::fromJSON(txt = parsed)
                 # }
 
-                output
-
                 totalResults <-
                 output %>%
                         purrr::transpose() %>%
@@ -124,7 +122,10 @@ get_nci_dd <-
                         purrr::set_names(1:length(results$aliases)) %>%
                         purrr::keep(~ !is.null(.)) %>%
                         dplyr::bind_rows(.id = "rowid") %>%
-                        dplyr::mutate(rowid = as.integer(rowid))
+                        dplyr::mutate(rowid = as.integer(rowid)) %>%
+                        dplyr::select(rowid,
+                                      drug_type = type,
+                                      drug_name = name)
 
                 results <-
                         results %>%
@@ -134,8 +135,27 @@ get_nci_dd <-
                         dplyr::bind_cols(drugInfoSummaryLink,
                                       definition) %>%
                         tibble::rowid_to_column(var = "rowid") %>%
-                        dplyr::left_join(aliases) %>%
-                        dplyr::distinct()
+                        dplyr::left_join(aliases, by = "rowid") %>%
+                        dplyr::select(-rowid) %>%
+                        dplyr::distinct() %>%
+                        dplyr::rename(drug = name,
+                                      drug_name_type = type) %>%
+                        dplyr::transmute(ndd_datetime = Sys.time(),
+                                         letter,
+                                         preferredName,
+                                         termId,
+                                         drug,
+                                         firstLetter,
+                                         drug_name_type,
+                                         prettyUrlName,
+                                         nciConceptId,
+                                         nciConceptName,
+                                         uri,
+                                         uri_text,
+                                         html,
+                                         html_text,
+                                         drug_type,
+                                         drug_name)
 
 
                 list(meta = list(grandTotal = grandTotal,
@@ -196,14 +216,14 @@ drug_count <-
 #'  \code{\link[pg13]{query}},\code{\link[pg13]{appendTable}}
 #'  \code{\link[secretary]{typewrite}}
 #'  \code{\link[tibble]{tibble}}
-#' @rdname log_drug_count
+#' @rdname nci_log_count
 #' @export
 #' @importFrom pg13 query appendTable
 #' @importFrom secretary typewrite
 #' @importFrom tibble tibble
 
 
-log_drug_count <-
+nci_log_count <-
         function(conn,
                  verbose = TRUE,
                  render_sql = TRUE,
@@ -243,5 +263,105 @@ log_drug_count <-
                                   data = tibble::tibble(ddl_datetime = Sys.time(),
                                                         drug_count = nci_dd_count))
 
+
+        }
+
+
+#' @title
+#' Scrape the NCI Thesaurus
+#'
+#' @description
+#' All NCIt Codes that have not been scraped or were scraped in the expiration period are scraped in the NCIt Thesaurus at the \url{"https://ncithesaurus.nci.nih.gov/ncitbrowser/pages/concept_details.jsf?dictionary=NCI_Thesaurus&code=%s&ns=ncit&type=synonym&key=null&b=1&n=0&vse=null#} path.
+#' @inheritSection cg_run Drug Detail Links
+#' @inheritParams get_drug_link_synonym
+#' @seealso
+#'  \code{\link[pg13]{query}},\code{\link[pg13]{appendTable}}
+#'  \code{\link[SqlRender]{render}}
+#'  \code{\link[secretary]{typewrite_progress}},\code{\link[secretary]{c("typewrite", "typewrite")}},\code{\link[secretary]{character(0)}}
+#'  \code{\link[rvest]{html_nodes}},\code{\link[rvest]{html_table}}
+#'  \code{\link[purrr]{keep}}
+#'  \code{\link[dplyr]{bind}},\code{\link[dplyr]{mutate}},\code{\link[dplyr]{select_all}}
+#'  \code{\link[rubix]{format_colnames}}
+#' @rdname get_ncit
+#' @export
+#' @importFrom pg13 query appendTable
+#' @importFrom SqlRender render
+#' @importFrom secretary typewrite_progress typewrite cyanTxt
+#' @importFrom rvest html_nodes html_table
+#' @importFrom purrr keep
+#' @importFrom dplyr bind_rows mutate rename_all transmute
+#' @importFrom rubix format_colnames
+
+get_ncit <-
+        function(conn,
+                 sleep_time = 5,
+                 expiration_days = 30,
+                 verbose = TRUE,
+                 render_sql = TRUE) {
+
+                ncit_synonym_table <-
+                        pg13::query(conn = conn,
+                                    sql_statement =
+                                            SqlRender::render("
+                                        SELECT DISTINCT
+                                                ndd.*
+                                        FROM cancergov.nci_drug_dictionary ndd
+                                        LEFT JOIN cancergov.ncit_synonym ns
+                                        ON ndd.nciconceptid  = ns.ncit_code
+                                        WHERE ns_datetime IS NULL
+                                                OR DATE_PART('day', LOCALTIMESTAMP(0)-ns.ns_datetime)::integer >= @expiration_days",
+                                                              expiration_days = expiration_days),
+                                    verbose = verbose,
+                                    render_sql = render_sql
+                        )
+
+
+
+                ncit_codes <- unique(ncit_synonym_table$nciconceptid)
+
+
+                for (i in 1:length(ncit_codes)) {
+
+                        ncit_code <- ncit_codes[i]
+                        ncit_code_url <- sprintf("https://ncithesaurus.nci.nih.gov/ncitbrowser/pages/concept_details.jsf?dictionary=NCI_Thesaurus&code=%s&ns=ncit&type=synonym&key=null&b=1&n=0&vse=null#", ncit_code)
+
+                        if (verbose) {
+
+                                secretary::typewrite_progress(iteration = i,
+                                                              total = length(ncit_codes))
+                                secretary::typewrite(secretary::cyanTxt("NCIt Code:"), ncit_code)
+                        }
+
+                        response <- scrape(ncit_code_url)
+
+
+                        if (!is.null(response)) {
+
+                                output <-
+                                        response %>%
+                                        rvest::html_nodes("table") %>%
+                                        rvest::html_table(fill = TRUE) %>%
+                                        purrr::keep(function(x) "Term" %in% colnames(x)) %>%
+                                        dplyr::bind_rows() %>%
+                                        dplyr::mutate(ncit_code = ncit_code) %>%
+                                        dplyr::mutate(ncit_code_url = ncit_code_url) %>%
+                                        rubix::format_colnames() %>%
+                                        dplyr::rename_all(tolower) %>%
+                                        dplyr::transmute(ns_datetime = Sys.time(),
+                                                         ncit_code,
+                                                         ncit_code_url,
+                                                         term,
+                                                         source,
+                                                         tty = type,
+                                                         code)
+
+                                pg13::appendTable(conn = conn,
+                                                  schema = "cancergov",
+                                                  tableName = "ncit_synonym",
+                                                  data = output)
+
+                        }
+
+                }
 
         }
