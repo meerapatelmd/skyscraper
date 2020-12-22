@@ -21,6 +21,8 @@ nci_run <-
                  verbose = TRUE,
                  render_sql = TRUE) {
 
+                on.exit(expr = closeAllConnections())
+
 
                 if (!missing(conn_fun)) {
 

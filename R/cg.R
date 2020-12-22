@@ -50,9 +50,14 @@ cg_run <-
                  verbose = TRUE,
                  render_sql = TRUE) {
 
+                on.exit(expr = closeAllConnections(),
+                        add = TRUE)
+
                 if (!missing(conn_fun)) {
                         conn <- eval(rlang::parse_expr(conn_fun))
-                        on.exit(pg13::dc(conn = conn, verbose = verbose))
+                        on.exit(pg13::dc(conn = conn, verbose = verbose),
+                                add = TRUE,
+                                after = TRUE)
                 }
 
                 cli::cat_line()

@@ -40,10 +40,14 @@ cdp_search <-
                 # verbose <- TRUE
                 # render_sql <- TRUE
 
+                on.exit(expr = closeAllConnections(),
+                        add = TRUE)
 
                 if (!missing(conn_fun)) {
                         conn <- eval(rlang::parse_expr(conn_fun))
-                        on.exit(pg13::dc(conn = conn, verbose = verbose))
+                        on.exit(pg13::dc(conn = conn, verbose = verbose),
+                                add = TRUE,
+                                after = TRUE)
                 }
 
 
@@ -270,6 +274,8 @@ cdp_run <-
                  render_sql = TRUE) {
 
 
+                on.exit(expr = closeAllConnections(),
+                        add = TRUE)
 
                 sql_statement <-
                 SqlRender::render(
