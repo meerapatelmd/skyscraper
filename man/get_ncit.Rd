@@ -7,7 +7,7 @@
 get_ncit(
   conn,
   sleep_time = 5,
-  expiration_days = 30,
+  expiration_days = 100,
   verbose = TRUE,
   render_sql = TRUE
 )

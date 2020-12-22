@@ -295,7 +295,7 @@ nci_log_count <-
 get_ncit <-
         function(conn,
                  sleep_time = 5,
-                 expiration_days = 30,
+                 expiration_days = 100,
                  verbose = TRUE,
                  render_sql = TRUE) {
 
@@ -303,13 +303,23 @@ get_ncit <-
                         pg13::query(conn = conn,
                                     sql_statement =
                                             SqlRender::render("
-                                        SELECT DISTINCT
-                                                ndd.*
+                                        WITH new AS (
+                                        SELECT DISTINCT ndd.nciconceptid
                                         FROM cancergov.nci_drug_dictionary ndd
                                         LEFT JOIN cancergov.ncit_synonym ns
-                                        ON ndd.nciconceptid  = ns.ncit_code
+                                        ON ndd.nciconceptid = ns.ncit_code
                                         WHERE ns_datetime IS NULL
-                                                OR DATE_PART('day', LOCALTIMESTAMP(0)-ns.ns_datetime)::integer >= @expiration_days",
+                                        	AND nciconceptid IS NOT NULL
+                                        )
+                                        SELECT nciconceptid
+                                        FROM new
+                                        UNION
+                                        SELECT DISTINCT ndd.nciconceptid
+                                        FROM cancergov.nci_drug_dictionary ndd
+                                        LEFT JOIN cancergov.ncit_synonym ns
+                                        ON ndd.nciconceptid = ns.ncit_code
+                                        WHERE  DATE_PART('day', LOCALTIMESTAMP(0)-ns.ns_datetime)::integer >= 100
+                                        	AND nciconceptid IS NOT NULL;",
                                                               expiration_days = expiration_days),
                                     verbose = verbose,
                                     render_sql = render_sql
