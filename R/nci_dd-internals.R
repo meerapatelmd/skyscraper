@@ -318,7 +318,7 @@ get_ncit <-
                                         FROM cancergov.nci_drug_dictionary ndd
                                         LEFT JOIN cancergov.ncit_synonym ns
                                         ON ndd.nciconceptid = ns.ncit_code
-                                        WHERE  DATE_PART('day', LOCALTIMESTAMP(0)-ns.ns_datetime)::integer >= 100
+                                        WHERE  DATE_PART('day', LOCALTIMESTAMP(0)-ns.ns_datetime)::integer >= @expiration_days
                                         	AND nciconceptid IS NOT NULL;",
                                                               expiration_days = expiration_days),
                                     verbose = verbose,
